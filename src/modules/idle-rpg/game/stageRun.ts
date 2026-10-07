@@ -156,29 +156,33 @@ export const FIRST_STAGE: StageDefinition = {
   chapter: 1,
   stage: 1,
   name: "1-1 · Meadow Road",
-  length: 5000,
+  length: 4500,
   environment: "forest",
   unlockRequirement: null,
-  recommendedPower: 65,
+  recommendedPower: 80,
   minimumClearSeconds: 7,
-  rewards: { repeat: { gold: 20, heroXP: 25, chestItemID: "stage_chest" }, firstClear: { itemID: "traveler_boots" } },
+  rewards: { repeat: { gold: 30, heroXP: 25, chestItemID: "stage_chest" }, firstClear: { itemID: "traveler_boots" } },
   encounters: [
-    { id: "meadow-1", distance: 750, enemies: [{ type: "Goblin Scout", maxHp: 15, attack: 1, defence: 0, attackSpeed: 0.8, moveSpeed: 0.36, attackRange: 0.10, visual: "goblin1" }] },
-    { id: "meadow-2", distance: 1750, enemies: [
-      { type: "Goblin Scout", maxHp: 18, attack: 1, defence: 0, attackSpeed: 0.8, moveSpeed: 0.36, attackRange: 0.10, visual: "goblin1" },
-      { type: "Goblin Raider", maxHp: 20, attack: 2, defence: 1, attackSpeed: 0.9, moveSpeed: 0.42, attackRange: 0.10, visual: "goblin2" },
+    { id: "meadow-1", distance: 675, enemies: [{ type: "Goblin Scout", maxHp: 15, attack: 1, defence: 0, attackSpeed: 0.8, moveSpeed: 0.40, attackRange: 0.10, visual: "goblin1" }] },
+    { id: "meadow-2", distance: 1450, enemies: [
+      { type: "Goblin Scout", maxHp: 18, attack: 1, defence: 0, attackSpeed: 0.8, moveSpeed: 0.40, attackRange: 0.10, visual: "goblin1" },
+      { type: "Goblin Raider", maxHp: 20, attack: 2, defence: 1, attackSpeed: 0.9, moveSpeed: 0.47, attackRange: 0.10, visual: "goblin2" },
     ] },
-    { id: "meadow-3", distance: 3000, enemies: [
-      { type: "Goblin Raider", maxHp: 22, attack: 2, defence: 1, attackSpeed: 0.9, moveSpeed: 0.42, attackRange: 0.10, visual: "goblin2" },
-      { type: "Goblin Brute", maxHp: 25, attack: 2, defence: 1, attackSpeed: 0.8, moveSpeed: 0.36, attackRange: 0.10, visual: "goblinboss" },
+    { id: "meadow-3", distance: 2275, enemies: [
+      { type: "Goblin Raider", maxHp: 22, attack: 2, defence: 1, attackSpeed: 0.9, moveSpeed: 0.47, attackRange: 0.10, visual: "goblin2" },
+      { type: "Goblin Brute", maxHp: 25, attack: 2, defence: 1, attackSpeed: 0.8, moveSpeed: 0.40, attackRange: 0.10, visual: "goblinboss" },
     ] },
-    { id: "meadow-4", distance: 4100, enemies: [
-      { type: "Goblin Brute", maxHp: 28, attack: 2, defence: 1, attackSpeed: 0.8, moveSpeed: 0.36, attackRange: 0.10, visual: "goblinboss" },
-      { type: "Goblin Raider", maxHp: 25, attack: 2, defence: 1, attackSpeed: 0.9, moveSpeed: 0.42, attackRange: 0.10, visual: "goblin2" },
+    { id: "meadow-4", distance: 3075, enemies: [
+      { type: "Goblin Brute", maxHp: 28, attack: 2, defence: 1, attackSpeed: 0.8, moveSpeed: 0.40, attackRange: 0.10, visual: "goblinboss" },
+      { type: "Goblin Raider", maxHp: 25, attack: 2, defence: 1, attackSpeed: 0.9, moveSpeed: 0.47, attackRange: 0.10, visual: "goblin2" },
+    ] },
+    { id: "meadow-5", distance: 3875, enemies: [
+      { type: "Goblin Scout", maxHp: 18, attack: 1, defence: 0, attackSpeed: 0.8, moveSpeed: 0.40, attackRange: 0.10, visual: "goblin1" },
+      { type: "Goblin Raider", maxHp: 20, attack: 2, defence: 1, attackSpeed: 0.9, moveSpeed: 0.47, attackRange: 0.10, visual: "goblin2" },
     ] },
   ],
-  boss: { id: "meadow-boss", distance: 5000, enemies: [
-    { type: "Ogre Boss", maxHp: 70, attack: 3, defence: 1, attackSpeed: 0.8, moveSpeed: 0.28, attackRange: 0.12, visual: "ogreboss" },
+  boss: { id: "meadow-boss", distance: 4500, enemies: [
+    { type: "Ogre Boss", maxHp: 85, attack: 3, defence: 1, attackSpeed: 0.8, moveSpeed: 0.28, attackRange: 0.12, visual: "ogreboss" },
   ] },
 };
 

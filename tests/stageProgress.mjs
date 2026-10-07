@@ -7,6 +7,8 @@ import { chapterAvailable, continuationStageID, farmingStageID } from "../src/mo
 import { makeStage, nextStageID } from "../src/modules/idle-rpg/game/stageCatalog.ts";
 
 assert.equal(STAGE_CATALOG.length, 30);
+assert.equal(makeStage(1, 1).length, 4500);
+assert.equal(makeStage(3, 10).length, 10150);
 assert.equal(nextStageID("grind-stage-1-1"), "grind-stage-1-2");
 assert.equal(nextStageID("grind-stage-1-9"), "grind-stage-1-10");
 assert.equal(nextStageID("grind-stage-1-10"), "grind-stage-2-1");
@@ -23,6 +25,16 @@ for (let i = 0; i < STAGE_CATALOG.length; i++) {
     stage.chapter === 1 ? "ogreboss" : stage.chapter === 2 ? "orangeOgre" : "zombieOgre");
   assert.equal(stage.environment, stage.chapter === 1 ? "forest" : `act${stage.chapter}`);
   const enemies = stage.encounters.flatMap((encounter) => encounter.enemies);
+  assert.equal(stage.encounters.length, 5, `${stage.id} has five readable normal waves`);
+  assert.ok(stage.encounters.every((encounter) => encounter.enemies.length <= 3), stage.id);
+  assert.ok(stage.boss.enemies.length <= 2, stage.id);
+  assert.ok(stage.encounters.every((encounter) =>
+    encounter.enemies.filter((enemy) => enemy.combatType === "RANGED").length <= 1), stage.id);
+  assert.ok(stage.encounters.every((encounter, index) =>
+    encounter.distance < stage.length &&
+    encounter.distance > (index ? stage.encounters[index - 1].distance : 0)), stage.id);
+  const totalEnemies = enemies.length + stage.boss.enemies.length;
+  assert.ok(totalEnemies >= 10 && totalEnemies <= 13, stage.id);
   if (stage.chapter > 1) {
     const prefix = stage.chapter === 2 ? "orange" : "undead";
     assert.ok(enemies.every((enemy) => enemy.visual.startsWith(prefix)), stage.id);
@@ -31,11 +43,16 @@ for (let i = 0; i < STAGE_CATALOG.length; i++) {
       encounter.enemies[0].combatType !== "RANGED"), "mixed waves put a melee enemy first");
   }
   assert.ok(stage.rewards.repeat.gold > 0);
+  assert.ok(stage.recommendedPower > 0);
+  assert.equal(stage.rewards.repeat.bossChestItemID ?? null, stage.stage % 5 === 0 ? "boss_chest" : null);
   assert.ok(stage.minimumClearSeconds > 0);
   assert.doesNotThrow(() => new StageRun(stage));
   if (i > 0) {
     assert.ok(stage.length > STAGE_CATALOG[i - 1].length);
     assert.ok(stage.boss.enemies[0].maxHp > STAGE_CATALOG[i - 1].boss.enemies[0].maxHp);
+    assert.ok(stage.rewards.repeat.gold > STAGE_CATALOG[i - 1].rewards.repeat.gold);
+    assert.ok(stage.rewards.repeat.heroXP >= STAGE_CATALOG[i - 1].rewards.repeat.heroXP);
+    assert.ok(stage.recommendedPower > STAGE_CATALOG[i - 1].recommendedPower);
   }
 }
 

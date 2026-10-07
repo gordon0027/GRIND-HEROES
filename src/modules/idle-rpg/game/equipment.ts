@@ -60,19 +60,21 @@ export function gearBonuses(def: GearDefinition, level = 1): GearBonuses {
   };
 }
 
-/** Normalize iDos item definitions and authoritative InventoryV2 instances once for the UI/run. */
+/** Inventory owns instances; only protected Grind assignments decide what is worn. */
 export function ownedGear(
   instances: Record<string, GearInstance | null> | null | undefined,
   definitions: ReadonlyMap<string, GearDefinition>,
+  assignments: Readonly<Record<string, { heroID: string; slot: GearSlot }>> = {},
 ): GearItem[] {
   const result: GearItem[] = [];
   for (const [instanceID, instance] of Object.entries(instances ?? {})) {
     if (!instance?.ItemID) continue;
     const def = definitions.get(instance.ItemID);
-    const slot = def?.Equipment?.AllowedSlotIDs?.find(isGearSlot);
+    const worn = assignments[instanceID];
+    const slot = worn && def?.Equipment?.AllowedSlotIDs?.includes(worn.slot)
+      ? worn.slot : def?.Equipment?.AllowedSlotIDs?.find(isGearSlot);
     if (!def || !slot) continue;
     const rarityID = def.Metadata?.RarityID ?? "Common";
-    const worn = instance.EquippedSlot;
     const rarity = (RARITIES.has(rarityID) ? rarityID : "Common") as Rarity;
     result.push({
       instanceID, itemID: instance.ItemID, catalogID: instance.CatalogID ?? "Item",
@@ -83,8 +85,7 @@ export function ownedGear(
       bonuses: gearBonuses(def, Number(instance.Level ?? 1)),
       allowedHeroes: [...(def.Equipment?.AllowedCharacterIDs ?? [])],
       iconRef: def.AssetPaths?.icon ?? null,
-      equippedBy: worn?.CharacterID && worn.SlotID && isGearSlot(worn.SlotID)
-        ? { heroID: worn.CharacterID, slot: worn.SlotID } : null,
+      equippedBy: worn && worn.slot === slot ? { heroID: worn.heroID, slot: worn.slot } : null,
     });
   }
   return result.sort((a, b) => GEAR_SLOTS.indexOf(a.slot) - GEAR_SLOTS.indexOf(b.slot)
@@ -130,6 +131,13 @@ export function totalBonuses(items: readonly GearItem[], heroID: string): GearBo
     attackSpeed: sum.attackSpeed + item.bonuses.attackSpeed,
     moveSpeed: sum.moveSpeed + item.bonuses.moveSpeed,
   }), { ...ZERO_BONUSES });
+}
+
+/** Dormant template battle uses the same Grind gear authority as StageRun. */
+export function grindFighterStats(base: FighterStats, gear: GearBonuses): FighterStats {
+  return { ...base, maxHp: Math.max(1, base.maxHp + gear.maxHp),
+    damage: Math.max(1, base.damage + gear.attack), armor: Math.max(0, base.armor + gear.defence),
+    attackSpeed: Math.max(0.1, base.attackSpeed + gear.attackSpeed) };
 }
 
 export function compareGear(candidate: GearItem, current: GearItem | null): GearBonuses {

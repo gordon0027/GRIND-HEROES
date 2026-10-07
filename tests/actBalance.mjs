@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
 import { HERO_ARCHETYPES } from "../src/modules/idle-rpg/game/heroArchetypes.ts";
-import { makeStage } from "../src/modules/idle-rpg/game/stageCatalog.ts";
+import { makeStage, STAGE_CATALOG } from "../src/modules/idle-rpg/game/stageCatalog.ts";
 import { StageRun } from "../src/modules/idle-rpg/game/stageRun.ts";
+import { gearedFor, representativeStages, simulate as sweep } from "./balanceSweep.mjs";
 
 const source = (id, maxHp, attack, defence, attackSpeed) => {
   const role = HERO_ARCHETYPES[id];
@@ -40,3 +41,23 @@ for (const [scenario, outcome] of Object.entries(outcomes)) {
     `${scenario} should take meaningful time without becoming an HP wall`);
 }
 console.log("Act balance scenarios", outcomes);
+for (const [chapter, stage] of representativeStages) {
+  const outcome = sweep(chapter, stage, gearedFor(chapter, stage));
+  assert.equal(outcome.result, "clear", `geared party should clear ${chapter}-${stage}: ${JSON.stringify(outcome)}`);
+  assert.equal(outcome.deaths, 0, `geared party should farm ${chapter}-${stage} without deaths`);
+  assert.ok(outcome.combatPercent >= 15 && outcome.combatPercent <= 65,
+    `encounters should occupy a meaningful share of ${chapter}-${stage}`);
+  assert.ok(outcome.bossSeconds >= 2 && outcome.bossSeconds <= 30,
+    `boss should remain a readable, finite fight in ${chapter}-${stage}`);
+}
+console.log("Nine representative geared stages clear at readable combat density");
+let previousGoldRate = 0;
+for (const stage of STAGE_CATALOG) {
+  const result = sweep(stage.chapter, stage.stage, gearedFor(stage.chapter, stage.stage));
+  assert.equal(result.result, "clear", stage.id);
+  const goldRate = stage.rewards.repeat.gold / result.seconds;
+  assert.ok(goldRate >= previousGoldRate * 0.94,
+    `${stage.id} should not make the previous stage markedly better to farm`);
+  previousGoldRate = goldRate;
+}
+console.log("All 30 appropriately geared stages remain broadly more profitable per second");

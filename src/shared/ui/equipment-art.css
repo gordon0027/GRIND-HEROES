@@ -1,0 +1,4 @@
+.gh-equipment-art{position:relative;display:inline-grid;place-items:center;flex:none;background-size:100% 100%;background-repeat:no-repeat}
+.gh-equipment-art__frame{position:absolute;z-index:1;inset:2%;width:96%;height:96%;object-fit:fill;pointer-events:none;filter:drop-shadow(0 0 3px var(--gh-rarity))}
+.gh-equipment-art--common .gh-equipment-art__frame{filter:grayscale(1) brightness(1.35)}
+.gh-equipment-art__icon{position:relative;z-index:2;width:77%;height:77%;object-fit:contain;filter:drop-shadow(1px 2px 1px #0009)}

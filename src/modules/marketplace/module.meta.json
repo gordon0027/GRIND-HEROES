@@ -1,0 +1,31 @@
+{
+  "id": "marketplace",
+  "type": "feature",
+  "summary": "Marketplace screen for any game: player listings and auctions, selling, bids, direct trades, claims and history.",
+  "description": "A ready player marketplace (Unity Alikhan/Marketplace) for ANY game, built on the @idosgames/react/ui kit and client.marketplace. Tabs: the market (items grouped with their cheapest price), my lots, my bids, direct trades, things to claim and history. Everything detailed is a popup: an item's offers (cheapest listing first, then auctions ending soonest), one offer (buy, bid with the engine's minimum next bid, cancel your own), selling (pick an item — only tradable, never a worn one — then listing or auction, amount, price in a currency tradable between players, duration and the commission), and incoming trades (accept / decline). The server holds the escrow and settles every trade. Registers the 'marketplace' feature; its badge counts things to claim and trades waiting. Ships title-seed.json: listings and auctions for currencies with a 5% commission.",
+  "provides": [
+    "player marketplace screen",
+    "listings and auctions",
+    "sell popup with price and duration",
+    "bids with the minimum next bid",
+    "direct trades",
+    "claims and history",
+    "marketplace badge",
+    "demo marketplace rules"
+  ],
+  "tags": [
+    "marketplace",
+    "trading",
+    "auction",
+    "listing",
+    "p2p",
+    "ui",
+    "screen",
+    "economy"
+  ],
+  "author": {
+    "name": "iDos Games",
+    "url": "https://idosgames.com"
+  },
+  "version": "0.1.1"
+}

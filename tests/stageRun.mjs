@@ -27,10 +27,10 @@ for (let frame = 0; frame < 12000 && run.state !== "clear" && run.state !== "fai
 }
 assert.equal(run.state, "clear", "Knight must clear the complete V1 stage");
 assert.deepEqual(reached.map(([id]) => id), [...FIRST_STAGE.encounters, FIRST_STAGE.boss].map((e) => e.id));
-assert.deepEqual(reached.map(([, distance]) => distance), [750, 1750, 3000, 4100, 5000]);
+assert.deepEqual(reached.map(([, distance]) => distance), [675, 1450, 2275, 3075, 3875, 4500]);
 assert.ok(pausedFrames > 0);
 assert.ok(run.completionSeconds > 0);
-assert.equal(run.distance, 5000);
+assert.equal(run.distance, 4500);
 assert.equal(run.retry(), true);
 assert.equal(run.state, "running");
 assert.equal(run.distance, 0);

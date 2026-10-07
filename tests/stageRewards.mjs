@@ -4,12 +4,20 @@ import { runInNewContext } from "node:vm";
 import { STAGE_CATALOG } from "../src/modules/idle-rpg/game/stageCatalog.ts";
 import { parseHeroProgress, xpToNext } from "../src/modules/idle-rpg/game/heroXP.ts";
 
-const code = readFileSync(new URL("../src/modules/idle-rpg/server/stageRewards.js", import.meta.url), "utf8");
+const code = readFileSync(new URL("../src/modules/idle-rpg/server/stageRewards.js", import.meta.url), "utf8") + "\n" +
+  readFileSync(new URL("../src/modules/idle-rpg/server/grindEquipment.js", import.meta.url), "utf8");
 const records = { Private: {}, ReadOnly: {}, Internal: {}, Public: {} };
-const inventory = { InventoryV2: { UnstackableItems: {}, VirtualCurrencies: { GOLD: { Amount: 0 } } },
+const inventory = { InventoryV2: { UnstackableItems: {}, Items: {}, VirtualCurrencies: { GOLD: { Amount: 0 } } },
   Character: { Characters: { Knight: { Level: 1 }, Archer: { Level: 1 }, Mage: { Level: 1 } } } };
 const grants = [];
 const server = {
+  GetTitleConfig: () => ({ Item: { Catalogs: { Item: { Items: {
+    traveler_boots: { ItemID: "traveler_boots", IsStackable: false, Metadata: { RarityID: "Common" },
+      Equipment: { AllowedSlotIDs: ["Boots"], AllowedCharacterIDs: [] } },
+  } } } }, Character: { Definitions: Object.fromEntries(["Knight", "Archer", "Mage"].map((id) =>
+    [id, { Unlock: { UnlockedByDefault: id === "Knight" },
+      Equipment: { Slots: Object.fromEntries(["Helmet", "Armor", "Gloves", "Boots", "Weapon", "Offhand"]
+        .map((slot) => [slot, { SlotID: slot }])) } }])) } }),
   GetUserCustomData: () => ({ Success: true, Data: records }),
   SetUserCustomData: (bucket, key, value) => {
     records[bucket][key] = { Value: value };
@@ -65,7 +73,7 @@ assert.equal(grants.length, 1);
 assert.equal(win.xpAwards.length, 1);
 assert.equal(win.xpAwards[0].heroID, "Knight");
 assert.equal(win.heroProgress.Knight.xp, 25);
-assert.deepEqual(Array.from(grants[0].Operation.Grant.Standard.Entries, (entry) => entry.Amount), [20, 1, 1],
+assert.deepEqual(Array.from(grants[0].Operation.Grant.Standard.Entries, (entry) => entry.Amount), [30, 1, 1],
   "client payload cannot select reward amounts or items");
 assert.equal(complete("grind-stage-1-1", first.runId, 42).reason, "run_not_active");
 assert.equal(grants.length, 1, "one run grants only once");
@@ -93,7 +101,13 @@ assert.equal(JSON.parse(records.ReadOnly.grind_hero_xp_v1.Value).Knight.level, 2
   "overflow from repeated clears raises the hero level");
 
 const changed = start("grind-stage-1-2", 180);
-inventory.InventoryV2.UnstackableItems.boots1 = { EquippedSlot: { CharacterID: "Knight", SlotID: "Boots" } };
+inventory.InventoryV2.UnstackableItems.boots1 = { ItemID: "traveler_boots", CatalogID: "Item" };
+inventory.InventoryV2.Items.traveler_boots = { UnstackableAmount: 1 };
+inventory.Character.Characters.Knight.Equipment = { Boots: {
+  ItemInstanceID: "boots1", ItemID: "traveler_boots", CatalogID: "Item", Level: 1,
+} };
+assert.equal(sandbox.handlers.equipGrindItem({ heroID: "Knight", slot: "Boots", itemInstanceID: "boots1" }).equipped,
+  true);
 assert.equal(complete("grind-stage-1-2", changed.runId, 220).reason, "party_changed");
 assert.equal(grants.length, 3);
 assert.equal(sandbox.handlers.failStageRun({ runId: changed.runId }, at(221)).closed, true);
@@ -117,23 +131,30 @@ assert.equal(milestoneClear.rewards.bossChestItemID, "boss_chest");
 assert.deepEqual(Array.from(grants.at(-1).Operation.Grant.Standard.Entries, (entry) => entry.ItemID ?? entry.CurrencyID),
   ["GOLD", "stage_chest", "boss_chest"], "milestone stage grants both unopened chest items");
 const prices = sandbox.handlers.getPartySlotPrices();
-assert.equal(prices.slot2, 5000);
-assert.equal(prices.slot3, 25000);
+assert.equal(prices.slot2, 50000);
+assert.equal(prices.slot3, 250000);
 assert.equal(sandbox.handlers.unlockPartySlot({ slot: 3 }).reason, "previous_slot_locked");
 assert.equal(sandbox.handlers.unlockPartySlot({ slot: 2 }).reason, "not_enough_gold");
-inventory.InventoryV2.VirtualCurrencies.GOLD.Amount = 6000;
+inventory.InventoryV2.VirtualCurrencies.GOLD.Amount = 49999;
+assert.equal(sandbox.handlers.unlockPartySlot({ slot: 2 }).reason, "not_enough_gold");
+inventory.InventoryV2.VirtualCurrencies.GOLD.Amount = 50000;
 const beforeSlot = start("grind-stage-1-1", 300);
 assert.equal(sandbox.handlers.unlockPartySlot({ slot: 2 }).unlocked, true);
-assert.equal(inventory.InventoryV2.VirtualCurrencies.GOLD.Amount, 1000);
+assert.equal(inventory.InventoryV2.VirtualCurrencies.GOLD.Amount, 0,
+  "slot 2 deducts exactly 50,000 GOLD");
+assert.equal(sandbox.handlers.unlockPartySlot({ slot: 2 }).reason, "already_unlocked");
 assert.equal(records.ReadOnly.grind_party_capacity_v2.Value, "2");
 assert.equal(sandbox.handlers.unlockPartySlot({ slot: 2 }).reason, "already_unlocked");
-assert.equal(inventory.InventoryV2.VirtualCurrencies.GOLD.Amount, 1000, "duplicate cannot charge");
+assert.equal(inventory.InventoryV2.VirtualCurrencies.GOLD.Amount, 0, "duplicate cannot charge");
 assert.equal(complete("grind-stage-1-1", beforeSlot.runId, 340).accepted, true,
   "buying a party slot must not invalidate an active run");
-inventory.InventoryV2.VirtualCurrencies.GOLD.Amount = 26000;
+inventory.InventoryV2.VirtualCurrencies.GOLD.Amount = 249999;
+assert.equal(sandbox.handlers.unlockPartySlot({ slot: 3 }).reason, "not_enough_gold");
+inventory.InventoryV2.VirtualCurrencies.GOLD.Amount = 250000;
 assert.equal(sandbox.handlers.unlockPartySlot({ slot: 3 }).unlocked, true);
-assert.equal(inventory.InventoryV2.VirtualCurrencies.GOLD.Amount, 1000);
+assert.equal(inventory.InventoryV2.VirtualCurrencies.GOLD.Amount, 0);
 assert.equal(records.ReadOnly.grind_party_capacity_v2.Value, "3");
+assert.equal(sandbox.handlers.unlockPartySlot({ slot: 3 }).reason, "already_unlocked");
 const liveManaged = start("grind-stage-1-1", 400);
 inventory.InventoryV2.UnstackableItems.helmet1 = { EquippedSlot: { CharacterID: "Archer", SlotID: "Helmet" } };
 writeFormation(["Knight", "Archer", null], 420);
@@ -191,6 +212,8 @@ assert.equal(start("grind-stage-3-1", 901).reason, "stage_locked",
   "Act 3 cannot begin before clearing 2-10 on the server");
 const overflowClear = complete("grind-stage-2-10", overflow.runId, 950);
 assert.equal(overflowClear.accepted, true);
+assert.equal(overflowClear.rewards.chestItemID, "stage_chest_act2");
+assert.equal(overflowClear.rewards.bossChestItemID, "boss_chest_act2");
 assert.equal(progress().highestUnlocked, 21, "server clear of 2-10 unlocks 3-1");
 assert.deepEqual(JSON.parse(JSON.stringify(xpState().Knight)), { level: 3, xp: 39 },
   "one reward may cross two thresholds while preserving overflow");
@@ -205,6 +228,26 @@ const act3Run = start("grind-stage-3-1", 960);
 assert.equal(act3Run.accepted, true, "the server recognizes Act 3 after unlock");
 const act3Clear = complete("grind-stage-3-1", act3Run.runId, 1000);
 assert.equal(act3Clear.accepted, true);
+assert.equal(act3Clear.rewards.chestItemID, "stage_chest_act3");
 assert.equal(act3Clear.rewards.gold, STAGE_CATALOG[20].rewards.repeat.gold);
 assert.equal(progress().highestUnlocked, 22);
+assert.equal(act3Clear.xpAwards[0].amount, STAGE_CATALOG[20].rewards.repeat.heroXP);
+assert.deepEqual(Array.from(grants.at(-1).Operation.Grant.Standard.Entries,
+  (entry) => entry.ItemID ?? entry.CurrencyID), ["GOLD", "stage_chest_act3"]);
+const act2Normal = start("grind-stage-2-1", 1010);
+const act2NormalClear = complete("grind-stage-2-1", act2Normal.runId, 1050);
+assert.equal(act2NormalClear.accepted, true);
+assert.equal(act2NormalClear.rewards.gold, STAGE_CATALOG[10].rewards.repeat.gold);
+assert.equal(act2NormalClear.xpAwards[0].amount, STAGE_CATALOG[10].rewards.repeat.heroXP);
+assert.deepEqual(Array.from(grants.at(-1).Operation.Grant.Standard.Entries,
+  (entry) => entry.ItemID ?? entry.CurrencyID), ["GOLD", "stage_chest_act2"]);
+records.ReadOnly.grind_stage_progress_v2.Value = JSON.stringify({ ...progress(), highestUnlocked: 30 });
+const act3Boss = start("grind-stage-3-10", 1060);
+const act3BossClear = complete("grind-stage-3-10", act3Boss.runId, 1110);
+assert.equal(act3BossClear.accepted, true);
+assert.equal(act3BossClear.rewards.gold, STAGE_CATALOG[29].rewards.repeat.gold);
+assert.equal(act3BossClear.xpAwards[0].amount, STAGE_CATALOG[29].rewards.repeat.heroXP);
+assert.deepEqual(Array.from(grants.at(-1).Operation.Grant.Standard.Entries,
+  (entry) => entry.ItemID ?? entry.CurrencyID),
+  ["GOLD", "stage_chest_act3", "boss_chest_act3"]);
 console.log("CloudCode lifecycle, live party signature sync, Gold purchases and duplicate protection passed");

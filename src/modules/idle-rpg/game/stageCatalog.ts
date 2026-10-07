@@ -13,7 +13,22 @@ export function stageLabel(chapter: number, stage: number): string {
 }
 
 const chapterNames = ["Meadow Road", "Orange Bastion", "Undead Crypt"];
-const extendedLegacyLengths = [5000, 5500, 6000, 6500, 7500];
+const legacyLengths = [5000, 5500, 6000, 6500, 7500];
+const LENGTH_FACTOR = 0.9;
+const ACT_GOLD_START = [0, 80, 200] as const;
+const ACT_GOLD_PER_STAGE = [0, 10, 20] as const;
+const ACT_POWER_START = [80, 240, 450] as const;
+const ACT_POWER_END = [220, 420, 680] as const;
+const stageLength = (index: number) => Math.round((legacyLengths[index] ?? 7500 + (index - 4) * 150) * LENGTH_FACTOR / 50) * 50;
+const stageGold = (index: number) => {
+  const act = Math.floor(index / STAGES_PER_CHAPTER);
+  return 30 + 8 * index + ACT_GOLD_START[act]! + ACT_GOLD_PER_STAGE[act]! * (index % STAGES_PER_CHAPTER);
+};
+const stagePower = (chapter: number, stage: number) => {
+  const act = chapter - 1;
+  return Math.round(ACT_POWER_START[act]! + (ACT_POWER_END[act]! - ACT_POWER_START[act]!) *
+    (stage - 1) / (STAGES_PER_CHAPTER - 1));
+};
 const act1Visuals = ["goblin1", "goblin2", "goblinboss"] as const;
 const act1Names = ["Goblin Scout", "Goblin Raider", "Goblin Brute"] as const;
 const act1HpWeight = [1, 1.15, 1.3] as const;
@@ -23,27 +38,27 @@ type EnemyRole = "simple" | "fat" | "archer" | "heavy";
 const actEnemies: Record<2 | 3, Record<string, EnemyDefinition>> = {
   2: {
     simple: { type: "Orange Goblin", visual: "orange1", maxHp: 45, attack: 5, defence: 1,
-      attackSpeed: 0.9, moveSpeed: 0.43, attackRange: 0.10 },
+      attackSpeed: 0.9, moveSpeed: 0.48, attackRange: 0.10 },
     fat: { type: "Orange Goblin Fat", visual: "orangeFat", maxHp: 72, attack: 5, defence: 3,
-      attackSpeed: 0.7, moveSpeed: 0.30, attackRange: 0.11 },
+      attackSpeed: 0.7, moveSpeed: 0.34, attackRange: 0.11 },
     archer: { type: "Orange Goblin Archer", visual: "orangeArcher", maxHp: 34, attack: 5, defence: 0,
-      attackSpeed: 0.7, moveSpeed: 0.32, attackRange: 0.42, combatType: "RANGED",
+      attackSpeed: 0.7, moveSpeed: 0.36, attackRange: 0.42, combatType: "RANGED",
       projectile: { type: "ARROW", speed: 1.35, releaseDelay: 0.19 } },
     heavy: { type: "Orange Goblin Heavy", visual: "orangeHeavy", maxHp: 88, attack: 8, defence: 3,
-      attackSpeed: 0.62, moveSpeed: 0.30, attackRange: 0.12 },
+      attackSpeed: 0.62, moveSpeed: 0.33, attackRange: 0.12 },
     boss: { type: "Orange Ogre", visual: "orangeOgre", maxHp: 230, attack: 9, defence: 3,
-      attackSpeed: 0.65, moveSpeed: 0.26, attackRange: 0.13 },
+      attackSpeed: 0.65, moveSpeed: 0.28, attackRange: 0.13 },
   },
   3: {
     simple: { type: "Undead Warrior", visual: "undead1", maxHp: 80, attack: 7, defence: 2,
-      attackSpeed: 0.85, moveSpeed: 0.37, attackRange: 0.10 },
+      attackSpeed: 0.85, moveSpeed: 0.42, attackRange: 0.10 },
     archer: { type: "Undead Archer", visual: "undeadArcher", maxHp: 58, attack: 7, defence: 1,
-      attackSpeed: 0.75, moveSpeed: 0.30, attackRange: 0.42, combatType: "RANGED",
+      attackSpeed: 0.75, moveSpeed: 0.34, attackRange: 0.42, combatType: "RANGED",
       projectile: { type: "ARROW", speed: 1.35, releaseDelay: 0.19 } },
     heavy: { type: "Undead Heavy", visual: "undeadHeavy", maxHp: 130, attack: 10, defence: 4,
-      attackSpeed: 0.58, moveSpeed: 0.27, attackRange: 0.12 },
+      attackSpeed: 0.58, moveSpeed: 0.30, attackRange: 0.12 },
     boss: { type: "Zombie Ogre", visual: "zombieOgre", maxHp: 465, attack: 12, defence: 5,
-      attackSpeed: 0.58, moveSpeed: 0.24, attackRange: 0.14 },
+      attackSpeed: 0.58, moveSpeed: 0.26, attackRange: 0.14 },
   },
 };
 
@@ -51,13 +66,13 @@ const actEnemies: Record<2 | 3, Record<string, EnemyDefinition>> = {
 function encounterRoles(chapter: 2 | 3, stage: number): EnemyRole[][] {
   const guard: EnemyRole = chapter === 2 ? "fat" : "heavy";
   if (stage <= 2) return [["simple"], ["simple", "simple"], [guard, "simple"],
-    stage === 1 ? ["simple", guard] : ["simple", "archer"]];
+    stage === 1 ? ["simple", guard] : ["simple", "archer"], [guard, "simple"]];
   if (stage <= 5) return [["simple", "simple"], [guard, "simple"],
-    [guard, "archer"], ["simple", "archer"]];
+    [guard, "archer"], ["simple", "archer"], [guard, "simple", "archer"]];
   if (stage <= 8) return [["simple", "archer"], ["heavy", "simple"],
-    ["heavy", "archer"], [guard, "simple", "archer"]];
+    ["heavy", "archer"], [guard, "simple"], ["simple", "heavy", "archer"]];
   return [["heavy", "simple"], [guard, "archer"],
-    ["heavy", "archer"], ["simple", "heavy", "archer"]];
+    ["heavy", "simple", "archer"], ["simple", "heavy"], ["simple", "heavy", "archer"]];
 }
 
 function act1Encounter(source: EncounterDefinition, index: number, number: number,
@@ -106,14 +121,18 @@ export function makeStage(chapter: number, stage: number): StageDefinition {
   if (chapter === 1 && stage === 1) return FIRST_STAGE;
   const index = (chapter - 1) * STAGES_PER_CHAPTER + stage - 1;
   const id = stageID(chapter, stage);
-  const length = extendedLegacyLengths[index] ?? 7500 + (index - 4) * 150;
+  const length = stageLength(index);
   const extraAct = chapter === 1 ? null : chapter as 2 | 3;
   const encounters = extraAct ? encounterRoles(extraAct, stage).map((roles, number) =>
     actEncounter(extraAct, stage, id, length, roles, number)) :
-    FIRST_STAGE.encounters.map((source, number) => act1Encounter(source, index, number, id, length, false));
+    FIRST_STAGE.encounters.map((source, number) => {
+      const encounter = act1Encounter(source, index, number, id, length, false);
+      if (stage >= 5 && number === 0) encounter.enemies.push({ ...encounter.enemies[0]! });
+      return encounter;
+    });
   const bossSource = extraAct ? actEnemies[extraAct].boss! : null;
   const boss = extraAct ? { id: `${id}-boss`, distance: length, enemies: [{ ...bossSource!,
-    maxHp: Math.round(bossSource!.maxHp * (1 + (stage - 1) * 0.10)),
+    maxHp: Math.round(bossSource!.maxHp * (extraAct === 2 ? 1.2 : 1.15) * (1 + (stage - 1) * 0.10)),
     attack: bossSource!.attack + Math.floor((stage - 1) / 3),
     defence: bossSource!.defence + Math.floor((stage - 1) / 5),
   }] } : act1Encounter(FIRST_STAGE.boss, index, FIRST_STAGE.encounters.length, id, length, true);
@@ -124,10 +143,9 @@ export function makeStage(chapter: number, stage: number): StageDefinition {
     environment: chapter === 1 ? "forest" : `act${chapter}`,
     unlockRequirement: stageID(stage === 1 ? chapter - 1 : chapter,
       stage === 1 ? STAGES_PER_CHAPTER : stage - 1),
-    recommendedPower: chapter === 1 ? 65 + (stage - 1) * 7 :
-      chapter === 2 ? 140 + (stage - 1) * 11 : 250 + (stage - 1) * 14,
+    recommendedPower: stagePower(chapter, stage),
     minimumClearSeconds: 7 + Math.floor(index / 3),
-    rewards: { repeat: { gold: 20 + index * 8, heroXP: stageHeroXP(chapter, stage),
+    rewards: { repeat: { gold: stageGold(index), heroXP: stageHeroXP(chapter, stage),
       chestItemID: "stage_chest", bossChestItemID: stage % 5 === 0 ? "boss_chest" : null } },
     encounters, boss,
   };

@@ -88,7 +88,8 @@ const inventory = {
   bow1: { ItemID: "bow", Level: 1, EquippedSlot: null },
   staff1: { ItemID: "staff", Level: 1, EquippedSlot: null },
 };
-const items = ownedGear(inventory, defs);
+const grindAssignments = { boots1: { heroID: "Knight", slot: "Boots" } };
+const items = ownedGear(inventory, defs, grindAssignments);
 const boots = items.find((item) => item.itemID === "boots");
 const sword = items.find((item) => item.itemID === "sword");
 const bow = items.find((item) => item.itemID === "bow");
@@ -114,18 +115,23 @@ assert.equal(equipProblem(bow, "Archer", 4, true, slots), "Requires Lv 5");
 assert.equal(equipProblem(bow, "Archer", 5, true, slots), null);
 assert.equal(equipProblem(staff, "Mage", 14, true, slots), "Requires Lv 15");
 assert.equal(equipProblem(staff, "Mage", 15, true, slots), null);
+const legendary = { ...staff, rarity: "Legendary", requiredLevel: 20 };
+assert.equal(equipProblem(legendary, "Mage", 19, true, slots), "Requires Lv 20");
+assert.equal(equipProblem(legendary, "Mage", 20, true, slots), null);
 assert.equal(equippedIn(items, "Knight", "Boots")?.instanceID, "boots1");
 assert.deepEqual(availableGear(items).map((item) => item.instanceID).sort(), ["bow1", "staff1", "sword1"]);
 const archerWearsBow = ownedGear({ ...inventory,
   bow1: { ...inventory.bow1, EquippedSlot: { CharacterID: "Archer", SlotID: "Weapon" } },
-}, defs);
+}, defs, { ...grindAssignments, bow1: { heroID: "Archer", slot: "Weapon" } });
 assert.deepEqual(availableGear(archerWearsBow).map((item) => item.instanceID).sort(), ["staff1", "sword1"],
   "gear equipped by another hero is unavailable in the shared bag");
 assert.equal(availableGear(ownedGear({ ...inventory,
   boots1: { ...inventory.boots1, EquippedSlot: null },
 }, defs)).length, 4, "unequipping returns the exact instance to the bag");
-assert.equal(equippedIn(ownedGear(JSON.parse(JSON.stringify(inventory)), defs), "Knight", "Boots")?.instanceID,
-  "boots1", "equipment assignment restores from iDos inventory state");
+assert.equal(equippedIn(ownedGear(JSON.parse(JSON.stringify(inventory)), defs, grindAssignments), "Knight", "Boots")?.instanceID,
+  "boots1", "equipment assignment restores from protected Grind state");
+assert.equal(equippedIn(ownedGear(inventory, defs), "Knight", "Boots"), null,
+  "a native EquippedSlot alone never equips gear for Grind Heroes");
 assert.deepEqual(totalBonuses(items, "Knight"), { attack: 0, maxHp: 0, defence: 0, attackSpeed: 0, moveSpeed: 15 });
 assert.equal(compareGear({ ...boots, bonuses: { ...boots.bonuses, moveSpeed: 20 } }, boots).moveSpeed, 5);
 assert.equal(gearBonuses(defs.get("sword")).attack, 12);

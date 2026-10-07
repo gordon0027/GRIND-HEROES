@@ -59,8 +59,11 @@ export class StageService {
       throw new Error(String(value.reason ?? "stage completion rejected"));
     const progress = parseStageProgress(JSON.stringify(value.progress));
     const rewards = value.rewards as CompletedStageRun["rewards"] | undefined;
-    if (!rewards || typeof rewards.gold !== "number" || rewards.chestItemID !== "stage_chest" ||
-        (rewards.bossChestItemID !== null && rewards.bossChestItemID !== "boss_chest"))
+    const act = Number(stageId.split("-")[2]);
+    const suffix = act > 1 ? `_act${act}` : "";
+    if (!rewards || typeof rewards.gold !== "number" ||
+        rewards.chestItemID !== `stage_chest${suffix}` ||
+        (rewards.bossChestItemID !== null && rewards.bossChestItemID !== `boss_chest${suffix}`))
       throw new Error("Stage reward result was incomplete");
     return { stageId, runId, serverSeconds: Number(value.serverSeconds),
       firstClear: value.firstClear === true, progress, rewards,

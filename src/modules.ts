@@ -5,6 +5,7 @@ import { lootboxesModule } from "./modules/lootboxes";
 import { questsModule } from "./modules/quests";
 import { storeModule } from "./modules/store";
 import { idleRpgModule } from "./modules/idle-rpg";
+import { marketplaceModule } from "./modules/marketplace";
 
 // The modules this app is made of, on top of the base (./base — sign-in and the lobby): the systems
 // shown as lobby tabs (shop, heroes, leaderboards…) and the games launched by "Play". Remove a module
@@ -21,4 +22,5 @@ export const modules: Module[] = [
   questsModule,
   storeModule,
   idleRpgModule,
+  marketplaceModule,
 ];

@@ -47,8 +47,12 @@ import { FORMATION_KEY, PARTY_CAPACITY_KEY, assignFormation, defaultFormation, p
 import { heroArchetype } from "./heroArchetypes";
 import { GOLD_CURRENCY_ID, RECRUITABLE_HERO_IDS, heroRecruitCost } from "./progression";
 import type { SlotIndex } from "./stageRun";
-import { combatPower, equipProblems, equippedIn, ownedGear, stageHeroStats, totalBonuses,
+import { combatPower, equipProblems, equippedIn, grindFighterStats, ownedGear, stageHeroStats, totalBonuses,
   type GearDefinition, type GearInstance, type GearItem, type GearSlot } from "./equipment";
+import { GrindEquipmentService, emptyGrindEquipment, grindAssignments,
+  type GrindEquipmentState } from "./grindEquipment";
+import { chestRewardItemID, chestRewardPreview, newlyGrantedGear } from "./chestReward";
+import { chestIDs, chestPool } from "./chestPools";
 
 /** The private custom-data key of the stage progress ("." and "$" are not allowed in keys). */
 export const PROGRESS_KEY = "idle_rpg_progress";
@@ -113,11 +117,14 @@ export class IdleSession {
   lootGold = 0;
   private serverRunId: string | null = null;
   private readonly stageService: StageService;
+  private readonly equipmentService: GrindEquipmentService;
   /** The hero the Heroes screen selected, or null until it says (then the fallback fights). */
   selectedID: string | null = "Knight";
   hero: HeroView | null = null;
   roster: HeroView[] = [];
   gearItems: GearItem[] = [];
+  grindEquipment: GrindEquipmentState = emptyGrindEquipment();
+  equipmentReady = false;
   equipmentBusy = false;
   equipmentError: string | null = null;
   lootPending = false;
@@ -174,6 +181,7 @@ export class IdleSession {
     private readonly callbacks: SessionCallbacks = {},
   ) {
     this.stageService = new StageService(client);
+    this.equipmentService = new GrindEquipmentService(client);
     // Removed in destroy(): setup() runs again on every login, and a client subscription that
     // outlived its session would keep a dead game recomputing — and emitting twice.
     this.offClient.push(
@@ -227,22 +235,28 @@ export class IdleSession {
           }
         | undefined
     )?.UnstackableItems;
-    this.gearItems = ownedGear(instances, items);
+    this.gearItems = ownedGear(instances, items, grindAssignments(this.grindEquipment));
     const instanceLevels: Record<string, number> = {};
     for (const [k, inst] of Object.entries(instances ?? {}))
       if (inst?.Level) instanceLevels[k] = inst.Level;
     this.roster = Object.entries(section?.Definitions ?? {}).flatMap(([heroID, definition]) => {
       if (!definition) return [];
-      const input: HeroInput = { section, def: definition, model: owned[heroID], items, instanceLevels };
+      // Native Character.EquipItems can be called directly. Strip its equipment before any
+      // Grind stat or Power calculation, then apply only protected Grind assignments.
+      const model = owned[heroID] ? { ...owned[heroID], Equipment: {} } : undefined;
+      const input: HeroInput = { section, def: definition, model, items, instanceLevels };
+      const baseFighter = fighterStats(input);
+      const gear = totalBonuses(this.gearItems, heroID);
+      const fighter = grindFighterStats(baseFighter, gear);
+      const stageStats = stageHeroStats(baseFighter, heroArchetype(heroID), gear);
       return [{
         id: heroID, name: definition.Identity?.DisplayName ?? heroID,
         classID: definition.Classification?.ClassID ?? "",
         rarity: definition.Classification?.RarityID ?? "",
-        rank: heroRank(input), power: Number(owned[heroID]?.Power ?? 0),
+        rank: heroRank(input), power: combatPower(stageStats),
         level: heroProgress(this.heroProgressMap[heroID]).level,
         xp: heroProgress(this.heroProgressMap[heroID]).xp,
-        def: definition, input, stats: resolveStats(section, definition), fighter: fighterStats(input),
-        baseFighter: fighterStats({ ...input, model: { ...input.model, Equipment: {} } }),
+        def: definition, input, stats: resolveStats(section, definition), fighter, baseFighter,
       }];
     });
     this.hero = this.roster.find((entry) => entry.id === id) ?? null;
@@ -343,6 +357,7 @@ export class IdleSession {
   }
 
   equipmentProblems(item: GearItem, heroID: string): string[] {
+    if (!this.equipmentReady) return ["Equipment is loading"];
     const entry = this.roster.find((candidate) => candidate.id === heroID);
     if (!entry) return ["Unknown hero"];
     return equipProblems(item, heroID, entry.level, entry.rank > 0,
@@ -354,7 +369,7 @@ export class IdleSession {
   }
 
   async equipGear(instanceID: string, heroID: string): Promise<void> {
-    if (this.equipmentBusy) return;
+    if (this.equipmentBusy || !this.equipmentReady) return;
     const item = this.gearItems.find((candidate) => candidate.instanceID === instanceID);
     if (!item) return;
     const problem = this.equipmentProblem(item, heroID);
@@ -362,31 +377,76 @@ export class IdleSession {
     this.equipmentBusy = true;
     this.equipmentError = null;
     this.changed();
-    const request = this.client.character.equipItems(heroID,
-      [{ SlotID: item.slot, ItemInstanceID: instanceID }]);
+    const request = this.equipmentService.equip(heroID, item.slot, instanceID);
     this.managementWrites.add(request);
-    const result = await request;
-    this.managementWrites.delete(request);
-    this.equipmentBusy = false;
-    if (!result.ok) this.equipmentError = String(result.error ?? result.reason);
-    else { this.managementRevision++; this.stagePartyDirty = true; }
-    this.refreshHero();
+    try {
+      this.grindEquipment = await request;
+      this.managementRevision++;
+      this.stagePartyDirty = true;
+    } catch (error) {
+      this.equipmentError = error instanceof Error ? error.message : String(error);
+    } finally {
+      this.managementWrites.delete(request);
+      this.equipmentBusy = false;
+      this.refreshHero();
+    }
   }
 
   async unequipGear(heroID: string, slot: GearSlot): Promise<void> {
-    if (this.equipmentBusy) return;
+    if (this.equipmentBusy || !this.equipmentReady) return;
     if (!equippedIn(this.gearItems, heroID, slot)) return;
     this.equipmentBusy = true;
     this.equipmentError = null;
     this.changed();
-    const request = this.client.character.unequipItems(heroID, [slot]);
+    const request = this.equipmentService.unequip(heroID, slot);
     this.managementWrites.add(request);
-    const result = await request;
-    this.managementWrites.delete(request);
-    this.equipmentBusy = false;
-    if (!result.ok) this.equipmentError = String(result.error ?? result.reason);
-    else { this.managementRevision++; this.stagePartyDirty = true; }
-    this.refreshHero();
+    try {
+      this.grindEquipment = await request;
+      this.managementRevision++;
+      this.stagePartyDirty = true;
+    } catch (error) {
+      this.equipmentError = error instanceof Error ? error.message : String(error);
+    } finally {
+      this.managementWrites.delete(request);
+      this.equipmentBusy = false;
+      this.refreshHero();
+    }
+  }
+
+  async equipBestGear(heroID: string): Promise<void> {
+    if (this.equipmentBusy || !this.equipmentReady) return;
+    const entry = this.roster.find((candidate) => candidate.id === heroID);
+    if (!entry) return;
+    const best: Partial<Record<GearSlot, GearItem>> = {};
+    const score = (item: GearItem) => item.requiredLevel * 1_000_000 +
+      item.bonuses.attack * 200 + item.bonuses.maxHp * 10 +
+      item.bonuses.defence * 300 + item.bonuses.attackSpeed * 2000 +
+      item.bonuses.moveSpeed * 20 + item.level;
+    for (const item of this.gearItems) {
+      if (item.equippedBy && item.equippedBy.heroID !== heroID) continue;
+      const problems = this.equipmentProblems(item, heroID)
+        .filter((problem) => problem !== "Already equipped");
+      if (problems.length) continue;
+      if (!best[item.slot] || score(item) > score(best[item.slot]!)) best[item.slot] = item;
+    }
+    const slots = Object.fromEntries(Object.entries(best)
+      .map(([slot, item]) => [slot, item.instanceID])) as Partial<Record<GearSlot, string>>;
+    this.equipmentBusy = true;
+    this.equipmentError = null;
+    this.changed();
+    const request = this.equipmentService.equipBest(heroID, slots);
+    this.managementWrites.add(request);
+    try {
+      this.grindEquipment = await request;
+      this.managementRevision++;
+      this.stagePartyDirty = true;
+    } catch (error) {
+      this.equipmentError = error instanceof Error ? error.message : String(error);
+    } finally {
+      this.managementWrites.delete(request);
+      this.equipmentBusy = false;
+      this.refreshHero();
+    }
   }
 
   /** A local-only battle preview; it never changes character or party unlock data. */
@@ -477,11 +537,7 @@ export class IdleSession {
   /** Gold per second the server pays now (display). */
   ratePerSecond(): number {
     if (!this.income) return 0;
-    const owned = this.client.data.user.state?.Character?.Characters ?? {};
-    return incomePerSecond(
-      this.income,
-      Object.values(owned).map((c) => (c as HeroModelView | undefined)?.Power),
-    );
+    return incomePerSecond(this.income, this.roster.map((hero) => hero.power));
   }
 
   balance(currencyID: string): number {
@@ -592,7 +648,7 @@ export class IdleSession {
   }
 
   private async beginRun(): Promise<boolean> {
-    if (!this.loaded || this.runStartBusy || this.lootPending || this.lootBusy ||
+    if (!this.loaded || !this.equipmentReady || this.runStartBusy || this.lootPending || this.lootBusy ||
       !(this.isDevPreview || stageUnlocked(this.stageProgress, this.run.stage.id))) return false;
     while (this.managementWrites.size)
       await Promise.allSettled([...this.managementWrites]);
@@ -690,7 +746,10 @@ export class IdleSession {
   }
 
   chestCount(itemID: string): number {
-    return Number(this.client.data.user.state?.InventoryV2?.Items?.[itemID]?.StackableAmount ?? 0);
+    const suffixes = itemID === "stage_chest" || itemID === "boss_chest"
+      ? chestIDs(itemID) : [itemID];
+    return suffixes.reduce((total, id) => total +
+      Number(this.client.data.user.state?.InventoryV2?.Items?.[id]?.StackableAmount ?? 0), 0);
   }
 
   chestConfigured(itemID: "stage_chest" | "boss_chest"): boolean {
@@ -700,7 +759,12 @@ export class IdleSession {
 
   async openChest(itemID: "stage_chest" | "boss_chest"): Promise<void> {
     if (this.lootBusy || !this.chestConfigured(itemID) || this.chestCount(itemID) < 1) return;
-    const option = itemID === "stage_chest" ? ["gear_summon", "stage"] : ["boss_summon", "boss"];
+    const definitions = configSection<{ Definitions?: Record<string, unknown> }>(this.client, "Lootbox")?.Definitions ?? {};
+    const counts = Object.fromEntries(chestIDs(itemID).map((id) =>
+      [id, Number(this.client.data.user.state?.InventoryV2?.Items?.[id]?.StackableAmount ?? 0)]));
+    // Spend the highest Act chest first; legacy stacks remain openable through Act 1 pools.
+    const option = chestPool(itemID, counts, definitions);
+    if (!option) return;
     this.lootBusy = true;
     this.lootError = null;
     this.lootItems = [];
@@ -710,24 +774,34 @@ export class IdleSession {
     const before = new Set(Object.keys(this.itemInstances()));
     this.changed();
     try {
-      const opened = await this.client.lootbox.open(option[0]!, 1, option[1]!);
+      const opened = await this.client.lootbox.open(option.lootboxID, 1, option.priceID);
       if (!opened.ok) throw new Error(String(opened.error ?? opened.reason));
-      const inventory = await this.client.user.getUserInventory();
-      if (!inventory.ok) throw new Error(`Inventory refresh: ${String(inventory.error ?? inventory.reason)}`);
-      this.refreshHero();
-      const fresh = this.gearItems.filter((item) => !before.has(item.instanceID));
-      this.lootItems = fresh.length ? [] : ["Chest opened · check Inventory"];
-      if (fresh[0]) {
-        const sequence = ++this.chestDropSequence;
-        this.chestDrop = { item: fresh[0], sequence };
-        this.chestDropTimer = setTimeout(() => {
-          if (this.chestDrop?.sequence === sequence) {
-            this.chestDrop = null;
-            this.changed();
+      const rewardItemID = chestRewardItemID(opened.data);
+      const itemDefs = itemDefinitions(configSection<ItemSection>(this.client, "Item")) as unknown as
+        ReadonlyMap<string, GearDefinition>;
+      let awarded = chestRewardPreview(rewardItemID, itemDefs);
+      const presented = !!awarded;
+      // The server roll is authoritative. Show it now rather than waiting for InventoryV2
+      // to catch up, which can take several reads on a hosted build.
+      if (awarded) this.showChestDrop(awarded);
+      let refreshError: string | null = null;
+      for (let attempt = 0; attempt < 4; attempt++) {
+        try {
+          const inventory = await this.client.user.getUserInventory();
+          if (!inventory.ok) refreshError = String(inventory.error ?? inventory.reason);
+          else {
+            refreshError = null;
+            this.refreshHero();
+            const fresh = newlyGrantedGear(this.gearItems, before, rewardItemID);
+            awarded = fresh ?? awarded;
+            if (fresh) break;
           }
-          this.chestDropTimer = null;
-        }, 3600);
+        } catch (error) { refreshError = error instanceof Error ? error.message : String(error); }
+        if (attempt < 3) await new Promise((resolve) => setTimeout(resolve, 180 * (attempt + 1)));
       }
+      this.lootItems = awarded ? [] : ["Chest opened · check Inventory"];
+      if (refreshError) this.lootError = `Inventory refresh delayed: ${refreshError}`;
+      if (awarded && !presented) this.showChestDrop(awarded);
     } catch (error) {
       this.lootError = error instanceof Error ? error.message : String(error);
       // A rejected request can still have changed inventory server-side. Refresh the count.
@@ -741,6 +815,20 @@ export class IdleSession {
       this.changed();
       if (this.lootPending) void this.claimStageLoot();
     }
+  }
+
+  private showChestDrop(item: GearItem): void {
+    const sequence = ++this.chestDropSequence;
+    this.chestDrop = { item, sequence };
+    if (this.chestDropTimer) clearTimeout(this.chestDropTimer);
+    this.chestDropTimer = setTimeout(() => {
+      if (this.chestDrop?.sequence === sequence) {
+        this.chestDrop = null;
+        this.changed();
+      }
+      this.chestDropTimer = null;
+    }, 3600);
+    this.changed();
   }
 
   /** CloudCode validates a server run before any configured reward reaches InventoryV2. */
@@ -918,6 +1006,15 @@ export class IdleSession {
     if (res.ok) {
       this.stageProgress = parseStageProgress(res.data.ReadOnly?.[STAGE_PROGRESS_KEY]?.Value);
       this.heroProgressMap = parseHeroProgress(res.data.ReadOnly?.[HERO_XP_KEY]?.Value);
+      try {
+        this.grindEquipment = await this.equipmentService.load();
+        this.equipmentReady = true;
+        this.equipmentError = null;
+      } catch (error) {
+        this.equipmentReady = false;
+        this.equipmentError = error instanceof Error ? error.message : String(error);
+        this.stageError = `Equipment load: ${this.equipmentError}`;
+      }
       this.refreshHero();
       try {
         const preferences = JSON.parse(res.data.Private?.[STAGE_PREFERENCES_KEY]?.Value ?? "{}");
@@ -1032,7 +1129,8 @@ export function pickHero(
   if (selectedID && defs[selectedID] && playable(selectedID)) return selectedID;
   const strongest = Object.entries(owned)
     .filter(([id, m]) => defs[id] && Number(m?.Level ?? 0) > 0)
-    .sort(([, a], [, b]) => Number(b?.Power ?? 0) - Number(a?.Power ?? 0))[0];
+    // Native Character.Power includes native equipment and cannot choose a Grind hero.
+    .sort(([, a], [, b]) => Number(b?.Level ?? 0) - Number(a?.Level ?? 0))[0];
   if (strongest) return strongest[0];
   const byOrder = Object.entries(defs)
     .filter(([id, d]) => d && playable(id))

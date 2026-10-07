@@ -15,7 +15,7 @@
 .gh-equipment__entry{display:flex;align-items:center;justify-content:center;gap:5px;min-width:0}
 .gh-equipment__side:last-child .gh-equipment__entry{flex-direction:row-reverse}
 .gh-equipment__entry>span{color:#b7aa99;font:600 10px system-ui,sans-serif;overflow:hidden;text-overflow:ellipsis}
-.gh-item-slot{position:relative;flex:none;display:grid;place-items:center;width:56px;height:58px;padding:5px;border:0;background-color:#28201d;background-size:100% 100%;cursor:pointer;transition:filter .15s,transform .15s}
+.gh-item-slot{position:relative;flex:none;display:grid;place-items:center;width:56px;height:58px;padding:0;border:0;background-color:#28201d;background-size:100% 100%;cursor:pointer;transition:filter .15s,transform .15s}
 .gh-item-slot:not(:disabled):hover,.gh-item-slot:focus-visible{filter:brightness(1.2);transform:translateY(-1px)}
 .gh-item-slot:disabled{cursor:default}
 .gh-item-slot__icon{width:77%;height:77%;object-fit:contain;filter:drop-shadow(1px 2px 1px #0009)}

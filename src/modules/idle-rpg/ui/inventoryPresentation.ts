@@ -1,4 +1,5 @@
 import type { GearItem, GearSlot, Rarity } from "../game/equipment";
+import { equipmentRarityColors } from "../../../shared/ui/equipmentRarity.ts";
 
 type IconName = string;
 type Family = "sword" | "shield" | "helmet" | "armor" | "gloves" | "boots" |
@@ -37,9 +38,7 @@ const classFamilies: Record<string, Record<"Weapon" | "Offhand", Family>> = {
 const rarityIndex: Record<Rarity, number> = {
   Common: 0, Uncommon: 1, Rare: 2, Epic: 3, Legendary: 4,
 };
-export const rarityColors: Record<Rarity, string> = {
-  Common: "#c5c1b9", Uncommon: "#83c87d", Rare: "#66b3ed", Epic: "#ba83ee", Legendary: "#f8c461",
-};
+export const rarityColors: Record<Rarity, string> = equipmentRarityColors as Record<Rarity, string>;
 const itemFamilies = new Map<string, Family>(Object.entries(EQUIPMENT_ICON_TIERS)
   .flatMap(([family, names]) => names.map((name) => [name, family as Family] as const)));
 

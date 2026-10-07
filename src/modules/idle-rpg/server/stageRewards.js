@@ -1,4 +1,4 @@
-// Publish this entire file to CloudCode on 98JRCAKG-DEV. No client imports.
+// Concatenate this file with grindEquipment.js for the DEV CloudCode revision. No client imports.
 // The server owns stage eligibility, clock, first-clear status, and grant amounts.
 var GH_STAGES = [];
 for (var chapter = 1; chapter <= 3; chapter++) {
@@ -7,7 +7,8 @@ for (var chapter = 1; chapter <= 3; chapter++) {
     GH_STAGES.push({
       id: "grind-stage-" + chapter + "-" + stageNumber,
       minSeconds: 7 + Math.floor(ordinal / 3),
-      gold: 20 + ordinal * 8,
+      gold: 30 + ordinal * 8 + (ordinal >= 20 ? 200 : ordinal >= 10 ? 80 : 0) +
+        Math.floor(ordinal / 10) * (ordinal % 10) * 10,
       heroXP: 25 + ordinal * 5,
       bossChest: stageNumber % 5 === 0,
       firstItem: ordinal === 0 ? "traveler_boots" : null,
@@ -22,7 +23,7 @@ var GH_MAX_SECONDS = 1200;
 var GH_MIN_HERO_XP_PARTICIPATION_MS = 5000;
 var GH_MIN_HERO_XP_PARTICIPATION_RATIO = 0.25;
 // Tunable DEV-only party prices. The client reads these through getPartySlotPrices.
-var GH_PARTY_SLOT_COSTS = { 2: 5000, 3: 25000 };
+var GH_PARTY_SLOT_COSTS = { 2: 50000, 3: 250000 };
 var GH_PARTY_CAPACITY_KEY = "grind_party_capacity_v2";
 
 function ghStage(stageId) {
@@ -62,16 +63,8 @@ function ghProgress(data) {
   };
 }
 
-function ghEquipmentSignature() {
-  var data = server.ReadUserData(["InventoryV2"]);
-  var items = data && data.InventoryV2 && data.InventoryV2.UnstackableItems || {};
-  var worn = [];
-  Object.keys(items).forEach(function (instanceId) {
-    var slot = items[instanceId] && items[instanceId].EquippedSlot;
-    if (slot && slot.CharacterID && slot.SlotID)
-      worn.push(instanceId + ":" + slot.CharacterID + ":" + slot.SlotID);
-  });
-  return worn.sort().join("|");
+function ghEquipmentSignature(data) {
+  return ghGrindEquipmentSignature(data);
 }
 
 function ghFormationSignature(data) {
@@ -254,7 +247,7 @@ handlers.startStageRun = function (args, context) {
     id: runId, stageId: stage.config.id, startedAt: now, status: "active",
     formation: formation, formationHeroes: formationHeroes,
     formationVersion: ghFormationVersion(data.Data),
-    formationUpdatedAt: ghFormationUpdatedAt(data.Data), equipment: ghEquipmentSignature(),
+    formationUpdatedAt: ghFormationUpdatedAt(data.Data), equipment: ghEquipmentSignature(data.Data),
     partyAt: now, participation: participation,
   });
   return { accepted: true, runId: runId, stageId: stage.config.id,
@@ -273,8 +266,8 @@ handlers.failStageRun = function (args, context) {
   return { closed: true };
 };
 
-// Live management changes are persisted through iDos first. Refresh only the
-// active run marker from those server-side records; the client supplies no stats.
+// Live management changes are persisted in protected Grind equipment state.
+// Refresh only the active marker from those server-side records; the client supplies no stats.
 handlers.syncStageRunParty = function (args, context) {
   var data = server.GetUserCustomData();
   if (!data.Success) throw new Error("stage_state_read_failed: " + data.Error);
@@ -282,7 +275,7 @@ handlers.syncStageRunParty = function (args, context) {
   if (!active || active.id !== (args && args.runId) || active.status !== "active")
     return { synced: false, reason: "run_not_active" };
   ghSyncParticipation(active, data.Data, ghNow(context));
-  active.equipment = ghEquipmentSignature();
+  active.equipment = ghEquipmentSignature(data.Data);
   ghWrite("Internal", GH_ACTIVE_KEY, active);
   return { synced: true };
 };
@@ -305,7 +298,7 @@ handlers.completeStageRun = function (args, context) {
   if (seconds > GH_MAX_SECONDS)
     return { accepted: false, reason: "run_expired" };
   if (!ghFormationMatches(active.formation, data.Data) ||
-      active.equipment !== ghEquipmentSignature())
+      active.equipment !== ghEquipmentSignature(data.Data))
     return { accepted: false, reason: "party_changed" };
 
   var completedAt = ghNow(context);
@@ -354,10 +347,10 @@ handlers.completeStageRun = function (args, context) {
 
   var entries = [
     { Type: "VirtualCurrency", CurrencyID: "GOLD", Amount: stage.config.gold },
-    { Type: "Item", CatalogID: "Item", ItemID: "stage_chest", Amount: 1 },
+    { Type: "Item", CatalogID: "Item", ItemID: ghChestItemID("stage_chest", stage.index), Amount: 1 },
   ];
   if (stage.config.bossChest)
-    entries.push({ Type: "Item", CatalogID: "Item", ItemID: "boss_chest", Amount: 1 });
+    entries.push({ Type: "Item", CatalogID: "Item", ItemID: ghChestItemID("boss_chest", stage.index), Amount: 1 });
   if (firstClear && stage.config.firstItem)
     entries.push({ Type: "Item", CatalogID: "Item", ItemID: stage.config.firstItem, Amount: 1 });
   var grant = server.ApplyResourceOperation({
@@ -371,8 +364,12 @@ handlers.completeStageRun = function (args, context) {
     accepted: true, stageId: stage.config.id, runId: active.id,
     serverSeconds: seconds, firstClear: firstClear, progress: progress,
     xpAwards: xpAwards, xpEligibility: xpEligibility, heroProgress: heroProgress,
-    rewards: { gold: stage.config.gold, chestItemID: "stage_chest",
-      bossChestItemID: stage.config.bossChest ? "boss_chest" : null,
+    rewards: { gold: stage.config.gold, chestItemID: ghChestItemID("stage_chest", stage.index),
+      bossChestItemID: stage.config.bossChest ? ghChestItemID("boss_chest", stage.index) : null,
       firstItemID: firstClear ? stage.config.firstItem || null : null },
   };
 };
+
+function ghChestItemID(base, stageIndex) {
+  return stageIndex < 10 ? base : base + "_act" + (stageIndex < 20 ? 2 : 3);
+}

@@ -1,5 +1,67 @@
 # Grind Heroes finite stage and progression
 
+## Production release (2026-10-07)
+
+Client build 26 (`blda30a385c7156464892bf16c358e2961f`) is live at
+https://98jrcakg.idos.games/. The PROD Title configuration now matches DEV for
+items, characters, lootboxes, rewards, quests, and UserCustomData definitions.
+The DEV CloudCode source was published to PROD as revision 1 with matching
+resource policy and rate limit. The live page, versioned page, JavaScript, CSS,
+and iDosGames app page all returned HTTP 200 after release. Gameplay requiring
+sign-in was not exercised on a PROD account.
+
+## Chest reward card reliability (DEV build 26, 2026-10-07)
+
+The previous chest flow read InventoryV2 once after a successful lootbox open.
+If the cache or read still held the preceding inventory snapshot, the newly
+awarded instance was not found and the HUD showed only “Chest opened · check
+Inventory.” The flow now matches the new instance to the item ID in the
+lootbox operation's authoritative grant, retries inventory refresh briefly,
+and can render a card directly from that grant and the configured item
+definition while inventory catches up. The card is outside the PLAY-only HUD
+and above stage transitions, so switching tabs or a clear animation cannot
+hide it. The manual one-chest open and 3.6-second card duration remain.
+
+## Gameplay pacing and balance V1 (DEV build 26, 2026-10-07)
+
+The 30-stage catalog has five normal encounters plus one boss instead of four
+plus one. Stage lengths are 90% of the previous values, rounded to 50m; the
+first stage is 4500m. Normal enemy counts rise from 7–9 to 9–12 per stage,
+plus one boss. Early groups contain at most two units, later groups at most
+three. Each normal group has at most one archer behind a melee unit. The added
+wave and closer spacing make combat more frequent without changing StageRun's
+attack, projectile, death, aggro, or camera rules.
+
+Stage-only Knight/Archer/Mage Move Speeds are now 140/162/130 (formerly
+130/150/120); normal enemy movement rose about 10–13% while heavy and bosses
+rose less. Act 1 boss base HP is 85 instead of 70; Act 2/3 boss HP receives
+an additional 20%/15% multiplier. Hero base combat stats, attack cadence,
+ranges, and enemy attack values were retained. Recommended Power now rises
+80→220, 240→420, 450→680 across the Acts, reflecting party progression in
+the deterministic sweep. Stage GOLD follows an increasing Act-aware curve:
+30→102, 190→352, 390→642. Hero XP remains 25→170 with the existing level
+curve. The client catalog and local CloudCode source mirror GOLD/XP grants;
+`tests/stageRewards.mjs` asserts parity.
+
+`tests/balanceSweep.mjs` records clear/fail, duration, combat share, HP,
+deaths, damage taken, boss duration and enemy counts for five party profiles
+at nine stages. Its configured geared profile clears all nine without deaths;
+undergeared groups fail later content. The sweep uses representative fixed
+fighter stats, not a replay of a real account. Visual checks on desktop and
+390px mobile confirmed readable 2–3-enemy fights and no sprite pile of five.
+
+The new `stageRewards.js` source is published as DEV CloudCode revision 20.
+Client build 26 (`blda30a385c7156464892bf16c358e2961f`) is staged at
+https://98jrcakg-dev.idos.games/v/blda30a385c7156464892bf16c358e2961f/index.html.
+The build was first staged for DEV testing, then promoted to PROD above.
+
+The DEV Reward catalog also pays `idle_gold` at 2 GOLD/s plus 0.01 per
+Character Power, including while away for up to eight hours. Stage GOLD is
+therefore an additional incentive to clear harder content, not the only
+source for recruitment or slot purchases. This pass leaves that Title-level
+passive rate unchanged; its effect on purchase pacing should be reviewed
+alongside future economy work.
+
 ## Chest buttons and loot drop popup V1 (2026-10-07)
 
 The two manual chest buttons below the stage progress bar use the existing
@@ -316,3 +378,32 @@ melee, arrow or orb impact ring. Boss hits get a slightly stronger recoil and a
 completion and scene reset. Damage, HP, defence, rewards and stage constants
 were not retuned; the new wind-up can change which in-flight melee hits resolve
 before an actor dies.
+
+## DEV integration V1 (2026-10-07)
+
+DEV CloudCode revision 21 replaced revision 20 with the local thirty-stage
+reward handler. The server derives the chest ItemID from the validated stage
+index: Act 1 keeps `stage_chest` / `boss_chest`; Acts 2 and 3 use the
+corresponding `_act2` / `_act3` IDs. Every clear grants one Stage Chest, and
+stages ending in 5 or 10 additionally grant a Boss Chest. The existing
+active-run, formation, equipment, elapsed-time, one-time completion, GOLD and
+participating-hero XP checks remain server-owned. The client does not submit a
+Lootbox ID with the stage result.
+
+The client retains two chest buttons. It opens the highest available Act stack
+through its matching DEV Lootbox price option, then falls back to older stacks;
+legacy Act 1 chest items remain spendable. The Lootbox operation's awarded
+ItemID now supplies an immediate popup preview while Inventory refreshes, so
+the icon, name and rarity frame appear even if the inventory read lags.
+
+DEV build v30 (`bld443d1e40321449bcbaca7537fac7beaf`) is staged at the
+`98jrcakg-dev.idos.games` test URL. To stay inside the Title's storage quota,
+it bundles current HTML/JS/CSS and reuses unchanged art from staged v27 on
+the same DEV origin. An earlier cross-origin art reference in v29 left Phaser
+textures blank; v30 restored the scene and reward art in browser checks.
+The unversioned DEV root still serves live v26; promoting v30 with the available
+build action would also change PROD, so the verified client remains on the
+versioned DEV test URL. PROD was not deployed. A DEV guest verified Act 1 server clear, GOLD, hero XP,
+legacy chest consumption, Inventory grant and visible loot popup. Acts 2 and 3
+passed local CloudCode/reward routing tests but await real clears and openings
+on a progressed DEV account; the current guest has only reached Stage 1-3.

@@ -7,6 +7,7 @@ import { heroUi } from "./heroAssets";
 import { HERO_LEVEL_CAP, xpToNext } from "../game/heroXP";
 import { emptySlotIcon, inventoryHero, rarityColors } from "./inventoryPresentation";
 import { gearImage } from "./itemImage";
+import { EquipmentArt } from "../../../shared/ui/EquipmentArt";
 import "./management-sections.css";
 
 const slotGroups: [GearSlot[], GearSlot[]] = [["Helmet", "Armor", "Gloves"], ["Weapon", "Offhand", "Boots"]];
@@ -41,10 +42,9 @@ function ItemSlot({ item, slot, heroID, selected, onClick, label, disabled = fal
   return <button type="button" className={`gh-item-slot${selected ? " gh-item-slot--selected" : ""}${incompatible ? " gh-item-slot--incompatible" : ""}${levelLocked ? " gh-item-slot--level-locked" : ""}`}
     aria-label={label} aria-pressed={selected} disabled={disabled} title={label} onClick={onClick}
     style={{ backgroundImage: `url("${heroUi.slot}")`, "--gh-rarity": item ? rarityColors[item.rarity] : "transparent" } as CSSProperties}>
-    {item ? <img className={`gh-item-slot__rarity${item.rarity === "Common" ? " gh-item-slot__rarity--common" : ""}`}
-      src={heroUi.rarityFrame(item.rarity)} alt="" /> : null}
-    <img className={`gh-item-slot__icon${item ? "" : " gh-item-slot__icon--empty"}`}
-      src={itemImage(item, slot, heroID)} alt="" />
+    {item ? <EquipmentArt icon={itemImage(item, slot, heroID)} rarity={item.rarity} size="100%" /> :
+      <img className="gh-item-slot__icon gh-item-slot__icon--empty"
+        src={itemImage(item, slot, heroID)} alt="" />}
     {item?.equippedBy ? <span className="gh-item-slot__equipped">{item.equippedBy.heroID === heroID ? "E" : item.equippedBy.heroID.slice(0, 1)}</span> : null}
     {incompatible || levelLocked ? <span className="gh-item-slot__incompatible" aria-hidden="true">
       {levelLocked ? <img src={heroUi.lock} alt="" /> : "!"}</span> : null}
@@ -172,7 +172,10 @@ function InventoryGrid({ session, heroID, selectedID, selectItem }: {
   const available = availableGear(session.gearItems);
   const heroLevel = session.roster.find((entry) => entry.id === heroID)?.level ?? 1;
   return <section className="gh-inventory" aria-label="Equipment inventory">
-    <div className="gh-section-title"><strong>Equipment</strong><span>{available.length} items</span></div>
+    <div className="gh-section-title"><strong>Equipment</strong><span>{available.length} items</span>
+      <FantasyButton disabled={!session.equipmentReady || session.equipmentBusy}
+        onClick={() => void session.equipBestGear(heroID)}>Equip Best</FantasyButton>
+    </div>
     {available.length ? <div className="gh-inventory__grid">
       {available.map((item) => {
         const incompatible = !gearAllowsHero(item, heroID);

@@ -1,5 +1,37 @@
 # Loot and equipment V1
 
+The current 50-item DEV catalog and six Act-specific Lootbox tables are recorded
+in [Item Balance V1](item-balance-v1.md). The audit below describes the earlier
+16-item configuration and is retained as change history.
+
+## Balance audit pending Title configuration (2026-10-07)
+
+The DEV Title has 16 equippable items and two manual chest lootboxes. Both
+lootboxes currently use the exact same 117-weight pool: Common 79 (67.5%),
+Uncommon 17 (14.5%), Rare 15 (12.8%), Epic 4 (3.4%), Legendary 2 (1.7%).
+Consequently the Boss Chest has no quality advantage, and Lv20 items can
+appear during Act 1. No local source can change these backend rolls: items
+and lootbox pools live in the DEV Title configuration. This local-only pass
+does not modify or publish that configuration. Before the next DEV release,
+give the Boss Chest a separate higher-tier weighted pool and reduce early
+Legendary access. Stage/Act-biased drops require additional Title lootbox
+definitions and matching chest items; keep the current manual-open flow.
+For the existing two-pool setup, a review target is Stage Chest rarity weights
+70/20/8/1.5/0.5% and Boss Chest 50/27/17/5/1% from Common through Legendary.
+These are proposed Title values, not current drop rates. A true Act-specific
+curve would need three Stage Chest and three Boss Chest pool identities, with
+Act 1 excluding Legendary, Act 2 making Rare realistic, and Act 3 making
+Epic possible without flooding it. That change remains outside this local
+numeric pass because the Title entities are not present in this repository.
+
+Current weapon Damage jumps 5 Common → 15 Rare → 40 Epic → 100 Legendary;
+armor Health jumps 50 → 150 → 400 → 1000. There is no Uncommon weapon or
+armor. These steps are powerful but uneven, so the local combat pass keeps
+the live item stats unchanged. A complete tier rebalance must update the
+Title Item definitions together with lootbox weights and then rerun the
+stage simulations against those exact values. The Lv1/5/10/15/20 equip
+gates remain unchanged.
+
 Continuous farming now queues equipment and formation changes made during a run.
 The server change happens after the current run closes and before the next starts,
 so the active run's fighter snapshot and party signature stay unchanged. Stage
@@ -71,3 +103,104 @@ has `Equipment.MinCharacterLevel: 0` on all 16 pieces; that server field checks
 the separate paid Character rank, so setting it to these thresholds would
 contradict the stage-XP level shown in this UI. The stage-level rule is enforced
 by this game's client flow, not by a new server-side Character rule.
+
+## Server-authoritative level audit (2026-10-07)
+
+The equipment mutation boundary is the platform's native Character
+`EquipItems` action. `IdleSession.equipGear`, the generic Character screen's
+individual Equip and Equip Best actions, and any direct SDK/API caller can all
+reach it. Inventory's Equip button only opens the Character screen. The native
+action validates ownership, allowed slot, allowed character and its own paid
+`Character.Level`; CloudCode handlers are separate callable actions and are
+not pre-commit hooks for `EquipItems`. The available Item rule
+`Equipment.MinCharacterLevel` reads paid Character rank, not the stage-earned
+`grind_hero_xp_v1` ReadOnly record. Setting that field to Grind thresholds
+would enforce the wrong progression track.
+
+An opt-in DEV guest probe in `tests/manualDevEquipmentBypass.mjs` calls the
+native SDK action directly. It confirmed invalid slot and unowned instance
+rejection, valid Common equipment acceptance, and wrong-class rejection.
+Critically, the native action **accepted and persisted** an Uncommon
+`reinforced_shield` (required Grind Lv5) on a Knight whose protected Grind
+level was 1. This reproduces the bypass without using the game UI. The
+existing Lv4/5, 9/10, 14/15 and 19/20 tests exercise only the client helper.
+
+The V1 server-authoritative equip requirement remains unimplemented. It
+requires a platform-side pre-commit validator on every native equipment
+mutation route, especially `EquipItems` with an instance ID or auto-picked
+ItemID and batched Equip Best. That validator must read the protected Grind
+level and trusted Item definition, resolve the owned instance and character,
+check slot/class/level, and reject before persisting either Character or
+InventoryV2. Native skin auto-equip/equip routes need the same audit if a
+future skin carries Grind equipment requirements. A callable CloudCode
+`validateEquip` preceding native `EquipItems` would remain bypassable and
+would not provide this guarantee. No DEV configuration or CloudCode revision
+was changed in this audit, and PROD was untouched.
+
+## Authoritative Equipment State V2 (DEV, 2026-10-07)
+
+`grind_equipment_v1` is a permanent ReadOnly UserCustomData JSON record. Its
+`heroes` map holds exact item-instance IDs (or null) for Knight, Archer and
+Mage across Helmet, Armor, Gloves, Boots, Weapon and Offhand. The same record
+stores a trusted item-ID/catalog/level snapshot for each assigned instance.
+Only CloudCode writes it. Grind combat stats, displayed Power, equipment
+slots, the shared bag exclusion and stage equipment signatures derive from
+this record. Native `Character.Power` is excluded from hero selection and
+Grind stat calculations. DEV `idle_gold.Rate.PowerCoefficient` is 0, since
+the platform's idle GOLD reward would otherwise still reward native Power
+increases after a direct bypass. This deliberately makes idle GOLD use its
+base rate; stage GOLD rewards are unchanged.
+
+On first access, the server checks native Character equipment and imports
+only valid, owned, class/slot-compatible instances meeting the protected
+`grind_hero_xp_v1` level. Once the record exists, native equipment is never
+re-imported. An invalid or missing saved record resets to empty rather than
+reopening migration. Missing definitions or depleted item counts clear stale
+assignments. No item is deleted by migration or cleanup.
+
+On this DEV platform, CloudCode `ReadUserData(["InventoryV2"])` exposes
+`Items[itemID].UnstackableAmount` but returns an empty `UnstackableItems`
+instance map even when the player's inventory contains gear. The V2 equip
+flow therefore calls native `Character.EquipItems` first as an ownership and
+exact-instance attestation. Native iDos validates the owned instance, class
+and slot; CloudCode then independently matches the exact instance ID and
+trusted Item definition to that server-readable Character assignment,
+checks aggregate ownership count, and checks the protected Grind level.
+The native write alone grants no Grind effect. A failed CloudCode validation
+leaves the protected state unchanged even if the native write succeeded.
+The client forwards the native response's confirmed instance ID because
+native equip can split an inventory instance. It reuses an already native
+equipped instance as the attestation on retry.
+
+`equipGrindItem` atomically replaces one protected slot; `unequipGrindItem`
+removes one reference and leaves the item owned. Equip Best proposes eligible
+instances from the local inventory, attests them in one native call, and
+`equipBestGrindHero` revalidates every proposed slot before one protected
+record write. It rejects the whole batch on an invalid candidate. The
+server's `isGrindEquipped(itemInstanceID)` checks a specific protected
+instance for future Marketplace listing rules. Marketplace itself is not
+implemented here. Native mirroring beyond the required attestation is
+unnecessary; Grind unequip does not need to mutate native equipment.
+
+The opt-in `tests/manualDevEquipmentBypass.mjs` reproduced a direct native
+Lv5 equip on a Grind Lv1 Knight after V2: native accepted and persisted it,
+but the protected slots and Grind Power remained unchanged, the item stayed
+visible in the Grind bag, and `isGrindEquipped` returned false. A Common
+Traveler Boots equip through the protected operation changed Grind Power.
+Unit tests cover Lv4/5, 9/10, 14/15, 19/20, class, slot, ownership,
+replacement, unequip, Equip Best, duplicate instance IDs and stale cleanup.
+
+Platform limitation: CloudCode cannot read the exact live unstackable
+inventory map. Saved assignments use their server-attested snapshot and
+aggregate per-item counts for later cleanup. If an external native route
+deletes one of several identical instances without consulting
+`isGrindEquipped`, the server cannot identify which instance disappeared.
+Future Marketplace code must call the protected helper before listing and
+reject an equipped instance. Concurrent CloudCode record writes also have
+no exposed per-user compare-and-swap primitive, so simultaneous equip
+requests may be last-write-wins; each individual write is a complete record.
+
+DEV CloudCode revision 28 runs the attested V2 handlers. The DEV
+UserCustomData schema registers `grind_equipment_v1` as ReadOnly JSON with
+a 4096-byte limit. The verified client is staged as DEV test version 33
+with `deploy:false`. No PROD configuration or build was changed.

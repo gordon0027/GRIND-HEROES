@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { runInNewContext } from "node:vm";
 
-const code = readFileSync(new URL("../src/modules/idle-rpg/server/stageRewards.js", import.meta.url), "utf8");
+const code = readFileSync(new URL("../src/modules/idle-rpg/server/stageRewards.js", import.meta.url), "utf8") + "\n" +
+  readFileSync(new URL("../src/modules/idle-rpg/server/grindEquipment.js", import.meta.url), "utf8");
 const clock = (seconds) => ({ InvokedAt: new Date(seconds * 1000).toISOString() });
 const stageID = "grind-stage-1-1";
 
@@ -23,6 +24,11 @@ function harness() {
       return { Success: true };
     },
     ReadUserData: () => user,
+    GetTitleConfig: () => ({ Item: { Catalogs: { Item: { Items: {} } } },
+      Character: { Definitions: Object.fromEntries(["Knight", "Archer", "Mage"].map((id) =>
+        [id, { Unlock: { UnlockedByDefault: id === "Knight" },
+          Equipment: { Slots: Object.fromEntries(["Helmet", "Armor", "Gloves", "Boots", "Weapon", "Offhand"]
+            .map((slot) => [slot, { SlotID: slot }])) } }])) } }),
     ApplyResourceOperation: (request) => { grants.push(request); return { Success: true }; },
     AddQuestProgress: () => ({ Success: true }),
   };
