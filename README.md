@@ -1,20 +1,14 @@
 # Grind Heroes
 
-Phaser/TypeScript game built from the official iDos Games host scaffold and
-`idle-rpg` module. Five finite stages use one three-slot party runtime with
-blocking encounters, bosses, clear/fail states and Retry. The DEV Title provides
-six equipment slots per hero, saved stage unlocks and secure run rewards.
-Character ownership, formation, equipment, inventory, currencies and stage
-progress are read from iDos. Validated clears grant GOLD and a server-random
-gear chest; the first Stage 1 clear adds Traveler Boots. See
-[feature history](docs/feature-history/README.md) for details.
+Pixel-art idle RPG built with React, Phaser and the iDos Games SDK. The game has
+three acts and 30 finite stages, a party of up to three heroes, melee and ranged
+combat, equipment, bosses, and a stage map. Progress and rewards are validated
+by the DEV Title. Stage clears grant GOLD and unopened chests; players open one
+chest at a time through iDos Lootbox. See
+[feature history](docs/feature-history/README.md) for implementation details.
 
-This foundation uses the regular iDos sign-in flow (guest, e-mail and available
-platform providers). Wallet sign-in is not wired into the app: the wallet stack
-shipped in the host scaffold currently fails the Vite build because its `wagmi`
-package imports a `viem/tempo/zones` export that the installed `viem` does not
-provide. Keep the new Title open/Web2 for this first slice. Wallet source remains
-in the scaffold for a later compatible Web3 setup.
+Sign-in uses the iDos guest, e-mail and available platform providers. This Title
+currently runs as Web2; wallet sign-in is not wired into the app.
 
 ## Setup
 
