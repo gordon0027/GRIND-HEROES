@@ -1,0 +1,48 @@
+{
+  "id": "character",
+  "type": "feature",
+  "summary": "Heroes screen for any game: roster, ranks and stats with their costs, equipment slots with 'Equip best', item levels and skins.",
+  "description": "A ready heroes screen (the Hero button of the Unity SDK) for ANY game, built on the @idosgames/react/ui kit and client.character. The screen is the selected hero's equipment hub: portrait, class and rarity, rank and server-computed Power, 'Rank up' with its price, gear slots (locked ones show the rank they open at), 'Equip best' when better gear fits, 'Take off all', and the gear the player owns by class. Everything detailed is a popup: the hero list (select, unlock for currency), the stats (level/cap bars, upgrade prices, requirements, 'Upgrade all' — as many levels as the balances cover, cheapest first, in one batch —, and 'where this number comes from' — base, stat levels, rank, gear flat and percent bonuses), a slot's fitting gear, a piece of gear (equip / take off / level up) and skins (wear, buy). Prices and caps follow the title's curves (rank ladder, stat cost curve, StatMaxLevelCurve, item Upgrade); the server re-checks everything. Registers the 'character' feature; the inventory hands equipment to it with ctx.features.open('character', { itemInstanceID }). Its badge counts heroes to unlock or rank up and better gear. Ships title-seed.json: three heroes (Knight free, Archer and Mage for gems) with stats, ranks and slots. Emits character:hero-selected@1 with the hero the player plays with (on start-up and on every pick) so a game can field that hero.",
+  "provides": [
+    "hero roster with unlock for currency",
+    "rank up with price by the rank ladder",
+    "stat upgrades with costs, caps and requirements",
+    "upgrade all stats in one batch",
+    "stat breakdown popup by source",
+    "equipment slots and equip / take off",
+    "equip best gear automatically",
+    "take off all gear",
+    "item level upgrades",
+    "character skins",
+    "demo heroes",
+    "selected hero for the game (event)"
+  ],
+  "tags": [
+    "heroes",
+    "characters",
+    "rpg",
+    "stats",
+    "equipment",
+    "gear",
+    "skins",
+    "ui",
+    "screen",
+    "economy"
+  ],
+  "author": {
+    "name": "iDos Games",
+    "url": "https://idosgames.com"
+  },
+  "version": "0.1.2",
+  "events": {
+    "emits": [
+      {
+        "topic": "character:hero-selected@1",
+        "when": "on start-up (the saved or first playable hero, once the roster is known) and whenever the player selects another hero on the Heroes screen",
+        "payload": {
+          "characterId": "string"
+        }
+      }
+    ]
+  }
+}

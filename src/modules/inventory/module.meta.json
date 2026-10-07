@@ -1,0 +1,20 @@
+{
+  "id": "inventory",
+  "type": "feature",
+  "inBase": true,
+  "summary": "Inventory screen for any game: owned items by rarity with category tabs and item cards.",
+  "description": "A ready inventory for ANY game, built on the @idosgames/react/ui kit. It shows what the player owns from the SDK's cached inventory (no request of its own): category tabs (equipment, consumables, other), rarity frames, counts and levels, and an item card popup with the description. Equipment hands off to the heroes screen (ctx.features.open('character', { itemInstanceID })) and a chest or key item to the chests screen (ctx.features.open('lootboxes', { itemID })) when those systems are installed. Registers the 'inventory' feature — always shown in the lobby, even before the title has items.",
+  "provides": [
+    "owned items grid by rarity",
+    "category tabs",
+    "item card popup",
+    "hand-off of equipment to the heroes screen",
+    "hand-off of chests and keys to the chests screen"
+  ],
+  "tags": ["inventory", "items", "rarity", "ui", "screen", "economy"],
+  "author": {
+    "name": "iDos Games",
+    "url": "https://idosgames.com"
+  },
+  "version": "0.1.0"
+}

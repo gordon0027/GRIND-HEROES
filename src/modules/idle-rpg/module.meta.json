@@ -1,0 +1,62 @@
+{
+  "id": "idle-rpg",
+  "type": "template",
+  "uses": ["character", "lootboxes", "store"],
+  "summary": "Idle RPG in the style of Legend Slime: the hero auto-battles waves and bosses, gold flows in online and offline, stats are enhanced for gold.",
+  "description": "A Legend Slime-style idle auto-battler on Phaser with a React screen. The selected hero (the Heroes system — character:hero-selected@1) stands on the left and shoots waves of monsters walking in from the right: crits, multi-shot, HP regen, three skills with cooldowns and an Auto switch. Stages come in chapters of ten (Chapter-Stage, themes meadow → volcano, difficulty loops); each stage is four waves and a boss with a 30-second timer — a failed boss drops back to farming until the player taps \"Boss!\". The hero's fight numbers are the server's character stats (ValueCurve, RankCurve, RankStatCurve, gear flat/percent bonuses — a mirror of PvPBattleEngine.CalculateStats). Gold is the title's idle accrual (Reward → IdleAccruals, rate = base + PowerCoefficient × the strongest hero's Power), collected every 15 s while playing and on entry with a \"while you were away\" popup; coins from kills draw that stream. Enhance: the hero's stats with level, value, next value and price, ×1 / ×10 / MAX and hold-to-repeat (one request in flight per stat, taps added up). A quest strip shows the next guide quest with Claim. The bottom bar opens the Heroes hub, gear summons, quests and the shop through ctx.features. Stage progress is saved in the player's private custom data (idle_rpg_progress); cleared stages and enhanced levels are reported to quests that count stage_cleared / stat_enhanced. Ships title-seed.json: GOLD/GEMS, three heroes on the engine's standard stat ids, twelve pieces of gear, the idle_gold accrual, a gear summon, a shop and a guide quest chain.",
+  "provides": [
+    "auto-battling hero vs waves of monsters",
+    "stages, chapters and timed bosses",
+    "idle gold income online and offline (server accrual)",
+    "stat enhance for gold with x1 / x10 / MAX and hold",
+    "skills with cooldowns and auto-cast",
+    "guide quest strip",
+    "bottom bar to heroes, summons, quests and shop",
+    "2D procedural art (Phaser)"
+  ],
+  "tags": [
+    "idle",
+    "rpg",
+    "incremental",
+    "auto-battler",
+    "legend-slime",
+    "phaser",
+    "2d"
+  ],
+  "media": {
+    "image": "https://cloud.idosgames.com/drive/modules/idle-rpg/cover.png",
+    "video": "https://cloud.idosgames.com/drive/modules/idle-rpg/demo.mp4"
+  },
+  "demoUrl": "https://cloud.idosgames.com/drive/modules/idle-rpg/demo/",
+  "author": {
+    "name": "iDos Games",
+    "url": "https://idosgames.com"
+  },
+  "version": "0.2.2",
+  "events": {
+    "emits": [
+      {
+        "topic": "idle-rpg:character-upgraded@1",
+        "when": "a hero's rank went up (client.character.upgradeCharacterLevel, from any screen)",
+        "payload": {
+          "characterId": "string",
+          "level": "number"
+        }
+      },
+      {
+        "topic": "idle-rpg:stage-cleared@1",
+        "when": "the hero beat a stage's boss; chapter-stage is the stage just cleared",
+        "payload": {
+          "chapter": "number",
+          "stage": "number"
+        }
+      }
+    ],
+    "listens": [
+      {
+        "topic": "character:hero-selected@1",
+        "why": "fields the hero picked on the Heroes screen (optional — without it the strongest hero fights)"
+      }
+    ]
+  }
+}

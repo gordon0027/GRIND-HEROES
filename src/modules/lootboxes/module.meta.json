@@ -1,0 +1,19 @@
+{
+  "id": "lootboxes",
+  "type": "feature",
+  "summary": "Chests for any game: the title's lootboxes with every way to open them, once or ten at a time, with an opening animation.",
+  "description": "A ready chests screen (Unity LootboxOpeningPopUp) for ANY game, built on the @idosgames/react/ui kit and client.lootbox. Every lootbox of the title as a card for each way to open it (currencies, a chest item, a key); 'Open' once, and 'Open ×10' where the lootbox's ceiling (MaxOpenCount) and the player's balance allow — the box shakes while the server rolls it, bursts, and the rewards fly out. The inventory hands a chest or key item over (ctx.features.open('lootboxes', { itemID })) — the screen then shows what that item opens. Registers the 'lootboxes' feature; its badge counts chests the player can open with the items they hold.",
+  "provides": [
+    "lootbox list with every way to open",
+    "opening animation with rewards",
+    "open ten at once",
+    "open a chest with a key item",
+    "badge for openable chests"
+  ],
+  "tags": ["lootbox", "chest", "gacha", "rewards", "ui", "screen", "economy"],
+  "author": {
+    "name": "iDos Games",
+    "url": "https://idosgames.com"
+  },
+  "version": "0.1.0"
+}

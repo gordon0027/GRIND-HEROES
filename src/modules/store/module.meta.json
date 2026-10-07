@@ -1,0 +1,31 @@
+{
+  "id": "store",
+  "type": "feature",
+  "summary": "Shop screen for any game: the title's storefront with stores as tabs, offer cards, purchase confirmation and the reward animation.",
+  "description": "A ready shop for ANY game, built on the @idosgames/react/ui kit. It draws the storefront the server resolves for the player (client.store.getStorefront — rotation, limits, timers and badges are the server's), several stores as tabs, the first section of a store as a carousel and the rest as grids, a free daily gift that shines, sold-out and not-yet-available states with countdowns, a confirmation popup (a bottom sheet on phones) and the 'You got' animation where rewards fly to the balance counters. Registers itself as the 'store' feature of the game (ctx.features): the lobby of the base shows it as a tab, and any module can open it with ctx.features.open('store'). Its badge counts free offers waiting. Ships title-seed.json: a demo store with a daily gift, items and currency packs.",
+  "provides": [
+    "shop screen from the title storefront",
+    "several stores as tabs",
+    "offer carousel and grids with countdowns",
+    "free daily gift offer",
+    "purchase confirmation popup",
+    "reward animation with icons flying to balances",
+    "shop badge for free offers",
+    "demo store settings"
+  ],
+  "tags": [
+    "shop",
+    "store",
+    "storefront",
+    "purchase",
+    "offers",
+    "ui",
+    "screen",
+    "economy"
+  ],
+  "author": {
+    "name": "iDos Games",
+    "url": "https://idosgames.com"
+  },
+  "version": "0.1.1"
+}

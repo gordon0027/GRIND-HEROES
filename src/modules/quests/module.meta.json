@@ -1,0 +1,29 @@
+{
+  "id": "quests",
+  "type": "feature",
+  "inBase": true,
+  "summary": "Quests for any game: quests by cycle with details, claim all and the quest points track.",
+  "description": "A ready quests screen (Unity Runtime/UI/Quests) for ANY game, built on the @idosgames/react/ui kit and client.quest. The title's quests: cycles as tabs (daily, weekly, achievements) with the timer to the next cycle, progress bars, a quest details popup with every goal, 'Claim all' for finished quests, and the quest points track with chests to claim along it. Registers the 'quests' feature; its badge counts finished quests. Ships title-seed.json: four daily quests.",
+  "provides": [
+    "quests by cycle with progress",
+    "quest details popup",
+    "claim all finished quests",
+    "quest points track with milestone chests",
+    "badge for finished quests",
+    "demo daily quests"
+  ],
+  "tags": [
+    "quests",
+    "missions",
+    "achievements",
+    "daily",
+    "ui",
+    "screen",
+    "events"
+  ],
+  "author": {
+    "name": "iDos Games",
+    "url": "https://idosgames.com"
+  },
+  "version": "0.1.0"
+}
