@@ -82,7 +82,7 @@ function ChestDrop({ drop }: { drop: NonNullable<IdleSession["chestDrop"]> }): R
 function MoreSection({ features, session }: { features: FeatureRegistry; session: IdleSession }): ReactNode {
   const [open, setOpen] = useState<string | null>(null);
   const Screen = open ? features.get(open)?.Screen : null;
-  const entries = [{ id: "character", label: "Hero upgrades" }, { id: "quests", label: "Quests" }, { id: "store", label: "Shop" }, { id: "lootboxes", label: "Summons" }, { id: "marketplace", label: "Marketplace" }]
+  const entries = [{ id: "character", label: "Hero upgrades" }, { id: "quests", label: "Quests" }, { id: "store", label: "Shop" }, { id: "marketplace", label: "Marketplace" }]
     .filter((entry) => features.get(entry.id)?.available);
   return <section className={`gh-more-panel${open === "marketplace" ? " gh-more-panel--marketplace" : ""}`}
     style={open === "marketplace" ? { borderImageSource: `url("${heroUi.panel}")` } : undefined}>
