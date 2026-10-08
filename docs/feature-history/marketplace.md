@@ -1,5 +1,22 @@
 # Grind Heroes marketplace
 
+## Global activity statistics feasibility (2026-10-08)
+
+The current iDos Marketplace stores completed sales in an internal append-only
+`MarketplaceTradeLogDocument`, deduplicated by terminal status and offer ID.
+The SDK's `getHistory()` reads only the signed-in player's projection of that
+log. `getGroupedOffers()` covers active offers, and PROD Marketplace, Analytics,
+Purchase, TitleCustomData and DataCollections configuration expose no global
+completed-sale aggregate. PROD CloudCode has no Marketplace log read, sale
+event hook, or Marketplace settlement operation in its documented `server.*`
+surface. Browser-reported purchases would be bypassable and client-forged, so
+CloudCode counters incremented from them would not be authoritative. No
+statistics counters or historical backfill were published. A platform-side
+aggregate over immutable completed Marketplace trade logs, or a trusted
+post-settlement hook, is required before the requested global panel can show
+Items Sold (sold quantity), GEMS Volume (buyer GEMS paid), and Transactions
+(completed purchase operations). Current PROD values are unknown, not zero.
+
 The iDos Marketplace system was available in the registry but was not installed in this checkout. Its existing SDK service handles listings, escrow, purchases, cancellations, claims and history. The project adds a Grind Heroes screen around that service; it does not implement a second trading backend.
 
 The player chose **GEMS and equipment** for trading. In the DEV title, Marketplace and GEMS trading are enabled and the 50 `grind-gear` equipment definitions are tradable. Listings use GEMS, with 24, 72 or 168 hour durations and no commission. Auctions, buy orders and direct trades remain disabled. PROD configuration was not changed.

@@ -1,6 +1,6 @@
-import { useState, useSyncExternalStore, type ComponentType, type CSSProperties, type ReactNode } from "react";
+import { useRef, useState, useSyncExternalStore, type ComponentType, type CSSProperties, type ReactNode } from "react";
 import type { FeatureRegistry } from "@idosgames/module-sdk";
-import { Button, Icon, Popup, ResourceList, outlined, useCatalog, useCelebrate, v } from "@idosgames/react/ui";
+import { Button, Popup, ResourceList, useCelebrate, v } from "@idosgames/react/ui";
 import type { IdleSession } from "../game/session";
 import { formatBig, formatDuration } from "../game/format";
 import { t } from "../i18n";
@@ -11,6 +11,7 @@ import { heroUi } from "./heroAssets";
 import { StagePresentation } from "./StagePresentation";
 import { emptySlotIcon, rarityColors } from "./inventoryPresentation";
 import { gearImage } from "./itemImage";
+import "./away-popup.css";
 
 /** The Phaser scene stays mounted while these four presentation sections change. */
 export function makeGamePanel(session: IdleSession, features: FeatureRegistry): ComponentType {
@@ -111,16 +112,25 @@ function MoreSection({ features, session }: { features: FeatureRegistry; session
 function AwayPopup({ session }: { session: IdleSession }): ReactNode {
   const away = session.away!;
   const celebrate = useCelebrate();
-  const catalog = useCatalog();
+  const closed = useRef(false);
   const lines = [{ kind: "currency" as const, id: away.currencyID, amount: away.amount }];
-  const close = () => { celebrate(lines); session.dismissAway(); };
-  return <Popup title={t("welcomeBack")} onClose={close} width={380} variant="center">
-    <div style={{ display: "grid", gap: 12, justifyItems: "center", textAlign: "center" }}>
-      <div className="idos-bounce"><Icon glyph={catalog.iconOf(lines[0]!)} size={64} /></div>
-      <div style={{ ...outlined, fontSize: 14, color: v.textDim }}>{t("awayText")} · {formatDuration(away.seconds)}</div>
-      <div style={{ ...outlined, fontSize: 28, color: v.gold }}>+{formatBig(away.amount)}</div>
-      <ResourceList lines={lines} size={20} />
-      <Button tone="gold" size="lg" attract onClick={close}>{t("collect")}</Button>
+  const close = () => {
+    if (closed.current) return;
+    closed.current = true;
+    celebrate(lines);
+    session.dismissAway();
+  };
+  return <Popup title="AFK REWARDS" onClose={close} width={380} variant="center">
+    <div className="gh-away">
+      <div className="gh-away__caption">{t("welcomeBack")}</div>
+      <div className="gh-away__time">{t("awayText")} · {formatDuration(away.seconds)}</div>
+      <div className="gh-away__reward">
+        {away.currencyID === "GOLD" ? <>
+          <img src={heroUi.gold} alt="Gold" />
+          <strong>+{formatBig(away.amount)}</strong><span>GOLD</span>
+        </> : <ResourceList lines={lines} size={28} />}
+      </div>
+      <Button className="gh-away__button" tone="gold" size="lg" onClick={close}>{t("collect")}</Button>
     </div>
   </Popup>;
 }

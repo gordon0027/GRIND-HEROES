@@ -1,0 +1,12 @@
+.gh-login__card { position: relative; min-width: 0; }
+.gh-login__brand { color: #f0c778; text-align: center; font: 800 clamp(26px, 7vw, 34px) Georgia, "Times New Roman", serif; letter-spacing: .08em; text-shadow: 1px 2px #20160e; }
+.gh-login__brand::after { content: ""; display: block; height: 2px; margin: 11px 0 2px; background: linear-gradient(90deg, transparent, #a38151, transparent); }
+.gh-login__pending { margin: 0; color: #e6c58d; text-align: center; font: 700 12px system-ui, sans-serif; }
+.gh-login__idos { position: relative; padding-left: 44px !important; padding-right: 44px !important; }
+.gh-login__idos img { position: absolute; left: 14px; top: 50%; width: 20px; height: 20px; transform: translateY(-50%); pointer-events: none; }
+.gh-login button { transition: filter .12s ease; }
+.gh-login button:not(:disabled):hover { filter: brightness(1.15); }
+.gh-login button:disabled { opacity: .6; cursor: default !important; }
+.gh-login button:focus-visible, .gh-login input:focus-visible { outline: 2px solid #f0c778 !important; outline-offset: 2px; }
+.gh-login input[type="checkbox"]:focus-visible + span { outline: 2px solid #f0c778; outline-offset: 2px; }
+@media (max-width: 420px) { .gh-login__card { padding-top: 18px !important; padding-bottom: 16px !important; } }

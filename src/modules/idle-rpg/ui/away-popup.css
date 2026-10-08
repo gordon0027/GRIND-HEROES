@@ -1,0 +1,13 @@
+[role="dialog"]:has(.gh-away) > .idos-scroll { box-sizing: border-box; max-width: 100vw; padding: 18px !important; border: 3px solid #9b7749 !important; border-radius: 4px !important; background: linear-gradient(#2f2923, #1c1a19) !important; box-shadow: inset 0 0 0 4px #171411, 0 16px 40px #000b !important; }
+[role="dialog"]:has(.gh-away) > .idos-scroll > div:first-child { color: #f0c778 !important; font-family: Georgia, "Times New Roman", serif !important; letter-spacing: .08em !important; }
+.gh-away { box-sizing: border-box; display: grid; justify-items: center; gap: 12px; width: 100%; min-width: 0; padding: 15px; border: 2px solid #8f7049; background: linear-gradient(#302820, #1d1b19); box-shadow: inset 0 0 0 3px #171411, inset 0 1px #d6ab6240; color: #efdfc5; text-align: center; font-family: Georgia, "Times New Roman", serif; }
+.gh-away__caption { color: #f1cc84; font-size: 17px; font-weight: 700; }
+.gh-away__time { color: #c7b699; font: 700 12px system-ui, sans-serif; }
+.gh-away__reward { box-sizing: border-box; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; width: 100%; min-height: 75px; padding: 8px; border: 1px solid #82623b; background: radial-gradient(circle at center, #7450244a, #211b17 75%); }
+.gh-away__reward img { width: 42px; height: 42px; object-fit: contain; image-rendering: pixelated; }
+.gh-away__reward strong { color: #ffe3a0; font-size: clamp(24px, 7vw, 32px); line-height: 1; overflow-wrap: anywhere; }
+.gh-away__reward span { color: #d9bd86; font: 800 12px system-ui, sans-serif; }
+.gh-away__button.idos-press { box-sizing: border-box; width: min(100%, 230px); min-height: 42px; border: 9px solid transparent !important; border-image-source: url("/assets/ui/source/Component/Button/btn_rectangle_01_n_brown.png") !important; border-image-slice: 24 fill !important; border-image-width: 9px !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; color: #fff0be !important; font: 800 14px Georgia, serif !important; }
+.gh-away__button.idos-press:focus-visible { outline: 2px solid #f0c778; outline-offset: 2px; }
+@media (max-width: 420px) { .gh-away { padding: 11px; } .gh-away__reward { min-height: 65px; } .gh-away__reward img { width: 36px; height: 36px; } }
+.gh-away { box-sizing: border-box; display: grid; justify-items: center; gap: 12px; width: 100%; min-width: 0; padding: 15px; border: 2px solid #8f7049; background: linear-gradient(#302820, #1d1b19); box-shadow: inset 0 0 0 3px #171411, inset 0 1px #d6ab6240; color: #efdfc5; text-align: center; font-family: Georgia, "Times New Roman", serif; }

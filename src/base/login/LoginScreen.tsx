@@ -13,15 +13,13 @@ import {
 import type { LoginScreenProps } from "@idosgames/app-shell";
 import { ENV_GOOGLE_CLIENT_ID } from "../../env";
 import {
-  buttonStyle,
   outlined,
-  panel,
-  screenBackground,
   useUiKit,
   v,
 } from "@idosgames/react/ui";
 import { logoDataUrl } from "./logo";
 import { loginIcons, withIcon } from "./loginIcons";
+import "./login.css";
 
 // The Login scene. The host runtime owns WHEN this is shown (the auth gate in
 // @idosgames/app-shell); this file owns what it LOOKS like and which providers it offers.
@@ -486,13 +484,15 @@ export function LoginScreen({
   };
 
   return (
-    <div style={styles.root}>
+    <div className="gh-login" style={styles.root}>
       {/* Placeholder color is a pseudo-element, unreachable from inline styles — this one rule is
           the whole reason for the style tag. */}
       <style>{`.idos-input::placeholder { color: ${v.textDim}; opacity: 1; }`}</style>
-      <div style={styles.card}>
+      <div className="gh-login__card" style={styles.card}>
         <img src={logo} alt="iDos Games" style={styles.logo} />
-        <h1 style={styles.title}>Sign in</h1>
+        <div className="gh-login__brand">GRIND HEROES</div>
+        <h1 style={styles.title}>{mode === "menu" ? "Welcome back" : mode === "email" ? registering ? "Create account" : "Sign in" : mode === "verify" ? "Confirm email" : "Restore access"}</h1>
+        {busy ? <p className="gh-login__pending" role="status">Please wait…</p> : null}
 
         {mode === "menu" && (
           <div style={styles.stack}>
@@ -518,10 +518,12 @@ export function LoginScreen({
             {sso && (
               <button
                 type="button"
-                style={{ ...styles.button, ...withIcon(icons.idos) }}
+                className="gh-login__idos"
+                style={{ ...styles.button, ...styles.primary }}
                 onClick={() => void continueWithIdosGames()}
                 disabled={busy}
               >
+                <img src={icons.idos} alt="" aria-hidden="true" />
                 Continue with iDos Games
               </button>
             )}
@@ -821,7 +823,7 @@ export function LoginScreen({
           <span
             style={{
               ...styles.switchTrack,
-              background: remember ? v.green : v.wellSoft,
+              background: remember ? "#9d7137" : "#433729",
             }}
           >
             <span
@@ -840,12 +842,9 @@ export function LoginScreen({
   );
 }
 
-// The look is the theme's (src/ui.config.ts, through the UI kit's CSS variables): the screen's
-// gradient, a panel for the card, the kit's green button for the primary action, recessed fields.
-// Change the theme, not these values.
-
-/** The primary button's fill, drawn under the icon layer (see withIcon). */
-const PRIMARY_FILL = `linear-gradient(180deg, ${v.green} 0%, ${v.greenDeep} 100%)`;
+/** Fill remains behind provider icons supplied by withIcon. */
+const PRIMARY_FILL = "linear-gradient(180deg, #74512c 0%, #422b1d 100%)";
+const LOGIN_ASSETS = `${import.meta.env.BASE_URL}assets/ui/source/Component/Button/`;
 
 const styles: Record<string, CSSProperties> = {
   root: {
@@ -857,22 +856,25 @@ const styles: Record<string, CSSProperties> = {
     padding: "16px",
     boxSizing: "border-box",
     overflowY: "auto",
-    background: screenBackground,
-    color: v.text,
-    fontFamily: v.font,
+    background: "radial-gradient(circle at 50% 13%, #5a462b 0, #27221d 32%, #111214 77%), #111214",
+    color: "#edddbc",
+    fontFamily: 'Georgia, "Times New Roman", serif',
     fontSize: "15px",
   },
   card: {
-    ...panel,
     margin: "auto",
-    width: "min(360px, 90vw)",
+    width: "min(420px, 100%)",
     boxSizing: "border-box",
-    padding: "24px 20px 18px",
+    padding: "26px clamp(16px, 5vw, 30px) 22px",
     display: "grid",
-    gap: "16px",
+    gap: "13px",
+    border: "2px solid #a8844e",
+    borderRadius: "3px",
+    background: "linear-gradient(160deg, #302a24, #201d1b 45%, #171719)",
+    boxShadow: "inset 0 0 0 4px #181613, inset 0 1px #d5ae6844, 0 18px 48px #000b",
   },
   logo: {
-    width: "160px",
+    width: "86px",
     justifySelf: "center",
     userSelect: "none",
     pointerEvents: "none",
@@ -883,7 +885,7 @@ const styles: Record<string, CSSProperties> = {
     gap: "10px",
     justifySelf: "center",
     cursor: "pointer",
-    color: v.textDim,
+    color: "#c8b99e",
     fontWeight: 700,
   },
   // The switch: a hidden real checkbox (keyboard/a11y) with a drawn track + knob on top.
@@ -893,7 +895,7 @@ const styles: Record<string, CSSProperties> = {
     width: "42px",
     height: "24px",
     borderRadius: "12px",
-    boxShadow: `inset 0 0 0 1px ${v.line}`,
+    boxShadow: "inset 0 0 0 1px #9c7848",
     transition: "background 0.15s",
     flexShrink: 0,
   },
@@ -903,48 +905,47 @@ const styles: Record<string, CSSProperties> = {
     width: "18px",
     height: "18px",
     borderRadius: "50%",
-    background: "#fff",
+    background: "#ffe0a1",
     boxShadow: "0 1px 3px rgba(0, 0, 0, 0.3)",
     transition: "left 0.15s",
   },
   title: {
     ...outlined,
     margin: 0,
-    fontSize: "24px",
-    fontFamily: v.font,
+    fontSize: "18px",
+    fontFamily: 'Georgia, "Times New Roman", serif',
     textAlign: "center",
+    color: "#f1d8a5",
   },
-  stack: { display: "grid", gap: "10px" },
+  stack: { display: "grid", gap: "8px" },
   button: {
-    padding: "11px 16px",
-    minHeight: "46px",
-    borderRadius: v.buttonRadius,
-    border: `1px solid ${v.line}`,
-    // backgroundColor, not the `background` shorthand: the shorthand would wipe the icon
-    // (backgroundImage from ./loginIcons) - here and on the wallet button, whose own default style
-    // uses the shorthand.
-    backgroundColor: v.wellSoft,
-    color: v.text,
-    font: "inherit",
+    padding: "8px 14px",
+    minHeight: "42px",
+    border: "9px solid transparent",
+    borderImageSource: `url("${LOGIN_ASSETS}btn_rectangle_01_n_dark.png")`,
+    borderImageSlice: "24 fill",
+    borderImageWidth: "9px",
+    borderImageRepeat: "stretch",
+    borderRadius: 0,
+    backgroundColor: "transparent",
+    color: "#f0ddba",
+    font: '13px Georgia, "Times New Roman", serif',
     fontWeight: 700,
     cursor: "pointer",
   },
-  // The kit's green button — its text colour and outline follow the theme — with the fill as an image
-  // layer, so an icon can sit on top of it.
   primary: {
-    ...buttonStyle("green"),
-    background: undefined,
-    backgroundImage: PRIMARY_FILL,
-    border: "none",
+    borderImageSource: `url("${LOGIN_ASSETS}btn_rectangle_01_n_brown.png")`,
+    backgroundColor: "transparent",
     width: "100%",
-    font: "inherit",
+    color: "#fff0be",
     fontWeight: 800,
   },
   ghost: {
     padding: "8px",
+    minHeight: "40px",
     border: "none",
     background: "none",
-    color: v.textDim,
+    color: "#c8b99e",
     font: "inherit",
     fontWeight: 700,
     cursor: "pointer",
@@ -956,18 +957,18 @@ const styles: Record<string, CSSProperties> = {
   },
   input: {
     padding: "12px 14px",
-    borderRadius: v.buttonRadius,
-    border: `1px solid ${v.line}`,
-    background: v.well,
-    boxShadow: v.wellShadow,
-    color: v.text,
+    borderRadius: "3px",
+    border: "1px solid #8d714b",
+    background: "#171717",
+    boxShadow: "inset 0 1px 4px #000a",
+    color: "#f3e5cb",
     font: "inherit",
     outline: "none",
   },
-  error: { margin: 0, color: v.red, fontWeight: 700, textAlign: "center" },
+  error: { margin: 0, padding: "8px", border: "1px solid #985440", background: "#321e1b", color: "#f3ad94", fontWeight: 700, textAlign: "center" },
   hint: {
     margin: 0,
-    color: v.textDim,
+    color: "#c8b99e",
     textAlign: "center",
     fontSize: "14px",
     lineHeight: 1.45,
