@@ -16,3 +16,4 @@ instead.
 - [UI foundation V2](hero-window.md) — five game sections, separate Inventory and Team panels, shared fantasy frame and one footer.
 - [Grind Heroes marketplace](marketplace.md) — DEV equipment market UI; Main token pricing awaits iDos Marketplace crypto support.
 - [Grind Heroes Shop](shop.md) — native GH Store purchases for GEMS and Premium Chests, deployed to PROD.
+- [Secure Team Power](team-power.md) — server-derived active party Power and a protected custom Top 100.

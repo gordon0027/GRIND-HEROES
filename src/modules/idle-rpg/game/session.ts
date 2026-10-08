@@ -53,6 +53,7 @@ import { GrindEquipmentService, emptyGrindEquipment, grindAssignments,
   type GrindEquipmentState } from "./grindEquipment";
 import { chestRewardItemID, chestRewardPreview, newlyGrantedGear } from "./chestReward";
 import { chestIDs, chestPool } from "./chestPools";
+import { TeamPowerService, type TeamPowerLeaderboard } from "./teamPower";
 
 /** The private custom-data key of the stage progress ("." and "$" are not allowed in keys). */
 export const PROGRESS_KEY = "idle_rpg_progress";
@@ -118,6 +119,7 @@ export class IdleSession {
   private serverRunId: string | null = null;
   private readonly stageService: StageService;
   private readonly equipmentService: GrindEquipmentService;
+  private readonly teamPowerService: TeamPowerService;
   /** The hero the Heroes screen selected, or null until it says (then the fallback fights). */
   selectedID: string | null = "Knight";
   hero: HeroView | null = null;
@@ -169,6 +171,14 @@ export class IdleSession {
   lastCollect: { amount: number; at: number } | null = null;
   notice: (Notice & { at: number }) | null = null;
   loaded = false;
+  teamPower: number | null = null;
+  teamPowerError: string | null = null;
+  teamLeaderboard: TeamPowerLeaderboard | null = null;
+  teamLeaderboardBusy = false;
+  private teamPowerSignature = "";
+  private teamPowerRevision = 0;
+  private teamPowerTimer: ReturnType<typeof setTimeout> | null = null;
+  private teamPowerRefresh: Promise<void> | null = null;
 
   private version = 0;
   private listeners = new Set<Listener>();
@@ -188,6 +198,7 @@ export class IdleSession {
     this.stageService = new StageService(client);
     this.equipmentService = new GrindEquipmentService(client);
     // Removed in destroy(): setup() runs again on every login, and a client subscription that
+    this.teamPowerService = new TeamPowerService(client);
     // outlived its session would keep a dead game recomputing — and emitting twice.
     this.offClient.push(
       client.on("user:anyUpdated", () => this.refreshHero()),
@@ -271,6 +282,7 @@ export class IdleSession {
       this.formation = defaultFormation(ownedIDs);
     this.syncParty();
     this.changed();
+    this.queueTeamPowerRefresh();
   }
 
   ownedHeroIDs(): Set<string> {
@@ -365,6 +377,50 @@ export class IdleSession {
     if (!this.equipmentReady) return ["Equipment is loading"];
     const entry = this.roster.find((candidate) => candidate.id === heroID);
     if (!entry) return ["Unknown hero"];
+  private queueTeamPowerRefresh(force = false): void {
+    if (!this.loaded || this.isDevPreview) return;
+    const signature = JSON.stringify({ formation: this.formation.slots, capacity: this.capacity,
+      powers: this.roster.map((hero) => [hero.id, hero.rank, hero.power]),
+      gear: this.gearItems.filter((item) => item.equippedBy)
+        .map((item) => [item.instanceID, item.equippedBy?.heroID, item.level, item.bonuses]) });
+    if (!force && signature === this.teamPowerSignature) return;
+    this.teamPowerSignature = signature;
+    this.teamPowerRevision++;
+    if (this.teamPowerTimer) clearTimeout(this.teamPowerTimer);
+    this.teamPowerTimer = setTimeout(() => { this.teamPowerTimer = null; void this.refreshTeamPower(); }, 350);
+  }
+
+  async refreshTeamPower(): Promise<void> {
+    if (this.teamPowerRefresh) return this.teamPowerRefresh;
+    const revision = this.teamPowerRevision;
+    this.teamPowerRefresh = (async () => {
+      try {
+        const value = await this.teamPowerService.refresh();
+        this.teamPower = value.power;
+        this.teamPowerError = null;
+      } catch (error) {
+        this.teamPowerError = error instanceof Error ? error.message : String(error);
+      } finally { this.changed(); }
+    })().finally(() => {
+      this.teamPowerRefresh = null;
+      if (this.teamPowerRevision !== revision) this.queueTeamPowerRefresh(true);
+    });
+    return this.teamPowerRefresh;
+  }
+
+  async loadTeamLeaderboard(): Promise<void> {
+    if (this.teamLeaderboardBusy) return;
+    this.teamLeaderboardBusy = true;
+    this.changed();
+    try {
+      this.teamLeaderboard = await this.teamPowerService.leaderboard();
+      this.teamPower = this.teamLeaderboard.power;
+      this.teamPowerError = null;
+    } catch (error) {
+      this.teamPowerError = error instanceof Error ? error.message : String(error);
+    } finally { this.teamLeaderboardBusy = false; this.changed(); }
+  }
+
     return equipProblems(item, heroID, entry.level, entry.rank > 0,
       new Set(Object.keys(entry.def.Equipment?.Slots ?? {})));
   }
@@ -537,6 +593,7 @@ export class IdleSession {
       } : null };
     });
     this.run.setSlots(slots);
+      this.queueTeamPowerRefresh();
   }
 
   /** Gold per second the server pays now (display). */
@@ -1044,6 +1101,7 @@ export class IdleSession {
       this.away = { amount, seconds, currencyID: income.currencyID };
     this.changed();
   }
+    if (this.teamPowerTimer) clearTimeout(this.teamPowerTimer);
 
   dismissAway(): void {
     this.away = null;
@@ -1190,6 +1248,7 @@ export class IdleSession {
     if (this.saveTimer) clearTimeout(this.saveTimer);
     this.saveTimer = null;
     if (!this.loaded) return;
+    this.queueTeamPowerRefresh(true);
     const value = serializeProgress({
       stage: this.battle.stage,
       best: this.battle.best,

@@ -327,7 +327,25 @@ export function InventorySection({ session }: { session: IdleSession }): ReactNo
 
 export function TeamSection({ session }: { session: IdleSession }): ReactNode {
   const [heroID, setHeroID] = useState(session.selectedID ?? "Knight");
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
   return <SectionFrame title="TEAM" kicker="GRIND HEROES / FORMATION" className="gh-management--team">
-    <FormationPanel session={session} heroID={heroID} selectHero={setHeroID} />
+    <div className="gh-team-power"><span>TEAM POWER</span><strong>{session.teamPower === null ? "…" : session.teamPower.toLocaleString("en-US")}</strong>
+      <button type="button" onClick={() => { setShowLeaderboard((open) => !open); if (!showLeaderboard) void session.loadTeamLeaderboard(); }}>
+        {showLeaderboard ? "Back to team" : "Power leaderboard"}</button></div>
+    {session.teamPowerError ? <p role="alert" className="gh-hero-window__error">{session.teamPowerError}</p> : null}
+    {showLeaderboard ? <section className="gh-power-board" aria-label="Power leaderboard">
+      <h3>POWER LEADERBOARD · TOP 100</h3>
+      {session.teamLeaderboardBusy && !session.teamLeaderboard ? <p>Loading…</p> : null}
+      {session.teamLeaderboard?.entries.map((row) => <div key={row.rank}
+        className={`gh-power-board__row${row.isYou ? " gh-power-board__row--you" : ""}`}>
+        <b>#{row.rank}</b>{row.avatar ? <img src={row.avatar} alt="" /> : <span className="gh-power-board__avatar">⚔</span>}
+        <span>{row.displayName}{row.isYou ? " · You" : ""}</span><strong>{row.power.toLocaleString("en-US")}</strong>
+      </div>)}
+      {session.teamLeaderboard && !session.teamLeaderboard.entries.length ? <p>No players yet.</p> : null}
+      {session.teamLeaderboard ? <div className="gh-power-board__self"><span>YOUR TEAM POWER</span>
+        <strong>{session.teamLeaderboard.power.toLocaleString("en-US")}</strong>
+        <small>{session.teamLeaderboard.rank ? `#${session.teamLeaderboard.rank} in Top 100` : "Not in Top 100"}</small></div> : null}
+      <button type="button" disabled={session.teamLeaderboardBusy} onClick={() => void session.loadTeamLeaderboard()}>Refresh</button>
+    </section> : <FormationPanel session={session} heroID={heroID} selectHero={setHeroID} />}
   </SectionFrame>;
 }

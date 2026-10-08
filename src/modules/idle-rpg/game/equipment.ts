@@ -1,6 +1,7 @@
 import { curveMultiplier, type ScalarCurveSpec } from "@idosgames/core";
 import type { FighterStats } from "./heroStats";
 import type { HeroSource } from "./stageRun";
+import { ghCombatPower } from "./powerFormula.js";
 
 export const GEAR_SLOTS = ["Helmet", "Armor", "Gloves", "Boots", "Weapon", "Offhand"] as const;
 export type GearSlot = typeof GEAR_SLOTS[number];
@@ -167,6 +168,5 @@ export function stageHeroStats(base: FighterStats, archetype: {
 
 /** Display-only Grind Heroes combat power; iDos Character.Power remains server-owned. */
 export function combatPower(stats: Pick<HeroSource, "maxHp" | "attack" | "defence" | "attackSpeed" | "moveSpeed">): number {
-  return Math.round(stats.attack * 2 + stats.maxHp / 10 + stats.defence * 3
-    + stats.attackSpeed * 20 + stats.moveSpeed / 5);
+  return ghCombatPower(stats);
 }
