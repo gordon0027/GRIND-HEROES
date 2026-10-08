@@ -23,22 +23,27 @@ export const idleRpgModule: Module = defineModule({
     });
     ctx.registerRoute({ id: "idle-rpg", label: "Grind Heroes", icon: "⚔️", inLobby: true });
 
-    // The browser agent cannot read the Phaser canvas. Expose the transient run;
-    // stage selection is the only player control for continuous farming.
+    // The browser agent cannot read the Phaser canvas. Expose the transient run
+    // and the same stage/Advance controls the player sees.
     ctx.exposeToAgent({
       state: () => ({
         mounted: box.get() !== null,
         playing: box.get()?.running ?? false,
         run: session.run.snapshot(),
+        advanceEnabled: session.autoProgressEnabled,
         partyCapacity: session.capacity,
         formation: session.formation,
         formationStored: session.formationStored,
         devPreview: session.isDevPreview,
         goldPerSecond: session.ratePerSecond(),
       }),
-      actions: { selectStage: (args) => session.selectStage(String(args?.stageID ?? "")) },
+      actions: {
+        selectStage: (args) => session.selectStage(String(args?.stageID ?? "")),
+        setAdvance: (args) => session.setAutoProgressEnabled(args?.enabled === true),
+      },
       describeActions: {
-        selectStage: "Switch the continuously farmed stage to an unlocked stage ID.",
+        selectStage: "Farm an unlocked stage and turn Advance off.",
+        setAdvance: "Enable or disable progression after the current battle; combat keeps running.",
       },
     });
   },

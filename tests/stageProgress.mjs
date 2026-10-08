@@ -14,7 +14,7 @@ assert.equal(nextStageID("grind-stage-1-9"), "grind-stage-1-10");
 assert.equal(nextStageID("grind-stage-1-10"), "grind-stage-2-1");
 assert.equal(continuationStageID("grind-stage-1-1", "clear", parseStageProgress(null),
   recordStageClear(parseStageProgress(null), "grind-stage-1-1", 40)), "grind-stage-1-2");
-assert.equal(continuationStageID("grind-stage-1-1", "failed", parseStageProgress(null)), null);
+assert.equal(continuationStageID("grind-stage-1-1", "failed", parseStageProgress(null)), "grind-stage-1-1");
 assert.equal(nextStageID("grind-stage-2-10"), "grind-stage-3-1");
 assert.equal(nextStageID("grind-stage-3-10"), null);
 assert.equal(makeStage(3, 1).id, "grind-stage-3-1");

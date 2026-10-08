@@ -1,29 +1,35 @@
 # Grind Heroes finite stage and progression
 
-## Automatic frontier progression and farming loop (2026-10-08)
+## Continuous battle and Advance-only progression (2026-10-08)
 
-The active PLAY mode previously started the selected unlocked stage automatically, then repeated
-that same stage after both a server-validated clear and a failed run. `grind_stage_progress_v2`
-in server-written ReadOnly custom data already stores `highestUnlocked`, completion counts and
-best times. `highestUnlocked` is the one-based catalogue position of the furthest stage the
-server permits a player to attempt; the last cleared stage is derived from server completion
-counts. The selected/current stage remains a separate Private preference and may be older.
+Combat always starts automatically after loading an unlocked selected stage and after every
+settled battle. The earlier `Loop` switch could persist `loopMode: false` and leave a cleared
+or failed run idle behind a START button; a first-stage defeat also returned no continuation.
+The client now ignores historical `loopMode`, writes only `selectedStageID` and
+`autoProgressMode` to `grind_stage_preferences_v1`, and shows only Advance beside the stage.
+START and NEXT were removed. Stage Map selection always turns Advance OFF, including when the
+player selects the current stage, because that action expresses a farming choice.
 
-The same `grind_stage_preferences_v1` Private record now stores Boolean `loopMode` and
-`autoProgressMode`. Loop controls whether another battle starts after this one; Loop OFF
-lets the current battle and reward settle, then stops. START and a map selection explicitly
-launch a battle. Advance controls whether clearing the frontier or the last cleared stage
-attempts the next server-unlocked stage. A manual old-stage selection turns Advance OFF;
-an uncleared stage selection or NEXT turns it ON. A missing Loop value defaults ON, while
-a missing Advance value defaults ON only for an uncleared selected stage.
+With Advance OFF, a validated victory or loss repeats the selected stage. With Advance ON, a
+validated victory starts the next server-unlocked stage, including from an older cleared stage;
+at the final catalog stage it repeats. A defeat on an uncleared stage while advancing closes
+the server run, reloads `grind_stage_progress_v2`, disables Advance, and starts the last
+successfully cleared stage. If nothing has been cleared yet, the first stage retries itself.
+A loss on a cleared farming stage stays there. Turning Advance on during a battle does not
+interrupt it; the next stage is chosen after its result settles.
 
-The next battle is selected only after CloudCode completion and Inventory refresh. An
-older stage repeats itself even when Advance is ON. After a frontier defeat, the client
-closes the server run, refreshes authoritative progress, turns Advance OFF, falls back to
-the last cleared stage and farms it with Loop ON. It stays there until NEXT selects the
-unlocked frontier or the player turns Advance ON, which tries the next stage after the
-current farm clear. If stage 1-1 fails before any stage has been cleared, the loop stops
-for a manual retry.
+CloudCode still owns run IDs, validation, rewards, unlocks and `grind_stage_progress_v2`.
+The client waits for completion and Inventory refresh before starting the next battle. Run
+generation, one in-flight start request and one-result-per-run guards prevent double starts.
+Reload restores the selected stage and Advance preference, then starts a fresh legitimate run.
+External state or server errors may delay a run, but no normal result waits for a player START.
+
+The complete client build with 107 PNG assets went live directly on PROD as **v48**
+(`bldea5a6ff8ce4c47428840f8afc04bee04`). A PROD guest cleared 1-1 with Advance OFF:
+the server granted GOLD and a stage chest, unlocked 1-2, and the client automatically
+started another 1-1 battle. Reload restored Advance OFF and automatically started 1-1 again.
+Enabling Advance during the restored 1-1 battle kept that battle running; its next
+server-validated victory automatically started 1-2 with Advance ON.
 
 The run generation, single in-flight start request and one-result-per-StageRun guard prevent
 duplicate continuation. Stage completion, unlocks, XP, GOLD and chests remain in the existing
