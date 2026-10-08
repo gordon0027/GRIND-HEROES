@@ -452,3 +452,7 @@ versioned DEV test URL. PROD was not deployed. A DEV guest verified Act 1 server
 legacy chest consumption, Inventory grant and visible loot popup. Acts 2 and 3
 passed local CloudCode/reward routing tests but await real clears and openings
 on a progressed DEV account; the current guest has only reached Stage 1-3.
+
+## Battle HUD cleanup (2026-10-08)
+
+The redundant small `Stage 1-5` label strip below the chest buttons was removed. The selected stage and Advance toggle remain together in the Stage Map below the battle. The distance progress bar, boss marker, chest controls, and stage progression logic are unchanged. Full build v51 went live on PROD; desktop and 390 px local views and the live PROD battle were checked.

@@ -1,5 +1,9 @@
 # Grind Heroes Shop V1
 
+## Game header GH balance (2026-10-08)
+
+The in-game header now shows `CryptoCurrencies.Main.Amount` beside GOLD and GEMS, using the same GH icon as the Shop. It reads the SDK user state, so a successful Shop purchase and inventory refresh updates the header too. Opening the game, returning focus after an external deposit, and tapping the GH counter request `getUserInventory()`; the counter shows an unavailable dash until the account supplies a balance. It does not infer GH from the separate platform wallet panel or change checkout behavior. This UI update shipped on PROD in full build v51 (`bld47e7f5b0640a4b9186e780f0b16979db`).
+
 The project already had the iDos Store module. It reads the player-resolved storefront through `client.store.getStorefront()`, and `client.store.purchase()` validates current slot, price, limits and rewards on the server. DEV currently has a daily free 30-GEMS gift, two GOLD offers priced in GEMS, and an Iron Sword offer priced in GEMS. The existing Store checkout remains under **MORE → Shop → SUPPLIES**. Its free gift and GEMS-priced supplies remain server-authoritative.
 
 The screen now opens on **GEMS**, with **PREMIUM CHESTS** and **SUPPLIES** tabs. TOKEN products in `src/modules/store/shopCatalog.ts` remain presentation-only until checkout exists. Amounts and TOKEN prices are centralized, provisional balancing figures, not final economy values. Cards use the existing GEMS icon and chest art, support optional badges, hide disabled entries, and open a details popup. The GEMS balance comes from the same `InventoryV2.VirtualCurrencies.GEMS.Amount` player state used by Marketplace, refreshed through the SDK cache.

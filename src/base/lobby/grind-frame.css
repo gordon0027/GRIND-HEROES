@@ -25,6 +25,9 @@
   font: 700 13px system-ui, sans-serif;
 }
 .grind-frame-header__balance img { width: 23px; height: 23px; object-fit: contain; }
+.grind-frame-header__balance--gh { cursor: pointer; white-space: nowrap; }
+.grind-frame-header__balance--gh:hover,
+.grind-frame-header__balance--gh:focus-visible { background: #302722; border-color: #d9a85e; }
 .grind-frame-header [data-tutorial-anchor="lobby:profile"] {
   border: 1px solid #9a7545 !important;
   border-radius: 5px !important;

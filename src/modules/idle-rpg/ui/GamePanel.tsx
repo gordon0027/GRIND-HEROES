@@ -40,9 +40,6 @@ export function makeGamePanel(session: IdleSession, features: FeatureRegistry): 
               <b aria-hidden="true">×{session.chestCount(itemID)}</b>
             </button>)}
           </div>
-          <div className="gh-stage-hud__controls">
-            <span className="gh-stage-hud__stage">Stage {run.stage.chapter}-{run.stage.stage}</span>
-          </div>
           {session.lastClearNotice ? <div className="gh-stage-hud__notice" role="status">{session.lastClearNotice}</div> : null}
           {session.lootItems.length ? <div className="gh-stage-hud__notice" role="status">{session.lootItems.join(", ")}</div> : null}
           {session.lootError || session.stageError ? <div className="gh-stage-hud__error" role="alert">{session.lootError ?? session.stageError}</div> : null}
