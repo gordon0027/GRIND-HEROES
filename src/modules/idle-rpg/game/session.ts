@@ -61,6 +61,7 @@ const SAVE_DELAY_MS = 4000;
 /** Below this, a collect on entry is just "the counter ticked", not "while you were away". */
 const AWAY_MIN_SECONDS = 60;
 const COLLECT_EVERY_MS = 15_000;
+const POWER_REWARD_RECHECK_MS = 8 * 60 * 60 * 1000 + 10_000;
 /** How often the HUD redraws while the fight runs. */
 const HUD_HZ = 8;
 const STAGE_PREFERENCES_KEY = "grind_stage_preferences_v1";
@@ -178,6 +179,8 @@ export class IdleSession {
   private teamPowerRevision = 0;
   private teamPowerTimer: ReturnType<typeof setTimeout> | null = null;
   private teamPowerRefresh: Promise<void> | null = null;
+  private powerRewardTimer: ReturnType<typeof setInterval> | null = null;
+  private powerRewardBusy = false;
 
   private version = 0;
   private listeners = new Set<Listener>();
@@ -405,6 +408,19 @@ export class IdleSession {
       if (this.teamPowerRevision !== revision) this.queueTeamPowerRefresh(true);
     });
     return this.teamPowerRefresh;
+  }
+
+  private async refreshAndClaimPowerReward(): Promise<void> {
+    if (this.powerRewardBusy) return;
+    this.powerRewardBusy = true;
+    try {
+      await this.refreshTeamPower();
+      if (this.teamPowerError === null) await this.teamPowerService.claimPendingReward();
+    } catch {
+      // The protected server ledger retains the entitlement for a later login.
+    } finally {
+      this.powerRewardBusy = false;
+    }
   }
 
   async loadTeamLeaderboard(): Promise<void> {
@@ -1066,6 +1082,7 @@ export class IdleSession {
     this.cancelAutoAdvance();
     this.suspend();
     if (this.teamPowerTimer) clearTimeout(this.teamPowerTimer);
+    if (this.powerRewardTimer) clearInterval(this.powerRewardTimer);
     if (this.chestDropTimer) clearTimeout(this.chestDropTimer);
     for (const off of this.offClient) off();
     this.offClient = [];
@@ -1211,8 +1228,13 @@ export class IdleSession {
       this.stageError = `Stage progress load: ${String(res.error ?? res.reason)}`;
     }
     this.loaded = true;
-    this.queueTeamPowerRefresh(true);
     this.changed();
+    if (this.client.titleID === "98JRCAKG" && !this.isDevPreview) {
+      void this.refreshAndClaimPowerReward();
+      this.powerRewardTimer ??= setInterval(
+        () => void this.refreshAndClaimPowerReward(), POWER_REWARD_RECHECK_MS,
+      );
+    } else this.queueTeamPowerRefresh(true);
     if (this.autoFlowEnabled) void this.startRun();
   }
 

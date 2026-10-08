@@ -30,6 +30,41 @@
 .grind-frame-header__balance--gh { cursor: pointer; white-space: nowrap; }
 .grind-frame-header__balance--gh:hover,
 .grind-frame-header__balance--gh:focus-visible { background: #302722; border-color: #d9a85e; }
+.grind-frame-header__earnings {
+  display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+  min-height: 37px; padding: 0 10px; border: 1px solid #c58c42; border-radius: 5px;
+  background: linear-gradient(#614021, #322418); color: #ffda86;
+  font: 800 11px system-ui, sans-serif; letter-spacing: .05em; cursor: pointer;
+}
+.grind-frame-header__earnings:hover, .grind-frame-header__earnings:focus-visible {
+  background: #80532a; outline: 2px solid #eab765; outline-offset: 2px;
+}
+.gh-earnings-overlay {
+  position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center;
+  justify-content: center; box-sizing: border-box; padding: 16px;
+  background: #090807c9; color: #f4dfb1;
+}
+.gh-earnings-dialog {
+  width: min(100%, 560px); max-height: min(90vh, 740px); overflow: auto;
+  box-sizing: border-box; padding: 22px; border: 2px solid #9a7545; border-radius: 10px;
+  background: linear-gradient(#272327, #171719 110px); box-shadow: 0 18px 60px #000d;
+  font-family: Georgia, serif;
+}
+.gh-earnings-dialog__header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; border-bottom: 1px solid #8d7149; }
+.gh-earnings-dialog__header small { color: #b79464; font: 700 10px system-ui, sans-serif; letter-spacing: .1em; }
+.gh-earnings-dialog__header h2 { margin: 5px 0 12px; color: #ffcc73; font-size: 27px; }
+.gh-earnings-dialog__header button { border: 0; background: transparent; color: #f4dfb1; font: 28px system-ui, sans-serif; cursor: pointer; }
+.gh-earnings-dialog__day { margin: 14px 0; color: #c7ac81; font: 700 12px system-ui, sans-serif; }
+.gh-earnings-dialog__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+.gh-earnings-dialog__grid > div { display: flex; flex-direction: column; gap: 5px; min-width: 0; padding: 12px; border: 1px solid #62503c; border-radius: 5px; background: #201d1c; }
+.gh-earnings-dialog__grid span { color: #c3a77d; font: 700 11px system-ui, sans-serif; }
+.gh-earnings-dialog__grid strong { overflow-wrap: anywhere; color: #ffcf7b; font-size: 22px; }
+.gh-earnings-dialog__grid small { color: #a79a8a; font: 11px system-ui, sans-serif; }
+.gh-earnings-dialog__notice, .gh-earnings-dialog__credit { padding: 10px 12px; border: 1px solid #766044; background: #332a21; font: 13px/1.4 system-ui, sans-serif; }
+.gh-earnings-dialog__notice--review, .gh-earnings-dialog__error { border-color: #b36d58; color: #ffc2a9; }
+.gh-earnings-dialog__fineprint { color: #b5a99b; font: 11px/1.5 system-ui, sans-serif; }
+.gh-earnings-dialog__refresh { padding: 8px 15px; border: 1px solid #a77e4b; border-radius: 4px; background: #4a311e; color: #ffdc9d; font: 700 12px system-ui, sans-serif; cursor: pointer; }
+.gh-earnings-dialog__refresh:disabled { opacity: .5; cursor: wait; }
 .grind-frame-header [data-tutorial-anchor="lobby:profile"] {
   border: 1px solid #9a7545 !important;
   border-radius: 5px !important;
@@ -41,4 +76,8 @@
   .grind-frame-header__balances { gap: 4px; }
   .grind-frame-header__balance { font-size: 11px; padding-right: 5px; }
   .grind-frame-header__balance img { width: 19px; height: 19px; }
+  .grind-frame-header__earnings { min-height: 32px; padding: 0 6px; font-size: 9px; }
+  .grind-frame-header__earnings span:first-child { display: none; }
+  .gh-earnings-dialog { padding: 16px; }
+  .gh-earnings-dialog__grid strong { font-size: 18px; }
 }

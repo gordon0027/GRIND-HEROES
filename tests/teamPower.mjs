@@ -9,7 +9,9 @@ const base = new URL("../src/modules/idle-rpg/", import.meta.url);
 const source = readFileSync(new URL("game/powerFormula.js", base), "utf8").replace("export function", "function") + "\n" +
   readFileSync(new URL("server/stageRewards.js", base), "utf8") + "\n" +
   readFileSync(new URL("server/grindEquipment.js", base), "utf8") + "\n" +
-  readFileSync(new URL("server/teamPower.js", base), "utf8");
+  readFileSync(new URL("server/teamPower.js", base), "utf8") + "\n" +
+  readFileSync(new URL("server/powerRewardPlan.js", base), "utf8") + "\n" +
+  readFileSync(new URL("server/powerRewards.js", base), "utf8");
 
 const stat = (id, value, step) => ({ StatID: id, BaseStatValue: value,
   ValueCurve: { Shape: "PerStep", PerStep: step } });

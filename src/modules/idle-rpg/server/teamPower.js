@@ -145,6 +145,8 @@ function ghPublishTop(row, mustCheckMissing) {
 }
 
 function ghRecalculateAndPublish(context) {
+  // Close elapsed reward days against the prior leaderboard before changing it.
+  if (typeof ghRewardCatchUp === "function") ghRewardCatchUp(new Date().toISOString());
   var read = server.GetUserCustomData();
   if (!read.Success) throw new Error("team_power_read_failed: " + read.Error);
   var data = read.Data;

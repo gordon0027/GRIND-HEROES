@@ -13,6 +13,7 @@ import { BottomTabs, LobbyHeader } from "./Lobby";
 import { PLAY, arrangeFeatures, chromeFor, splitTabs } from "./model";
 import { useIDosGamesClient, useUserState } from "@idosgames/react";
 import { Account } from "./Account";
+import { Earnings } from "./Earnings";
 import "./grind-frame.css";
 
 // The game inside the lobby — only a game whose route says `inLobby` (idle-rpg); a full-screen game
@@ -79,6 +80,7 @@ function GrindFrameBalances(): ReactNode {
       <img src={ghIcon} alt="" />
       <strong>{gh}</strong>
     </button>
+    <Earnings />
   </div>;
 }
 

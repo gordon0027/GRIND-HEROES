@@ -24,6 +24,8 @@
     "test:stage-loop": "node --experimental-strip-types tests/stageAutoLoop.mjs",
     "test:stage-session": "node --experimental-strip-types tests/stageSessionLoop.mjs",
     "test:rewards": "node --experimental-strip-types tests/stageRewards.mjs",
+    "test:power-rewards": "node tests/powerRewardPlan.mjs",
+    "test:power-payouts": "node tests/powerRewards.mjs",
     "test:xp": "node --experimental-strip-types tests/heroXpEligibility.mjs",
     "test:enemy": "node --experimental-strip-types tests/enemyVisuals.mjs",
     "test:render": "node --experimental-strip-types tests/renderResolution.mjs",
@@ -33,7 +35,7 @@
     "test:item-progress": "node --experimental-strip-types tests/itemProgression.mjs",
     "test:aggro": "node --experimental-strip-types tests/frontlineAggro.mjs",
     "test:feel": "node --experimental-strip-types tests/combatFeel.mjs",
-    "test": "npm run test:stage && npm run test:world && npm run test:ranged && npm run test:enemy-ranged && npm run test:aggro && npm run test:feel && npm run test:equipment && npm run test:grind-equipment && npm run test:chest && npm run test:chest-pools && npm run test:premium-chest && npm run test:premium-opening && npm run test:shop && npm run test:gh-price && npm run test:token-orders && npm run test:balance && npm run test:item-progress && npm run test:progress && npm run test:stage-loop && npm run test:stage-session && npm run test:rewards && npm run test:xp && npm run test:enemy && npm run test:render"
+    "test": "npm run test:stage && npm run test:world && npm run test:ranged && npm run test:enemy-ranged && npm run test:aggro && npm run test:feel && npm run test:equipment && npm run test:grind-equipment && npm run test:chest && npm run test:chest-pools && npm run test:premium-chest && npm run test:premium-opening && npm run test:shop && npm run test:gh-price && npm run test:token-orders && npm run test:balance && npm run test:item-progress && npm run test:progress && npm run test:stage-loop && npm run test:stage-session && npm run test:rewards && npm run test:power-rewards && npm run test:power-payouts && npm run test:xp && npm run test:enemy && npm run test:render"
   },
   "//": "Versions are pinned exactly: this is a seed for AI Coder projects, which build offline against a dependency allowlist baked at these versions (see scripts/pack-builder.mjs). Modules bring their own engine deps (three/phaser) when added.",
   "dependencies": {
