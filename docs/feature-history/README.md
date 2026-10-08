@@ -14,4 +14,4 @@ instead.
 - [Hero art and battle visuals V1](hero-art.md) — shared sprite animation mapping and looping Stage 1 forest.
 - [Item art direction](item-art.md) — user-supplied visual references and rendering rules for inventory icons.
 - [UI foundation V2](hero-window.md) — five game sections, separate Inventory and Team panels, shared fantasy frame and one footer.
-- [Grind Heroes marketplace](marketplace.md) — DEV GEMS equipment trading through the iDos Marketplace service, with inventory art and Grind equip checks.
+- [Grind Heroes marketplace](marketplace.md) — DEV equipment market UI; Main token pricing awaits iDos Marketplace crypto support.
