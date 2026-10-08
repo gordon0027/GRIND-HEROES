@@ -65,7 +65,7 @@ Solana gives GH a wallet-connected token network and an existing community famil
 | Verification | TypeScript typecheck and Node-based gameplay and economy tests |
 
 ```mermaid
-flowchart LR
+flowchart TD
     Player[Player / browser] --> Game[React UI + Phaser combat]
     Game --> SDK[iDos Games SDK]
     SDK --> State[Characters, inventory, stages, loot]
