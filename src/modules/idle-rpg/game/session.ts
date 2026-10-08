@@ -38,7 +38,7 @@ import {
 import { stageInfo } from "./stages";
 import { FIRST_STAGE, StageRun, type PartySlot, type RunEvent } from "./stageRun";
 import { STAGE_CATALOG, stageByID } from "./stageCatalog";
-import { continuationStageID, farmingStageID } from "./stageFlow";
+import { continuationStageID, farmingStageID, highestClearedStageID } from "./stageFlow";
 import { parseStageProgress, stageUnlocked, STAGE_PROGRESS_KEY, type StageProgress } from "./stageProgress";
 import { StageService } from "./stageService";
 import { HERO_XP_KEY, heroProgress, parseHeroProgress, type HeroProgressMap } from "./heroXP";
@@ -144,6 +144,10 @@ export class IdleSession {
   heroProgressMap: HeroProgressMap = {};
   private autoAdvanceTimer: ReturnType<typeof setTimeout> | null = null;
   private autoFlowEnabled = false;
+  loopEnabled = true;
+  private pendingContinuationID: string | null = null;
+  private terminalRun: StageRun | null = null;
+  private failureClose: Promise<void> | null = null;
   private preferenceWrites: Promise<unknown> = Promise.resolve();
   formation: Formation = { version: 2, slots: [null, null, null] };
   capacity: 1 | 2 | 3 = 1;
@@ -568,9 +572,11 @@ export class IdleSession {
   /** The new finite-stage loop, independent of the template's old wave simulation. */
   tickRun(dt: number): RunEvent[] {
     const events = this.run.tick(dt);
-    if (events.some((event) => event.type === "stageCleared")) {
+    if (this.terminalRun !== this.run && events.some((event) => event.type === "stageCleared")) {
+      this.terminalRun = this.run;
       if (this.isDevPreview) {
         this.lootItems = ["DEV preview: no progression or reward"];
+        this.pendingContinuationID = this.run.stage.id;
         this.scheduleAutoAdvance();
       }
       else {
@@ -578,17 +584,22 @@ export class IdleSession {
         void this.claimStageLoot();
       }
     }
-    if (events.some((event) => event.type === "stageFailed")) {
+    if (this.terminalRun !== this.run && events.some((event) => event.type === "stageFailed")) {
+      this.terminalRun = this.run;
       const runId = this.serverRunId;
-      this.serverRunId = null;
-      this.lastClearNotice = "Party defeated · retrying";
-      void (async () => {
-        if (runId) await this.stageService.fail(runId);
+      const failedRun = this.run;
+      const generation = this.runGeneration;
+      this.lastClearNotice = "Party defeated";
+      if (this.isDevPreview) {
+        this.pendingContinuationID = failedRun.stage.id;
         this.scheduleAutoAdvance();
-      })().catch((error: unknown) => {
-        this.stageError = `Could not close failed run: ${String(error)}`;
-        this.scheduleAutoAdvance();
-      });
+      } else if (runId) {
+        const closing = this.closeFailedRun(runId, failedRun, generation);
+        this.failureClose = closing;
+        void closing.finally(() => { if (this.failureClose === closing) this.failureClose = null; });
+      } else {
+        this.stageError = "Failed run has no server marker";
+      }
     }
     this.hudClock += dt;
     if (events.length > 0 || this.hudClock >= 1 / HUD_HZ) {
@@ -598,12 +609,38 @@ export class IdleSession {
     return events;
   }
 
+  private async closeFailedRun(runId: string, failedRun: StageRun, generation: number): Promise<void> {
+    try {
+      await this.stageService.fail(runId);
+      this.serverRunId = null;
+      const progress = await this.stageService.loadProgress();
+      if (generation !== this.runGeneration || failedRun !== this.run) return;
+      this.stageProgress = progress;
+      this.pendingContinuationID = continuationStageID(failedRun.stage.id, "failed", progress);
+      this.lastClearNotice = this.pendingContinuationID
+        ? `Party defeated · farming ${this.pendingContinuationID.replace("grind-stage-", "")}`
+        : "Party defeated · press START to retry";
+      if (this.pendingContinuationID && this.pendingContinuationID !== failedRun.stage.id)
+        this.saveStagePreferences(this.pendingContinuationID);
+      this.changed();
+      if (!this.loopEnabled && this.pendingContinuationID) this.prepareContinuation(this.pendingContinuationID);
+      else this.scheduleAutoAdvance();
+    } catch (error) {
+      if (generation === this.runGeneration && failedRun === this.run) {
+        this.stageError = `Could not close failed run: ${String(error)}`;
+        this.changed();
+      }
+    }
+  }
+
   selectStage(stageID: string, force = false): boolean {
-    if (this.lootPending || this.lootBusy) return false;
+    if (this.lootPending || this.lootBusy || this.failureClose ||
+      (this.run.state === "failed" && this.serverRunId)) return false;
     const stage = stageByID(stageID);
     if (!stage || !(this.isDevPreview || stageUnlocked(this.stageProgress, stageID))) return false;
     if (stageID === this.run.stage.id && !force) return true;
     this.cancelAutoAdvance();
+    this.pendingContinuationID = null;
     const oldRunID = this.serverRunId;
     this.serverRunId = null;
     const generation = ++this.runGeneration;
@@ -614,6 +651,7 @@ export class IdleSession {
     this.lootItems = [];
     this.lootError = null;
     this.stageError = null;
+    this.lastClearNotice = null;
     this.syncParty();
     if (!this.isDevPreview) this.saveStagePreferences();
     this.changed();
@@ -639,6 +677,49 @@ export class IdleSession {
     return next && stageUnlocked(this.stageProgress, next.id) ? next.id : null;
   }
 
+  get highestClearedStageID(): string | null {
+    return highestClearedStageID(this.stageProgress);
+  }
+
+  get canManuallyStart(): boolean {
+    return this.loaded && this.equipmentReady && !this.runStartBusy && !this.startRequest &&
+      !this.failureClose && !this.lootPending && !this.lootBusy &&
+      (this.run.state === "ready" || this.run.state === "clear" ||
+        (this.run.state === "failed" && !this.serverRunId));
+  }
+
+  get canSelectNext(): boolean {
+    return !!this.nextStageID && !this.lootPending && !this.lootBusy &&
+      !this.runStartBusy && !this.failureClose &&
+      !(this.run.state === "failed" && this.serverRunId);
+  }
+
+  get awaitingManualStart(): boolean {
+    return !this.loopEnabled || (this.run.state === "failed" && !this.highestClearedStageID);
+  }
+
+  startCurrentStage(): boolean {
+    if (!this.canManuallyStart) return false;
+    return this.run.state === "ready" ? (void this.startRun(), true) :
+      this.selectStage(this.run.stage.id, true);
+  }
+
+  setLoopEnabled(enabled: boolean): void {
+    if (enabled === this.loopEnabled) return;
+    this.loopEnabled = enabled;
+    if (!enabled) {
+      this.cancelAutoAdvance();
+      if (this.run.state === "failed" && this.pendingContinuationID && !this.serverRunId)
+        this.prepareContinuation(this.pendingContinuationID);
+    }
+    else if (this.autoFlowEnabled) {
+      if (this.run.state === "ready") void this.startRun();
+      else if (["clear", "failed"].includes(this.run.state)) this.scheduleAutoAdvance();
+    }
+    this.saveStagePreferences();
+    this.changed();
+  }
+
   async startRun(): Promise<boolean> {
     if (this.startRequest) return this.startRequest;
     const request = this.beginRun();
@@ -649,6 +730,7 @@ export class IdleSession {
 
   private async beginRun(): Promise<boolean> {
     if (!this.loaded || !this.equipmentReady || this.runStartBusy || this.lootPending || this.lootBusy ||
+      this.failureClose || this.run.state !== "ready" || this.serverRunId ||
       !(this.isDevPreview || stageUnlocked(this.stageProgress, this.run.stage.id))) return false;
     while (this.managementWrites.size)
       await Promise.allSettled([...this.managementWrites]);
@@ -684,7 +766,7 @@ export class IdleSession {
       return true;
     } catch (error) {
       this.stageError = error instanceof Error ? error.message : String(error);
-      if (this.autoFlowEnabled && generation === this.runGeneration)
+      if (this.autoFlowEnabled && this.loopEnabled && generation === this.runGeneration)
         this.autoAdvanceTimer = setTimeout(() => { this.autoAdvanceTimer = null; void this.startRun(); }, 2500);
       return false;
     } finally {
@@ -698,14 +780,31 @@ export class IdleSession {
     this.autoAdvanceTimer = null;
   }
 
+  private prepareContinuation(targetID: string): boolean {
+    const next = stageByID(targetID);
+    if (!next || !(this.isDevPreview || stageUnlocked(this.stageProgress, targetID))) return false;
+    const previousID = this.run.stage.id;
+    this.runGeneration++;
+    this.pendingContinuationID = null;
+    this.run = new StageRun(next);
+    this.run.bestClearSeconds = this.stageProgress.bestSeconds[targetID] ?? null;
+    this.syncParty();
+    if (!this.isDevPreview && targetID !== previousID) this.saveStagePreferences();
+    this.changed();
+    return true;
+  }
+
   private scheduleAutoAdvance(): void {
-    if (!this.autoFlowEnabled || this.lootPending || this.lootBusy) return;
+    if (!this.autoFlowEnabled || !this.loopEnabled || !this.pendingContinuationID ||
+      this.lootPending || this.lootBusy || this.failureClose && this.serverRunId) return;
     this.cancelAutoAdvance();
     const stageID = this.run.stage.id;
+    const targetID = this.pendingContinuationID;
     const generation = this.runGeneration;
     this.autoAdvanceTimer = setTimeout(() => { void (async () => {
       this.autoAdvanceTimer = null;
-      if (!this.autoFlowEnabled || generation !== this.runGeneration ||
+      if (!this.autoFlowEnabled || !this.loopEnabled || generation !== this.runGeneration ||
+          this.pendingContinuationID !== targetID ||
           !["clear", "failed"].includes(this.run.state)) return;
       const reward = this.isDevPreview ? "DEV preview" :
         `+${this.lootGold} GOLD${this.lootItems.length ? ` · ${this.lootItems.join(", ")}` : ""}`;
@@ -720,22 +819,16 @@ export class IdleSession {
         }, 3500);
       }
       if (generation !== this.runGeneration) return;
-      this.run = new StageRun(stageByID(continuationStageID(stageID, this.run.state === "failed" ? "failed" : "clear"))!);
-      this.run.bestClearSeconds = this.stageProgress.bestSeconds[stageID] ?? null;
-      this.syncParty();
-      this.changed();
-      void this.startRun();
+      if (this.prepareContinuation(targetID)) void this.startRun();
     })().catch((error: unknown) => {
       this.stageError = `Stage retry: ${String(error)}`;
       this.changed();
-      if (this.autoFlowEnabled && generation === this.runGeneration)
-        this.autoAdvanceTimer = setTimeout(() => { this.autoAdvanceTimer = null; this.scheduleAutoAdvance(); }, 1800);
     }); }, this.run.state === "failed" ? 1200 : 850);
   }
 
-  private saveStagePreferences(): void {
+  private saveStagePreferences(selectedStageID = this.run.stage.id): void {
     if (!this.loaded) return;
-    const value = JSON.stringify({ selectedStageID: this.run.stage.id });
+    const value = JSON.stringify({ selectedStageID, loopMode: this.loopEnabled });
     this.preferenceWrites = this.preferenceWrites.then(async () => {
       const result = await this.client.userCustomData.setPrivateData(STAGE_PREFERENCES_KEY, value);
       if (!result.ok) {
@@ -847,7 +940,9 @@ export class IdleSession {
         }
         const completed = await this.stageService.complete(this.run.stage.id, this.serverRunId);
         this.serverRunId = null;
+        const before = this.stageProgress;
         this.stageProgress = completed.progress;
+        this.pendingContinuationID = continuationStageID(this.run.stage.id, "clear", before, completed.progress);
         this.validatedClearSeconds = completed.serverSeconds;
         this.lootGold = completed.rewards.gold;
         this.run.bestClearSeconds = completed.progress.bestSeconds[this.run.stage.id] ?? null;
@@ -883,7 +978,7 @@ export class IdleSession {
   /** The mode is on screen: collect what the hero earned meanwhile, then keep collecting. */
   activate(): void {
     this.autoFlowEnabled = true;
-    if (this.loaded && this.run.state === "ready") void this.startRun();
+    if (this.loopEnabled && this.loaded && this.run.state === "ready") void this.startRun();
     if (["clear", "failed"].includes(this.run.state)) this.scheduleAutoAdvance();
     void this.collect();
     this.collectTimer ??= setInterval(
@@ -894,6 +989,7 @@ export class IdleSession {
 
   suspend(): void {
     this.autoFlowEnabled = false;
+    this.cancelAutoAdvance();
     if (this.collectTimer) clearInterval(this.collectTimer);
     this.collectTimer = null;
     // The finite V1 run is transient. Do not write the legacy wave-stage key
@@ -1019,6 +1115,7 @@ export class IdleSession {
       try {
         const preferences = JSON.parse(res.data.Private?.[STAGE_PREFERENCES_KEY]?.Value ?? "{}");
         this.run = new StageRun(stageByID(farmingStageID(preferences.selectedStageID, this.stageProgress))!);
+        if (typeof preferences.loopMode === "boolean") this.loopEnabled = preferences.loopMode;
       } catch { /* Invalid optional preferences fall back to the first stage. */ }
       this.run.bestClearSeconds = this.stageProgress.bestSeconds[this.run.stage.id] ?? null;
       this.capacity = partyCapacity(res.data.ReadOnly?.[PARTY_CAPACITY_KEY]?.Value);
@@ -1044,7 +1141,7 @@ export class IdleSession {
     }
     this.loaded = true;
     this.changed();
-    if (this.autoFlowEnabled) void this.startRun();
+    if (this.autoFlowEnabled && this.loopEnabled) void this.startRun();
   }
 
   /** `undefined` — the login state did not bring the custom data at all (ask once). */

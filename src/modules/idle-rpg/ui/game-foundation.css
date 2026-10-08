@@ -11,6 +11,12 @@
 .gh-stage-hud__fill{height:100%;background:linear-gradient(#ffe19a,#e7a837 45%,#9b5c1d);box-shadow:inset 0 1px #fff9;transition:width .12s linear}
 .gh-stage-hud__boss{display:grid;place-items:center;flex:0 0 30px;width:30px;height:30px;border:2px solid #e34c38;border-radius:5px;background:#451914;box-shadow:0 0 6px #de3527,inset 0 0 3px #000}
 .gh-stage-hud__boss img{display:block;width:25px;height:25px;object-fit:contain}
+.gh-stage-hud__controls{display:flex;align-items:center;gap:6px;margin-top:3px;padding:3px 6px;border:1px solid #775d39;border-radius:4px;background:#211c19df;color:#f2dbab;font:700 10px system-ui,sans-serif}
+.gh-stage-hud__stage{margin-right:auto;white-space:nowrap}
+.gh-stage-hud__loop{display:flex;align-items:center;gap:3px;white-space:nowrap;cursor:pointer}
+.gh-stage-hud__loop input{margin:0;accent-color:#d59a3c}
+.gh-stage-hud__controls button{padding:3px 7px;border:1px solid #9e7744;border-radius:3px;background:#493321;color:#ffe3ae;font:700 10px system-ui,sans-serif;cursor:pointer}
+.gh-stage-hud__controls button:disabled{opacity:.45;cursor:default}
 .gh-stage-transition{position:absolute;z-index:19;left:0;right:0;top:0;height:min(44%,430px);display:grid;place-items:center;overflow:hidden;pointer-events:none}
 .gh-stage-transition strong{position:relative;z-index:2;max-width:90%;padding:7px 24px;border:2px solid #cf9d56;border-radius:3px;background:linear-gradient(#423027ef,#231b19ed);box-shadow:0 4px 14px #000b;color:#ffe1a0;font:900 clamp(20px,4vw,34px) Georgia,serif;letter-spacing:.12em;text-align:center;text-shadow:0 2px 2px #160f0c;animation:gh-result-banner 1.1s ease-out both}
 .gh-stage-transition--failed strong{color:#ffb7a0;border-color:#b9614a}

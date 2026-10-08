@@ -1,5 +1,35 @@
 # Grind Heroes finite stage and progression
 
+## Automatic frontier progression and farming loop (2026-10-08)
+
+The active PLAY mode previously started the selected unlocked stage automatically, then repeated
+that same stage after both a server-validated clear and a failed run. `grind_stage_progress_v2`
+in server-written ReadOnly custom data already stores `highestUnlocked`, completion counts and
+best times. `highestUnlocked` is the one-based catalogue position of the furthest stage the
+server permits a player to attempt; the last cleared stage is derived from server completion
+counts. The selected/current stage remains a separate Private preference and may be older.
+
+The same `grind_stage_preferences_v1` Private record now also stores a Boolean `loopMode`;
+missing/legacy values default to Loop ON. Loop OFF lets the current battle and its reward
+settle, then stops; selecting a map node, pressing NEXT or pressing START explicitly launches
+another battle. Turning Loop ON starts a ready stage or resumes a settled continuation.
+On a first clear of the unlocked frontier, Loop ON advances to the newly server-unlocked stage
+only after CloudCode completion and Inventory refresh. A previously cleared stage repeats
+itself, including an intentionally selected older stage. After a frontier defeat, the client
+closes the active server run, refreshes authoritative progress, falls back to the last cleared
+stage and farms it. It stays there until NEXT selects the unlocked frontier again. If stage
+1-1 fails before any stage has been cleared, the loop stops for a manual retry.
+
+The run generation, single in-flight start request and one-result-per-StageRun guard prevent
+duplicate continuation. Stage completion, unlocks, XP, GOLD and chests remain in the existing
+CloudCode handlers; the client only selects a valid next stage. Reload restores the server
+progress and saved selected stage/Loop preference; a transient in-progress fight starts fresh.
+The full client bundle with 107 PNGs went live directly on PROD as **v44**
+(`bldb4592f52f28445178622c4077b65be8d`). On a PROD guest, NEXT began
+1-2, validated clears advanced through 1-3 to 1-4, a 1-4 defeat returned to
+1-3 farming, and NEXT manually started 1-4 again. The final live page loaded
+the v44 client; Loop remained ON and the selected 1-3 farm survived reload.
+
 ## Production release (2026-10-07)
 
 Client build 26 (`blda30a385c7156464892bf16c358e2961f`) is live at

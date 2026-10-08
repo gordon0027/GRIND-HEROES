@@ -37,6 +37,15 @@ export function makeGamePanel(session: IdleSession, features: FeatureRegistry): 
               <b aria-hidden="true">×{session.chestCount(itemID)}</b>
             </button>)}
           </div>
+          <div className="gh-stage-hud__controls">
+            <span className="gh-stage-hud__stage">Stage {run.stage.chapter}-{run.stage.stage}</span>
+            <label className="gh-stage-hud__loop"><input type="checkbox" checked={session.loopEnabled}
+              onChange={(event) => session.setLoopEnabled(event.target.checked)} /> Loop</label>
+            {session.awaitingManualStart && session.canManuallyStart ? <button type="button"
+              onClick={() => session.startCurrentStage()}>START</button> : null}
+            {session.nextStageID ? <button type="button" disabled={!session.canSelectNext}
+              onClick={() => { const next = session.nextStageID; if (next) session.selectStage(next); }}>NEXT</button> : null}
+          </div>
           {session.lastClearNotice ? <div className="gh-stage-hud__notice" role="status">{session.lastClearNotice}</div> : null}
           {session.lootItems.length ? <div className="gh-stage-hud__notice" role="status">{session.lootItems.join(", ")}</div> : null}
           {session.lootError || session.stageError ? <div className="gh-stage-hud__error" role="alert">{session.lootError ?? session.stageError}</div> : null}

@@ -80,6 +80,7 @@ export class StageService {
   }
 
   async fail(runId: string): Promise<void> {
-    await this.execute("failStageRun", { runId });
+    const value = await this.execute("failStageRun", { runId });
+    if (value.closed !== true) throw new Error(String(value.reason ?? "stage failure was not closed"));
   }
 }

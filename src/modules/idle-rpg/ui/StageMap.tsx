@@ -86,9 +86,9 @@ export function StageMap({ session, play }: { session: IdleSession; play: boolea
           return <button key={stage.id} type="button" style={style}
             className={`gh-map-node${unlocked ? " is-unlocked" : " is-locked"}${completed ? " is-completed" : ""}${selected ? " is-current" : ""}${boss ? " is-boss" : ""}${special ? " is-special" : ""}`}
             disabled={!unlocked || session.lootPending || session.lootBusy}
-            aria-label={`Stage ${stage.chapter}-${stage.stage}, ${selected ? "currently farming" : completed ? "completed" : unlocked ? "unlocked" : "locked"}${boss ? ", chapter boss" : ""}`}
+            aria-label={`Stage ${stage.chapter}-${stage.stage}, ${selected ? completed ? "currently farming" : "current progression stage" : completed ? "completed" : unlocked ? "unlocked" : "locked"}${boss ? ", chapter boss" : ""}`}
             aria-current={selected ? "location" : undefined}
-            title={`${stage.name} · ${selected ? "Farming" : unlocked ? "Farm this stage" : "Locked"}`}
+            title={`${stage.name} · ${selected ? completed ? "Farming" : "Progressing" : unlocked ? "Select this stage" : "Locked"}`}
             onClick={() => session.selectStage(stage.id)}>
             {selected && <span className="gh-map-node__party"><img src={heroUi.functionIcon("function_icon_battle")} alt="" /></span>}
             <span className="gh-map-node__disc">
@@ -104,7 +104,7 @@ export function StageMap({ session, play }: { session: IdleSession; play: boolea
       </div>
       <div className="gh-stage-map__detail">
         <div className="gh-stage-map__detail-main"><strong>{selectedVisible ? current.name : chapterName}</strong>
-          <span>{selectedVisible ? "FARMING HERE" : `Farming ${current.chapter}-${current.stage} · Act ${current.chapter}`}</span></div>
+          <span>{selectedVisible ? (session.stageProgress.completed[current.id] ?? 0) > 0 ? "FARMING HERE" : "PROGRESSING HERE" : `Current ${current.chapter}-${current.stage} · Act ${current.chapter}`}</span></div>
         {selectedVisible && <div className="gh-stage-map__detail-stats">
           <span>Best <b>{session.stageProgress.bestSeconds[current.id] == null ? "—" : `${session.stageProgress.bestSeconds[current.id]!.toFixed(1)}s`}</b></span>
           <span>Power <b>{current.recommendedPower ?? "—"}</b></span>
