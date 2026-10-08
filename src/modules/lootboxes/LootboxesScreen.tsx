@@ -153,33 +153,35 @@ function LootboxOpening({
   const play = useSound();
   const kit = useUiKit();
   const boxRef = useRef<HTMLDivElement>(null);
+  const openingRef = useRef(false);
   const [busy, setBusy] = useState(false);
 
   const openBox = async (close: () => void) => {
+    if (openingRef.current) return;
+    openingRef.current = true;
     setBusy(true);
     const started = Date.now();
-    const res = await client.lootbox.open(
-      option.lootboxID,
-      count,
-      option.optionID,
-    );
-    // Let the shake play for a moment even on a fast server — the anticipation is the point.
-    const wait = Math.max(
-      0,
-      (kit.motion.on ? 700 : 0) - (Date.now() - started),
-    );
-    await new Promise((r) => setTimeout(r, wait));
-    setBusy(false);
-    if (!res.ok) {
-      toast(errorText(res.error), "error");
-      return;
+    try {
+      const res = await client.lootbox.open(option.lootboxID, count, option.optionID);
+      // Let the shake play for a moment even on a fast server — the anticipation is the point.
+      const wait = Math.max(0, (kit.motion.on ? 700 : 0) - (Date.now() - started));
+      await new Promise((r) => setTimeout(r, wait));
+      if (!res.ok) {
+        toast(errorText(res.error), "error");
+        return;
+      }
+      play("lootbox");
+      kit.fx.burst(boxRef.current);
+      close();
+      // `Resources` is the whole operation — every box of a bulk opening already summed by the server
+      // (`Results` is the same per box; adding both would count everything twice).
+      celebrate(grantedBy(res.data), { sound: "levelUp" });
+    } catch {
+      toast("Unable to open chest. Refresh Inventory before trying again.", "error");
+    } finally {
+      openingRef.current = false;
+      setBusy(false);
     }
-    play("lootbox");
-    kit.fx.burst(boxRef.current);
-    close();
-    // `Resources` is the whole operation — every box of a bulk opening already summed by the server
-    // (`Results` is the same per box; adding both would count everything twice).
-    celebrate(grantedBy(res.data), { sound: "levelUp" });
   };
 
   return (

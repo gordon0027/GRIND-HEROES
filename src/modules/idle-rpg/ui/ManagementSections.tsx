@@ -1,5 +1,5 @@
 import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
-import { GEAR_STATS, availableGear, compareGear, equippedIn, gearAllowsHero, type GearBonuses, type GearItem, type GearSlot, type GearStat } from "../game/equipment";
+import { availableGear, equippedIn, gearAllowsHero, type GearItem, type GearSlot } from "../game/equipment";
 import type { HeroView, IdleSession } from "../game/session";
 import type { SlotIndex } from "../game/stageRun";
 import { RECRUITABLE_HERO_IDS } from "../game/progression";
@@ -8,12 +8,11 @@ import { HERO_LEVEL_CAP, xpToNext } from "../game/heroXP";
 import { emptySlotIcon, inventoryHero, rarityColors } from "./inventoryPresentation";
 import { gearImage } from "./itemImage";
 import { EquipmentArt } from "../../../shared/ui/EquipmentArt";
+import { GearStatRows } from "./GearStatRows";
+import { PremiumChestPanel } from "./PremiumChestPanel";
 import "./management-sections.css";
 
 const slotGroups: [GearSlot[], GearSlot[]] = [["Helmet", "Armor", "Gloves"], ["Weapon", "Offhand", "Boots"]];
-const statFields: Record<GearStat, keyof GearBonuses> = {
-  Attack: "attack", "Max HP": "maxHp", Defence: "defence", "Attack Speed": "attackSpeed", "Move Speed": "moveSpeed",
-};
 function itemImage(item: GearItem | null, slot: GearSlot, heroID: string): string {
   if (item) {
     const resolved = gearImage(item);
@@ -138,10 +137,8 @@ function ItemDetails({ session, heroID, item, close }: {
   session: IdleSession; heroID: string; item: GearItem; close: () => void;
 }): ReactNode {
   const current = equippedIn(session.gearItems, heroID, item.slot);
-  const delta = compareGear(item, current);
   const problems = session.equipmentProblems(item, heroID);
   const isWornHere = item.equippedBy?.heroID === heroID;
-  const number = (value: number) => Number(value.toFixed(2)).toString();
   return <div className="gh-item-detail" role="region" aria-label={`${item.name} details`}>
     <div className="gh-item-detail__header">
       <img src={itemImage(item, item.slot, heroID)} alt="" />
@@ -150,13 +147,7 @@ function ItemDetails({ session, heroID, item, close }: {
       <button type="button" onClick={close} aria-label="Close item details">×</button>
     </div>
     {current && current.instanceID !== item.instanceID ? <p className="gh-item-detail__compare">Compared with {current.name}</p> : null}
-    <div className="gh-item-detail__stats">{GEAR_STATS.map((stat) => {
-      const field = statFields[stat];
-      const change = delta[field];
-      return <div key={stat}><span>{stat}</span><strong>{number(item.bonuses[field])}</strong>
-        <em className={change < 0 ? "negative" : change > 0 ? "positive" : "neutral"}>
-          {change > 0 ? "+" : ""}{number(change)}</em></div>;
-    })}</div>
+    <GearStatRows item={item} comparedWith={current} />
     {problems.length && !isWornHere ? <div className="gh-item-detail__requirements">{problems.map((problem) =>
       <p key={problem} className="gh-item-detail__problem">{problem}</p>)}</div> : null}
     {isWornHere ? <FantasyButton disabled={session.equipmentBusy}
@@ -313,6 +304,7 @@ export function InventorySection({ session }: { session: IdleSession }): ReactNo
   const chosenHero = inventoryHero(session.roster, preferredHeroID ?? session.selectedID);
   const selected = session.gearItems.find((item) => item.instanceID === selectedID) ?? null;
   return <SectionFrame title="INVENTORY" kicker="GRIND HEROES / EQUIPMENT" className="gh-management--inventory">
+    <PremiumChestPanel session={session} />
     {!chosenHero ? <p className="gh-empty" role="status">Loading inventory…</p> : <>
     <div className="gh-management__inventory-layout">
       <div className="gh-management__hero-column">
