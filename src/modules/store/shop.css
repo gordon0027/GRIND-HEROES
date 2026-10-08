@@ -6,13 +6,22 @@
 .gh-shop__intro { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 10px; }
 .gh-shop__intro h3 { margin: 0; color: #f1cc84; font-size: 17px; letter-spacing: .08em; }
 .gh-shop__intro p { margin: 3px 0 0; color: #b6ad9f; font-size: 12px; }
+.gh-shop__balances { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 5px; }
 .gh-shop__balance { display: flex; align-items: center; gap: 5px; white-space: nowrap; padding: 7px 10px; border: 1px solid #715e43; background: #201d1b; font-size: 12px; }
 .gh-shop__balance img { width: 20px; height: 20px; object-fit: contain; }
 .gh-shop__balance strong { color: #f1cc84; font-size: 16px; }
-.gh-shop__notice { margin: 0 0 12px; color: #bca884; font-size: 12px; }
+.gh-shop__actions { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+.gh-shop__notice { margin: 0; color: #bca884; font-size: 12px; }
+.gh-shop__account-note { margin: 0 0 12px; padding: 9px 10px; border: 1px solid #715e43; background: #29221c; color: #e8d8ba; font-size: 12px; line-height: 1.4; }
+.gh-shop__account-note button { margin-left: 5px; padding: 0; border: 0; background: none; color: #f1cc84; font: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; }
+.gh-shop__account-note button:focus-visible { outline: 2px solid #e8c17d; outline-offset: 2px; }
+.gh-shop__deposit { box-sizing: border-box; min-height: 34px; padding: 4px 10px; border: 1px solid #b9945d; background: #392c1d; color: #fff0be; font: 700 12px Georgia, serif; white-space: nowrap; cursor: pointer; }
+.gh-shop__deposit:hover { background: #4a3822; }
+.gh-shop__deposit:focus-visible { outline: 2px solid #e8c17d; outline-offset: 2px; }
 .gh-shop__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
 .gh-shop__card { --accent: #72bdda; box-sizing: border-box; position: relative; display: flex; flex-direction: column; align-items: center; gap: 5px; min-width: 0; min-height: 263px; padding: 10px; border: 1px solid color-mix(in srgb, var(--accent), #3b332b 55%); border-radius: 3px; background: linear-gradient(#312a25, #211d1b); box-shadow: inset 0 1px #ad8c5940, 0 3px 8px #0004; color: #f2e6d3; text-align: center; cursor: pointer; font: inherit; }
 .gh-shop__card:hover { border-color: var(--accent); box-shadow: 0 0 15px color-mix(in srgb, var(--accent), transparent 80%); }
+.gh-shop__card:disabled { opacity: .55; cursor: not-allowed; }
 .gh-shop__card--rare { --accent: #75a8ed; } .gh-shop__card--epic, .gh-shop__card--premium { --accent: #bf85e9; } .gh-shop__card--legendary { --accent: #f0b75b; }
 .gh-shop__art { display: grid; place-items: center; width: 100%; height: 120px; background: radial-gradient(circle, color-mix(in srgb, var(--accent), transparent 78%), transparent 70%); }
 .gh-shop__art img { max-width: 122px; max-height: 112px; object-fit: contain; image-rendering: pixelated; }
@@ -33,4 +42,4 @@
 .gh-shop__detail-price small { display: block; color: #a99c89; font-size: 11px; font-weight: 400; }
 .gh-shop__buy { width: 100%; }
 .gh-shop__unavailable { color: #f2ad8d !important; }
-@media (max-width: 560px) { .gh-shop__intro { align-items: start; flex-wrap: wrap; } .gh-shop__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .gh-shop__card { min-height: 236px; padding: 7px; } .gh-shop__art { height: 96px; } .gh-shop__art img { max-width: 100px; max-height: 92px; } .gh-shop-shell__tabs button { min-height: 34px; padding: 1px 6px; border-width: 7px; border-image-width: 7px; font-size: 11px; } }
+@media (max-width: 560px) { .gh-shop__intro { align-items: start; flex-wrap: wrap; } .gh-shop__balances { justify-content: flex-start; } .gh-shop__actions { flex-wrap: wrap; } .gh-shop__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .gh-shop__card { min-height: 236px; padding: 7px; } .gh-shop__art { height: 96px; } .gh-shop__art img { max-width: 100px; max-height: 92px; } .gh-shop-shell__tabs button { min-height: 34px; padding: 1px 6px; border-width: 7px; border-image-width: 7px; font-size: 11px; } }
