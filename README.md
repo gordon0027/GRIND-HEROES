@@ -69,10 +69,11 @@ flowchart LR
     Player[Player / browser] --> Game[React UI + Phaser combat]
     Game --> SDK[iDos Games SDK]
     SDK --> State[Characters, inventory, stages, loot]
-    SDK --> Economy[Store and GEMS marketplace]
+    SDK --> Market[GEMS equipment marketplace]
+    SDK --> Store[GH Store]
     Player --> Wallet[iDos platform wallet]
     Wallet <--> Solana[Solana GH token]
-    Wallet <--> Economy
+    Wallet -->|GH deposits / withdrawals| SDK
 ```
 
 ### iDos Games integration
