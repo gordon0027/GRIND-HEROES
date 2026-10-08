@@ -12,6 +12,7 @@ instead.
 - [Item Balance V1](item-balance-v1.md) — 50-item matrix, Act loot tables, progression and economy audit.
 - [GOLD economy rebalance V1](gold-economy-v1.md) — DEV purchase prices, active farming audit and idle GOLD target.
 - [Hero art and battle visuals V1](hero-art.md) — shared sprite animation mapping and looping Stage 1 forest.
+- [Battle render resolution](battle-render-resolution.md) — DPR-aware Phaser canvas with unchanged game coordinates and PNG assets.
 - [Item art direction](item-art.md) — user-supplied visual references and rendering rules for inventory icons.
 - [UI foundation V2](hero-window.md) — five game sections, separate Inventory and Team panels, shared fantasy frame and one footer.
 - [Grind Heroes marketplace](marketplace.md) — DEV equipment market UI; Main token pricing awaits iDos Marketplace crypto support.

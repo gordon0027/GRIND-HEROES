@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import type { IdleSession } from "../game/session";
+import type { BattleRenderSize } from "../game/renderResolution";
 import type { EnemyProjectile, PendingProjectile, RuntimeEnemy, RuntimeHero, RunEvent, StageRun } from "../game/stageRun";
 import { battleHeight } from "../layout";
 import { heroArchetype } from "../game/heroArchetypes";
@@ -70,7 +71,13 @@ export class GrindScene extends Phaser.Scene {
   private lastRun: StageRun | null = null;
   private lastElapsed = 0;
 
-  constructor(private readonly session: IdleSession) { super("grind-stage"); }
+  constructor(private readonly session: IdleSession,
+    private readonly getRenderSize: () => BattleRenderSize) { super("grind-stage"); }
+
+  private syncCameraResolution(): void {
+    const { scaleX, scaleY } = this.getRenderSize();
+    this.cameras.main.setOrigin(0, 0).setZoom(scaleX, scaleY);
+  }
 
   preload(): void {
     for (const visual of Object.values(HERO_VISUALS))
@@ -85,6 +92,8 @@ export class GrindScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.syncCameraResolution();
+    this.scale.on(Phaser.Scale.Events.RESIZE, this.syncCameraResolution, this);
     registerHeroAnimations(this);
     registerEnemyAnimations(this);
     const orb = this.add.graphics();
@@ -95,7 +104,10 @@ export class GrindScene extends Phaser.Scene {
     orb.destroy();
     this.enemyPaint = this.add.graphics().setDepth(3);
     this.heroBars = this.add.graphics().setDepth(7);
-    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.resetActors());
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.scale.off(Phaser.Scale.Events.RESIZE, this.syncCameraResolution, this);
+      this.resetActors();
+    });
   }
 
   override update(_time: number, deltaMs: number): void {
@@ -110,11 +122,11 @@ export class GrindScene extends Phaser.Scene {
         visual: e.visual ?? "goblin1" }] as const));
     const beforeHeroes = new Map(run.heroes.map((h) => [h.id, h.hp] as const));
     const events = this.session.tickRun(deltaMs / 1000);
-    this.world.update(run, deltaMs / 1000, this.scale.width);
+    const { cssWidth: w, cssHeight } = this.getRenderSize();
+    this.world.update(run, deltaMs / 1000, w);
     this.visualTime += Math.max(0, deltaMs);
     this.lastElapsed = run.elapsedSeconds;
-    const h = battleHeight(this.scale.height);
-    const w = this.scale.width;
+    const h = battleHeight(cssHeight);
     const groundY = h * 0.82;
     this.drawBackground(run, w, h, groundY);
     this.drawEnemies(this.world.visibleEnemies(run), events, beforeEnemies, w, groundY, h);

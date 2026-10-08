@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import { GrindScene } from "../phaser/GrindScene";
 import type { IdleSession } from "./session";
+import { battleRenderSize, sameBattleRenderSize, type BattleRenderSize } from "./renderResolution";
 
 /**
  * Owns the Phaser game that draws the session's fight. Created on mount (Phaser needs the host
@@ -8,26 +9,55 @@ import type { IdleSession } from "./session";
  */
 export class IdleRpgController {
   private readonly game: Phaser.Game;
+  private readonly resizeObserver: ResizeObserver;
+  private readonly parent: HTMLElement;
+  private renderSize: BattleRenderSize;
+
+  private readonly updateRenderSize = (): void => {
+    const next = battleRenderSize(this.parent.clientWidth || 480,
+      this.parent.clientHeight || 800, window.devicePixelRatio);
+    if (sameBattleRenderSize(this.renderSize, next)) return;
+    this.renderSize = next;
+    // ScaleManager.NONE lets the backing store change without moving the CSS-sized game world.
+    this.game.scale.zoom = 1 / next.effectiveDpr;
+    this.game.scale.resize(next.backingWidth, next.backingHeight);
+    this.setCanvasDisplaySize(next);
+  };
+
+  private setCanvasDisplaySize(size: BattleRenderSize): void {
+    this.game.canvas.style.width = `${size.cssWidth}px`;
+    this.game.canvas.style.height = `${size.cssHeight}px`;
+  }
 
   constructor(
     parent: HTMLElement,
     readonly session: IdleSession,
   ) {
+    this.parent = parent;
+    this.renderSize = battleRenderSize(parent.clientWidth || 480,
+      parent.clientHeight || 800, window.devicePixelRatio);
     this.game = new Phaser.Game({
       type: Phaser.AUTO,
       parent,
-      width: parent.clientWidth || 480,
-      height: parent.clientHeight || 800,
+      width: this.renderSize.backingWidth,
+      height: this.renderSize.backingHeight,
       backgroundColor: "#7ec8ff",
-      pixelArt: true,
-      roundPixels: true,
-      scene: new GrindScene(session),
+      pixelArt: false,
+      roundPixels: false,
+      antialias: true,
+      antialiasGL: true,
+      scene: new GrindScene(session, () => this.renderSize),
       scale: {
         // The canvas fills the full-bleed host; the scene draws the field into its top part and the
         // module's panel covers the rest (layout.ts).
-        mode: Phaser.Scale.RESIZE,
+        mode: Phaser.Scale.NONE,
+        zoom: 1 / this.renderSize.effectiveDpr,
       },
     });
+    this.setCanvasDisplaySize(this.renderSize);
+    this.resizeObserver = new ResizeObserver(this.updateRenderSize);
+    this.resizeObserver.observe(parent);
+    window.addEventListener("resize", this.updateRenderSize);
 
     // Makes the game observable in the AI Coder's live preview, which reads this exact global.
     //
@@ -95,6 +125,8 @@ export class IdleRpgController {
   }
 
   destroy(): void {
+    this.resizeObserver.disconnect();
+    window.removeEventListener("resize", this.updateRenderSize);
     this.game.destroy(true);
     // Drop the debug global with the game itself: the Mode Router destroys a suspended mode, and a
     // stale reference here would show an observer a game that no longer exists.
