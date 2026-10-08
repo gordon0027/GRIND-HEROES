@@ -13,12 +13,12 @@
 .gh-shop__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
 .gh-shop__card { --accent: #72bdda; box-sizing: border-box; position: relative; display: flex; flex-direction: column; align-items: center; gap: 5px; min-width: 0; min-height: 263px; padding: 10px; border: 1px solid color-mix(in srgb, var(--accent), #3b332b 55%); border-radius: 3px; background: linear-gradient(#312a25, #211d1b); box-shadow: inset 0 1px #ad8c5940, 0 3px 8px #0004; color: #f2e6d3; text-align: center; cursor: pointer; font: inherit; }
 .gh-shop__card:hover { border-color: var(--accent); box-shadow: 0 0 15px color-mix(in srgb, var(--accent), transparent 80%); }
-.gh-shop__card--rare { --accent: #75a8ed; } .gh-shop__card--epic { --accent: #bf85e9; } .gh-shop__card--legendary { --accent: #f0b75b; }
+.gh-shop__card--rare { --accent: #75a8ed; } .gh-shop__card--epic, .gh-shop__card--premium { --accent: #bf85e9; } .gh-shop__card--legendary { --accent: #f0b75b; }
 .gh-shop__art { display: grid; place-items: center; width: 100%; height: 120px; background: radial-gradient(circle, color-mix(in srgb, var(--accent), transparent 78%), transparent 70%); }
 .gh-shop__art img { max-width: 122px; max-height: 112px; object-fit: contain; image-rendering: pixelated; }
 .gh-shop__art span, .gh-shop__detail-art span { color: var(--accent, #bf85e9); font-size: 58px; }
 .gh-shop__kind { color: var(--accent); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .16em; }
-.gh-shop__kind--rare { color: #75a8ed; } .gh-shop__kind--epic { color: #bf85e9; } .gh-shop__kind--legendary { color: #f0b75b; }
+.gh-shop__kind--rare { color: #75a8ed; } .gh-shop__kind--epic, .gh-shop__kind--premium { color: #bf85e9; } .gh-shop__kind--legendary { color: #f0b75b; }
 .gh-shop__card strong { min-height: 38px; display: grid; place-items: center; font-size: 16px; line-height: 1.2; }
 .gh-shop__price { color: #e6bd79; font-size: 14px; font-weight: 700; }
 .gh-shop__card-action { width: 100%; margin-top: auto; padding-top: 7px; border-top: 1px solid #4a4036; color: #fff0be; font-size: 11px; font-weight: 700; }

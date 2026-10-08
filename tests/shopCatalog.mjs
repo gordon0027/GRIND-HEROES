@@ -16,8 +16,13 @@ for (const product of shopCatalog) {
   assert.ok(product.provisionalTokenPrice > 0);
   assert.ok(existsSync(resolve("public", product.art)), `missing artwork: ${product.art}`);
   assert.deepEqual(requestTokenPurchase(product.id),
-    { status: "unavailable", code: "TOKEN_PROVIDER_NOT_IMPLEMENTED" });
+    product.enabled
+      ? { status: "unavailable", code: "TOKEN_PROVIDER_NOT_IMPLEMENTED" }
+      : { status: "failed", code: "PRODUCT_UNAVAILABLE" });
 }
+
+assert.deepEqual(visibleProducts("chests").map((product) =>
+  [product.id, product.fulfillmentLootboxID]), [["premium_chest_v1", "premium_equipment_v1"]]);
 
 assert.deepEqual(requestTokenPurchase("nonexistent"),
   { status: "failed", code: "PRODUCT_UNAVAILABLE" });

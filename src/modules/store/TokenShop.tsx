@@ -23,19 +23,19 @@ export function TokenShop({ category }: { category: ShopCategory }): ReactNode {
     <div className="gh-shop__intro">
       <div>
         <h3>{category === "gems" ? "GEMS" : "PREMIUM CHESTS"}</h3>
-        <p>{category === "gems" ? "Stock up for Marketplace equipment." : "Premium chest concepts awaiting server loot tables."}</p>
+        <p>{category === "gems" ? "Stock up for Marketplace equipment." : "One server-rolled equipment reward per chest."}</p>
       </div>
       <div className="gh-shop__balance"><img src={gemIcon} alt="" /> GEMS <strong>{typeof balance === "number" ? balance.toLocaleString() : "—"}</strong></div>
     </div>
     <p className="gh-shop__notice">TOKEN prices are provisional. TOKEN checkout is not connected.</p>
     {products.length === 0 ? <div className="gh-shop__empty">No products are available in this category.</div> :
       <div className="gh-shop__grid">{products.map((product) => <button key={product.id} type="button"
-        className={`gh-shop__card gh-shop__card--${product.rarity?.toLowerCase() ?? "gems"}`}
+        className={`gh-shop__card gh-shop__card--${product.rarity?.toLowerCase() ?? (product.category === "chests" ? "premium" : "gems")}`}
         onClick={() => setPicked(product)}>
         {product.badge ? <span className="gh-shop__badge">{product.badge}</span> : null}
         <span className="gh-shop__art">{artFailed[product.id] ? <span aria-hidden="true">{category === "gems" ? "◆" : "✦"}</span> :
           <img src={`${import.meta.env.BASE_URL}${product.art}`} alt="" onError={() => setArtFailed((previous) => ({ ...previous, [product.id]: true }))} />}</span>
-        <span className="gh-shop__kind">{product.rarity ?? "GEMS"}</span>
+        <span className="gh-shop__kind">{product.rarity ?? (product.category === "chests" ? "PREMIUM" : "GEMS")}</span>
         <strong>{product.amount ? `${product.amount.toLocaleString()} GEMS` : product.title}</strong>
         <span className="gh-shop__price">≈ {product.provisionalTokenPrice} {SHOP_PAYMENT_CURRENCY}</span>
         <span className="gh-shop__card-action">VIEW DETAILS</span>
@@ -55,9 +55,9 @@ function ProductDetails({ product, artFailed, onClose }: { product: ShopProduct;
   return <Popup title={product.title} onClose={onClose}>
     <div className="gh-shop__details">
       <div className="gh-shop__detail-art">{artFailed ? <span aria-hidden="true">✦</span> : <img src={`${import.meta.env.BASE_URL}${product.art}`} alt="" />}</div>
-      {product.rarity ? <span className={`gh-shop__kind gh-shop__kind--${product.rarity.toLowerCase()}`}>{product.rarity} · Premium</span> : <strong>{product.amount?.toLocaleString()} GEMS</strong>}
+      {product.category === "chests" ? <span className={`gh-shop__kind gh-shop__kind--${product.rarity?.toLowerCase() ?? "premium"}`}>{product.rarity ? `${product.rarity} · ` : ""}Premium</span> : <strong>{product.amount?.toLocaleString()} GEMS</strong>}
       <p>{product.description}</p>
-      <div className="gh-shop__detail-price">≈ {product.provisionalTokenPrice} {SHOP_PAYMENT_CURRENCY} <small>Provisional DEV price</small></div>
+      <div className="gh-shop__detail-price">≈ {product.provisionalTokenPrice} {SHOP_PAYMENT_CURRENCY} <small>Provisional price</small></div>
       <button type="button" className="gh-shop__buy" onClick={buy}>BUY</button>
       {purchaseState === "unavailable" ? <p role="status" className="gh-shop__unavailable">TOKEN checkout is coming later. No payment or reward was processed.</p> : null}
     </div>
