@@ -15,3 +15,4 @@ instead.
 - [Item art direction](item-art.md) — user-supplied visual references and rendering rules for inventory icons.
 - [UI foundation V2](hero-window.md) — five game sections, separate Inventory and Team panels, shared fantasy frame and one footer.
 - [Grind Heroes marketplace](marketplace.md) — DEV equipment market UI; Main token pricing awaits iDos Marketplace crypto support.
+- [Grind Heroes Shop V1](shop.md) — TOKEN product previews beside the existing server-backed Store, pending checkout and premium loot configuration.

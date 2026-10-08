@@ -8,6 +8,7 @@ import { useIDosGamesClient } from "@idosgames/react";
 import { StoreScreen } from "./StoreScreen";
 import { freeOffersWaiting, hasOffers } from "./model";
 import { t } from "./i18n";
+import { shopCatalog } from "./shopCatalog";
 
 // The shop as a feature of the game (ctx.features): the lobby shows it as a main tab once the
 // storefront has offers. Its badge counts free offers waiting to be taken (the daily gift), kept
@@ -51,8 +52,8 @@ function makeBadgeWatcher(features: FeatureRegistry) {
         const front = client.store.cachedStorefront;
         features.setAvailable(
           "store",
-          hasOffers(front),
-          "the storefront has no offers (Store section)",
+          hasOffers(front) || shopCatalog.some((product) => product.enabled),
+          "the storefront and Shop catalogue have no offers",
         );
         features.setBadge("store", freeOffersWaiting(front));
       };

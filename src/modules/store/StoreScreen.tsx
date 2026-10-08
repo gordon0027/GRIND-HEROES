@@ -54,6 +54,7 @@ import {
   sortedStores,
 } from "./model";
 import { t } from "./i18n";
+import { TokenShop } from "./TokenShop";
 
 // The shop, drawn from the storefront RESOLVED for this player (client.store.getStorefront — never
 // from the raw config): rotation, limits, badges and timers are computed by the server. Layout of the
@@ -68,7 +69,21 @@ interface Picked {
   offer: StorefrontOfferView;
 }
 
+type ShopTab = "gems" | "chests" | "supplies";
+
 export function StoreScreen({ args }: FeatureScreenProps): ReactNode {
+  const [tab, setTab] = useState<ShopTab>("gems");
+  return <div className="gh-shop-shell">
+    <nav className="gh-shop-shell__tabs" aria-label="Shop categories">
+      {([ ["gems", "GEMS"], ["chests", "PREMIUM CHESTS"], ["supplies", "SUPPLIES"] ] as const).map(([id, label]) =>
+        <button key={id} type="button" aria-current={tab === id ? "page" : undefined}
+          className={tab === id ? "is-active" : ""} onClick={() => setTab(id)}>{label}</button>)}
+    </nav>
+    {tab === "supplies" ? <LiveStoreScreen args={args} /> : <TokenShop category={tab} />}
+  </div>;
+}
+
+function LiveStoreScreen({ args }: Pick<FeatureScreenProps, "args">): ReactNode {
   const client = useIDosGamesClient();
   const [front, setFront] = useState<GetStorefrontResponse | null>(
     client.store.cachedStorefront,
