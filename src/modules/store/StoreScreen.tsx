@@ -55,9 +55,6 @@ import {
 } from "./model";
 import { t } from "./i18n";
 import { TokenShop } from "./TokenShop";
-import { tokenStoreOffers } from "./tokenPurchase";
-
-const tokenSectionIDs = new Set<string>(Object.values(tokenStoreOffers).map((offer) => offer.sectionID));
 
 // The shop, drawn from the storefront RESOLVED for this player (client.store.getStorefront — never
 // from the raw config): rotation, limits, badges and timers are computed by the server. Layout of the
@@ -149,8 +146,8 @@ function LiveStoreScreen({ args }: Pick<FeatureScreenProps, "args">): ReactNode 
 
   const stores = sortedStores(front);
   const store = stores.find((s) => s.StoreID === storeID) ?? stores[0];
-  // The GH shelves have their own GEMS / PREMIUM CHESTS views above.
-  const sections = sortedSections(store).filter((section) => !tokenSectionIDs.has(section.SectionID));
+  // Supplies is the GOLD shelf; GH packs and all retired starter offers stay out.
+  const sections = sortedSections(store).filter((section) => section.SectionID === "gold");
   if (!store || sections.length === 0)
     return <EmptyState glyph="shop" text={t("emptyShop")} />;
   const [first, ...rest] = sections;

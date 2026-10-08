@@ -12,6 +12,10 @@
 .gh-shop__balance strong { color: #f1cc84; font-size: 16px; }
 .gh-shop__actions { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
 .gh-shop__notice { margin: 0; color: #bca884; font-size: 12px; }
+.gh-shop__market-rate { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 3px 10px; margin: 0 0 12px; padding: 8px 10px; border: 1px solid #5c6474; background: linear-gradient(110deg, #222936, #201e24); color: #dce4f4; font: 11px system-ui, sans-serif; }
+.gh-shop__market-rate strong { color: #f0d995; font-size: 13px; }
+.gh-shop__market-rate a { color: #a9ceff; text-decoration: underline; }
+.gh-shop__usd, .gh-shop__details .gh-shop__usd { color: #b4c4d5; font: 11px system-ui, sans-serif; }
 .gh-shop__account-note { margin: 0 0 12px; padding: 9px 10px; border: 1px solid #715e43; background: #29221c; color: #e8d8ba; font-size: 12px; line-height: 1.4; }
 .gh-shop__account-note button { margin-left: 5px; padding: 0; border: 0; background: none; color: #f1cc84; font: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; }
 .gh-shop__account-note button:focus-visible { outline: 2px solid #e8c17d; outline-offset: 2px; }

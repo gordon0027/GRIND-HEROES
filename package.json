@@ -18,6 +18,7 @@
     "test:premium-chest": "node --experimental-strip-types tests/premiumChestV1.mjs",
     "test:premium-opening": "node --experimental-strip-types tests/premiumChestOpening.mjs",
     "test:shop": "node --experimental-strip-types tests/shopCatalog.mjs",
+    "test:gh-price": "node --experimental-strip-types tests/ghPrice.mjs",
     "test:token-orders": "node tests/tokenOrders.mjs",
     "test:progress": "node --experimental-strip-types tests/stageProgress.mjs",
     "test:rewards": "node --experimental-strip-types tests/stageRewards.mjs",
@@ -29,7 +30,7 @@
     "test:item-progress": "node --experimental-strip-types tests/itemProgression.mjs",
     "test:aggro": "node --experimental-strip-types tests/frontlineAggro.mjs",
     "test:feel": "node --experimental-strip-types tests/combatFeel.mjs",
-    "test": "npm run test:stage && npm run test:world && npm run test:ranged && npm run test:enemy-ranged && npm run test:aggro && npm run test:feel && npm run test:equipment && npm run test:grind-equipment && npm run test:chest && npm run test:chest-pools && npm run test:premium-chest && npm run test:premium-opening && npm run test:shop && npm run test:token-orders && npm run test:balance && npm run test:item-progress && npm run test:progress && npm run test:rewards && npm run test:xp && npm run test:enemy"
+    "test": "npm run test:stage && npm run test:world && npm run test:ranged && npm run test:enemy-ranged && npm run test:aggro && npm run test:feel && npm run test:equipment && npm run test:grind-equipment && npm run test:chest && npm run test:chest-pools && npm run test:premium-chest && npm run test:premium-opening && npm run test:shop && npm run test:gh-price && npm run test:token-orders && npm run test:balance && npm run test:item-progress && npm run test:progress && npm run test:rewards && npm run test:xp && npm run test:enemy"
   },
   "//": "Versions are pinned exactly: this is a seed for AI Coder projects, which build offline against a dependency allowlist baked at these versions (see scripts/pack-builder.mjs). Modules bring their own engine deps (three/phaser) when added.",
   "dependencies": {

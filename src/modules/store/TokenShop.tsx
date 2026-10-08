@@ -8,6 +8,7 @@ import {
   type ResolvedTokenOffer, type TokenPurchaseError,
 } from "./tokenPurchase";
 import { AuthType, type GetStorefrontResponse } from "@idosgames/core";
+import { fetchGhMarketQuote, formatGhUsd, ghMarketPairUrl, type GhMarketQuote } from "./ghPrice";
 import "./shop.css";
 
 const gemIcon = `${import.meta.env.BASE_URL}assets/ui/source/Component/UI_Etc/status_icon_gem.png`;
@@ -34,6 +35,8 @@ export function TokenShop({ category }: { category: ShopCategory }): ReactNode {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [balanceRefreshing, setBalanceRefreshing] = useState(false);
   const [balanceError, setBalanceError] = useState(false);
+  const [marketQuote, setMarketQuote] = useState<GhMarketQuote | null>(null);
+  const [marketLoading, setMarketLoading] = useState(true);
   const balanceRequest = useRef(false);
   const gems = state?.InventoryV2?.VirtualCurrencies?.GEMS?.Amount;
   const gh = state?.InventoryV2?.CryptoCurrencies?.Main?.Amount ?? "0";
@@ -82,6 +85,24 @@ export function TokenShop({ category }: { category: ShopCategory }): ReactNode {
     };
   }, [load, refreshBalance]);
 
+  useEffect(() => {
+    let active = true;
+    const controller = new AbortController();
+    const refreshMarket = async () => {
+      try {
+        const quote = await fetchGhMarketQuote(controller.signal);
+        if (active) setMarketQuote(quote);
+      } catch {
+        if (active) setMarketQuote(null);
+      } finally {
+        if (active) setMarketLoading(false);
+      }
+    };
+    void refreshMarket();
+    const timer = window.setInterval(() => void refreshMarket(), 120_000);
+    return () => { active = false; controller.abort(); window.clearInterval(timer); };
+  }, []);
+
   const products = visibleProducts(category);
   const selectedOffer = picked ? resolveTokenShopOffer(front, picked.id) : null;
   return <section className="gh-shop" aria-label={category === "gems" ? "Gem packs" : "Premium chests"}>
@@ -100,6 +121,12 @@ export function TokenShop({ category }: { category: ShopCategory }): ReactNode {
       <p className="gh-shop__notice">Purchases use GH already deposited into your game balance.</p>
       <button type="button" className="gh-shop__deposit" onClick={() => depositGh(client.titleID)}>Deposit GH</button>
     </div>
+    <div className="gh-shop__market-rate" role="status">
+      {marketQuote ? <>
+        <strong>1,000 GH ≈ {formatGhUsd(1000, marketQuote)}</strong>
+        <span>Market estimate · <a href={ghMarketPairUrl(marketQuote)} target="_blank" rel="noopener noreferrer">DexScreener</a> · refreshed every 2 min</span>
+      </> : <span>{marketLoading ? "Loading GH/USD market rate…" : "GH/USD market rate unavailable"}</span>}
+    </div>
     {balanceError ? <p role="alert" className="gh-shop__unavailable">Could not refresh your GH balance. <button type="button" onClick={() => void refreshBalance()}>Retry</button></p> : null}
     {!balanceRefreshing && !balanceError && gh === "0" && !signedInWithIdos ?
       <p className="gh-shop__account-note">GH deposited through your iDos Games account appears only when you sign into the game with that account. <button type="button" onClick={() => client.auth.logout()}>Sign in with iDos Games</button></p> : null}
@@ -116,18 +143,21 @@ export function TokenShop({ category }: { category: ShopCategory }): ReactNode {
           <span className="gh-shop__kind">{product.rarity ?? (product.category === "chests" ? "PREMIUM" : "GEMS")}</span>
           <strong>{offer ? rewardLabel(offer) : product.title}</strong>
           <span className="gh-shop__price">{offer ? `${offer.ghPrice.toLocaleString()} GH` : "Offer unavailable"}</span>
+          {offer && marketQuote ? <span className="gh-shop__usd">≈ {formatGhUsd(offer.ghPrice, marketQuote)}</span> : null}
           <span className="gh-shop__card-action">{offer?.soldOut ? "SOLD OUT" : offer?.availableAtUtc ? "NOT READY" : "VIEW DETAILS"}</span>
         </button>;
       })}</div>}
     {picked && selectedOffer ? <ProductDetails key={picked.id} product={picked} offer={selectedOffer}
+      marketQuote={marketQuote}
       artFailed={!!artFailed[picked.id]} onClose={() => setPicked(null)}
       onPurchased={() => setFront(client.store.cachedStorefront)}
       onRefresh={load} onDeposit={() => depositGh(client.titleID)} /> : null}
   </section>;
 }
 
-function ProductDetails({ product, offer, artFailed, onClose, onPurchased, onRefresh, onDeposit }: {
+function ProductDetails({ product, offer, marketQuote, artFailed, onClose, onPurchased, onRefresh, onDeposit }: {
   product: ShopProduct; offer: ResolvedTokenOffer; artFailed: boolean;
+  marketQuote: GhMarketQuote | null;
   onClose: () => void; onPurchased: () => void; onRefresh: () => Promise<void>; onDeposit: () => void;
 }): ReactNode {
   const client = useIDosGamesClient();
@@ -168,6 +198,7 @@ function ProductDetails({ product, offer, artFailed, onClose, onPurchased, onRef
       <p>{product.description}</p>
       <p>Reward: {rewardLabel(offer)}</p>
       <div className="gh-shop__detail-price">{offer.ghPrice.toLocaleString()} GH<small>Price from the iDos Store</small></div>
+      {marketQuote ? <p className="gh-shop__usd">≈ {formatGhUsd(offer.ghPrice, marketQuote)} at current market rate</p> : null}
       {success ? <>
         <strong role="status">{product.category === "gems" ? "GEMS purchased." : "Premium Chest added to Inventory."}</strong>
         {refreshWarning ? <p>Purchase completed. Refresh the game to update the displayed balances.</p> : null}
