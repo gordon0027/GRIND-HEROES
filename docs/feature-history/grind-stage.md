@@ -9,26 +9,33 @@ best times. `highestUnlocked` is the one-based catalogue position of the furthes
 server permits a player to attempt; the last cleared stage is derived from server completion
 counts. The selected/current stage remains a separate Private preference and may be older.
 
-The same `grind_stage_preferences_v1` Private record now also stores a Boolean `loopMode`;
-missing/legacy values default to Loop ON. Loop OFF lets the current battle and its reward
-settle, then stops; selecting a map node, pressing NEXT or pressing START explicitly launches
-another battle. Turning Loop ON starts a ready stage or resumes a settled continuation.
-On a first clear of the unlocked frontier, Loop ON advances to the newly server-unlocked stage
-only after CloudCode completion and Inventory refresh. A previously cleared stage repeats
-itself, including an intentionally selected older stage. After a frontier defeat, the client
-closes the active server run, refreshes authoritative progress, falls back to the last cleared
-stage and farms it. It stays there until NEXT selects the unlocked frontier again. If stage
-1-1 fails before any stage has been cleared, the loop stops for a manual retry.
+The same `grind_stage_preferences_v1` Private record now stores Boolean `loopMode` and
+`autoProgressMode`. Loop controls whether another battle starts after this one; Loop OFF
+lets the current battle and reward settle, then stops. START and a map selection explicitly
+launch a battle. Advance controls whether clearing the frontier or the last cleared stage
+attempts the next server-unlocked stage. A manual old-stage selection turns Advance OFF;
+an uncleared stage selection or NEXT turns it ON. A missing Loop value defaults ON, while
+a missing Advance value defaults ON only for an uncleared selected stage.
+
+The next battle is selected only after CloudCode completion and Inventory refresh. An
+older stage repeats itself even when Advance is ON. After a frontier defeat, the client
+closes the server run, refreshes authoritative progress, turns Advance OFF, falls back to
+the last cleared stage and farms it with Loop ON. It stays there until NEXT selects the
+unlocked frontier or the player turns Advance ON, which tries the next stage after the
+current farm clear. If stage 1-1 fails before any stage has been cleared, the loop stops
+for a manual retry.
 
 The run generation, single in-flight start request and one-result-per-StageRun guard prevent
 duplicate continuation. Stage completion, unlocks, XP, GOLD and chests remain in the existing
 CloudCode handlers; the client only selects a valid next stage. Reload restores the server
 progress and saved selected stage/Loop preference; a transient in-progress fight starts fresh.
-The full client bundle with 107 PNGs went live directly on PROD as **v44**
-(`bldb4592f52f28445178622c4077b65be8d`). On a PROD guest, NEXT began
+The full client bundle with 107 PNGs went live directly on PROD as **v45**
+(`bld76d7446d83754ae9a37fb06eebfc0d32`). On a PROD guest, NEXT began
 1-2, validated clears advanced through 1-3 to 1-4, a 1-4 defeat returned to
 1-3 farming, and NEXT manually started 1-4 again. The final live page loaded
-the v44 client; Loop remained ON and the selected 1-3 farm survived reload.
+the v45 client; Loop remained ON, Advance showed OFF after the fallback, and
+the selected 1-3 farm survived reload. Turning Advance ON while farming 1-3
+started 1-4 after the next validated clear.
 
 ## Production release (2026-10-07)
 

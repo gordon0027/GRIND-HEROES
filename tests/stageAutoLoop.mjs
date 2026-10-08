@@ -10,9 +10,9 @@ const clearedThrough = (lastIndex) => {
   for (let i = 0; i <= lastIndex; i++) progress = recordStageClear(progress, id(i), 40);
   return progress;
 };
-const finish = (stageID, result, before, loop = true) => {
+const finish = (stageID, result, before, loop = true, advance = true) => {
   const after = result === "clear" ? recordStageClear(before, stageID, 40) : before;
-  const target = continuationStageID(stageID, result, before, after);
+  const target = continuationStageID(stageID, result, before, after, advance);
   return { progress: after, target, nextRun: loop ? target : null };
 };
 
@@ -32,8 +32,10 @@ assert.equal(outcome.nextRun, id(4), "an uncleared frontier failure falls back t
 assert.equal(JSON.stringify(outcome.progress), beforeFailure, "failure cannot change unlocks or rewards");
 assert.equal(outcome.progress.completed[id(5)], undefined);
 progress = outcome.progress;
-outcome = finish(id(4), "clear", progress);
+outcome = finish(id(4), "clear", progress, true, false);
 assert.equal(outcome.nextRun, id(4), "fallback farming repeats instead of retrying the failed stage");
+assert.equal(finish(id(4), "clear", progress, true, true).nextRun, id(5),
+  "turning Advance back on retries after the next successful farm clear");
 assert.equal(nextStageID(outcome.nextRun), id(5), "NEXT can retry the already server-unlocked frontier");
 assert.equal(stageUnlocked(outcome.progress, id(5)), true);
 assert.equal(outcome.progress.highestUnlocked, progress.highestUnlocked,
@@ -44,6 +46,8 @@ assert.equal(old.nextRun, id(1), "manually selected older stages loop themselves
 assert.equal(old.progress.highestUnlocked, progress.highestUnlocked);
 assert.equal(finish(id(5), "clear", progress, false).nextRun, null,
   "Loop OFF stops after a frontier victory");
+assert.equal(finish(id(5), "clear", progress, true, false).nextRun, id(5),
+  "Advance OFF keeps a newly cleared frontier as the farming target");
 assert.equal(finish(id(5), "failed", progress, false).nextRun, null,
   "Loop OFF stops after failure");
 assert.equal(finish(id(0), "failed", parseStageProgress(null)).nextRun, null,

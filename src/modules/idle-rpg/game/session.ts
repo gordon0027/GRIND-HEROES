@@ -145,6 +145,7 @@ export class IdleSession {
   private autoAdvanceTimer: ReturnType<typeof setTimeout> | null = null;
   private autoFlowEnabled = false;
   loopEnabled = true;
+  autoProgressEnabled = true;
   private pendingContinuationID: string | null = null;
   private terminalRun: StageRun | null = null;
   private failureClose: Promise<void> | null = null;
@@ -616,6 +617,7 @@ export class IdleSession {
       const progress = await this.stageService.loadProgress();
       if (generation !== this.runGeneration || failedRun !== this.run) return;
       this.stageProgress = progress;
+      this.autoProgressEnabled = false;
       this.pendingContinuationID = continuationStageID(failedRun.stage.id, "failed", progress);
       this.lastClearNotice = this.pendingContinuationID
         ? `Party defeated · farming ${this.pendingContinuationID.replace("grind-stage-", "")}`
@@ -641,6 +643,7 @@ export class IdleSession {
     if (stageID === this.run.stage.id && !force) return true;
     this.cancelAutoAdvance();
     this.pendingContinuationID = null;
+    if (!force) this.autoProgressEnabled = (this.stageProgress.completed[stageID] ?? 0) === 0;
     const oldRunID = this.serverRunId;
     this.serverRunId = null;
     const generation = ++this.runGeneration;
@@ -715,6 +718,19 @@ export class IdleSession {
     else if (this.autoFlowEnabled) {
       if (this.run.state === "ready") void this.startRun();
       else if (["clear", "failed"].includes(this.run.state)) this.scheduleAutoAdvance();
+    }
+    this.saveStagePreferences();
+    this.changed();
+  }
+
+  setAutoProgressEnabled(enabled: boolean): void {
+    if (enabled === this.autoProgressEnabled) return;
+    this.autoProgressEnabled = enabled;
+    if (this.run.state === "clear" && !this.lootPending && !this.lootBusy) {
+      const nextID = this.nextStageID;
+      this.pendingContinuationID = enabled && this.run.stage.id === this.highestClearedStageID && nextID
+        ? nextID : this.run.stage.id;
+      this.scheduleAutoAdvance();
     }
     this.saveStagePreferences();
     this.changed();
@@ -828,7 +844,8 @@ export class IdleSession {
 
   private saveStagePreferences(selectedStageID = this.run.stage.id): void {
     if (!this.loaded) return;
-    const value = JSON.stringify({ selectedStageID, loopMode: this.loopEnabled });
+    const value = JSON.stringify({ selectedStageID, loopMode: this.loopEnabled,
+      autoProgressMode: this.autoProgressEnabled });
     this.preferenceWrites = this.preferenceWrites.then(async () => {
       const result = await this.client.userCustomData.setPrivateData(STAGE_PREFERENCES_KEY, value);
       if (!result.ok) {
@@ -942,7 +959,8 @@ export class IdleSession {
         this.serverRunId = null;
         const before = this.stageProgress;
         this.stageProgress = completed.progress;
-        this.pendingContinuationID = continuationStageID(this.run.stage.id, "clear", before, completed.progress);
+        this.pendingContinuationID = continuationStageID(this.run.stage.id, "clear", before,
+          completed.progress, this.autoProgressEnabled);
         this.validatedClearSeconds = completed.serverSeconds;
         this.lootGold = completed.rewards.gold;
         this.run.bestClearSeconds = completed.progress.bestSeconds[this.run.stage.id] ?? null;
@@ -1116,6 +1134,8 @@ export class IdleSession {
         const preferences = JSON.parse(res.data.Private?.[STAGE_PREFERENCES_KEY]?.Value ?? "{}");
         this.run = new StageRun(stageByID(farmingStageID(preferences.selectedStageID, this.stageProgress))!);
         if (typeof preferences.loopMode === "boolean") this.loopEnabled = preferences.loopMode;
+        this.autoProgressEnabled = typeof preferences.autoProgressMode === "boolean"
+          ? preferences.autoProgressMode : (this.stageProgress.completed[this.run.stage.id] ?? 0) === 0;
       } catch { /* Invalid optional preferences fall back to the first stage. */ }
       this.run.bestClearSeconds = this.stageProgress.bestSeconds[this.run.stage.id] ?? null;
       this.capacity = partyCapacity(res.data.ReadOnly?.[PARTY_CAPACITY_KEY]?.Value);

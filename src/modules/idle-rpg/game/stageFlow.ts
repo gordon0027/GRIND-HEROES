@@ -16,7 +16,8 @@ export function highestClearedStageID(progress: StageProgress): string | null {
 
 /** Choose a continuation only after the authoritative result has settled. */
 export function continuationStageID(currentID: string, outcome: "clear" | "failed",
-  before: StageProgress, after: StageProgress = before): string | null {
+  before: StageProgress, after: StageProgress = before,
+  advanceEnabled = true): string | null {
   const index = STAGE_CATALOG.findIndex((stage) => stage.id === currentID);
   if (index < 0 || !stageUnlocked(before, currentID)) return null;
   const wasFrontier = (before.completed[currentID] ?? 0) === 0 &&
@@ -26,7 +27,9 @@ export function continuationStageID(currentID: string, outcome: "clear" | "faile
     // With no cleared stage (the first attempt at 1-1), stop instead of wiping forever.
     return highestClearedStageID(after);
   }
-  if (wasFrontier && (after.completed[currentID] ?? 0) > 0) {
+  const lastCleared = currentID === highestClearedStageID(before);
+  if (advanceEnabled && (wasFrontier || lastCleared) &&
+      (after.completed[currentID] ?? 0) > (before.completed[currentID] ?? 0)) {
     const next = STAGE_CATALOG[index + 1];
     if (next && stageUnlocked(after, next.id)) return next.id;
   }

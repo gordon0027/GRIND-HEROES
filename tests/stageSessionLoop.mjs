@@ -22,6 +22,7 @@ try {
     session.previewCapacity = null;
     session.autoFlowEnabled = true;
     session.loopEnabled = loop;
+    session.autoProgressEnabled = true;
     session.pendingContinuationID = null;
     session.terminalRun = null;
     session.failureClose = null;
@@ -72,12 +73,25 @@ try {
   assert.equal(fail.counters.failures, 1, "one failure closes its server run once");
   assert.equal(fail.counters.starts, 1, "one failure starts one fallback battle");
   assert.equal(fail.session.run.stage.id, stageID(4), "fallback selects the last cleared stage");
+  assert.equal(fail.session.autoProgressEnabled, false,
+    "defeat disarms automatic advancement while farming the fallback");
   assert.equal(fail.session.nextStageID, stageID(5));
   assert.equal(fail.session.selectStage(fail.session.nextStageID), true,
     "NEXT manually selects the already unlocked failed frontier");
   await delay(20);
   assert.equal(fail.session.run.stage.id, stageID(5));
   assert.equal(fail.counters.starts, 2, "manual NEXT starts only its requested battle");
+  assert.equal(fail.session.autoProgressEnabled, true, "manual NEXT re-arms progression");
+
+  const rearm = makeSession(4, "clear", clearedThrough(4));
+  rearm.session.autoProgressEnabled = false;
+  rearm.session.tickRun(1 / 60);
+  await delay(30);
+  rearm.session.setAutoProgressEnabled(true);
+  await delay(950);
+  assert.equal(rearm.session.run.stage.id, stageID(5),
+    "Advance can re-arm progression from the last cleared farming stage");
+  assert.equal(rearm.counters.starts, 1);
 
   const stopped = makeSession(3, "clear", clearedThrough(2), false);
   stopped.session.tickRun(1 / 60);

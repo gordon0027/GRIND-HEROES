@@ -41,6 +41,9 @@ export function makeGamePanel(session: IdleSession, features: FeatureRegistry): 
             <span className="gh-stage-hud__stage">Stage {run.stage.chapter}-{run.stage.stage}</span>
             <label className="gh-stage-hud__loop"><input type="checkbox" checked={session.loopEnabled}
               onChange={(event) => session.setLoopEnabled(event.target.checked)} /> Loop</label>
+            <label className="gh-stage-hud__loop" title="Try the next unlocked stage after a clear"><input
+              type="checkbox" checked={session.autoProgressEnabled}
+              onChange={(event) => session.setAutoProgressEnabled(event.target.checked)} /> Advance</label>
             {session.awaitingManualStart && session.canManuallyStart ? <button type="button"
               onClick={() => session.startCurrentStage()}>START</button> : null}
             {session.nextStageID ? <button type="button" disabled={!session.canSelectNext}
