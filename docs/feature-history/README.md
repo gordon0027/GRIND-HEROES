@@ -15,7 +15,7 @@ instead.
 - [Battle render resolution](battle-render-resolution.md) — DPR-aware Phaser canvas with unchanged game coordinates and PNG assets.
 - [Item art direction](item-art.md) — user-supplied visual references and rendering rules for inventory icons.
 - [UI foundation V2](hero-window.md) — five game sections, separate Inventory and Team panels, shared fantasy frame and one footer.
-- [Grind Heroes marketplace](marketplace.md) — DEV equipment market UI; Main token pricing awaits iDos Marketplace crypto support.
+- [Grind Heroes marketplace](marketplace.md) — equipment trading for GEMS is live in PROD, with a footer entry and DEV-tested purchase flow.
 - [Login and AFK presentation](login-afk-ui.md) — RPG login panel and Gold reward popup; existing auth and claim behavior retained.
 - [Grind Heroes Shop](shop.md) — native GH Store purchases for GEMS and Premium Chests, deployed to PROD.
 - [Secure Team Power](team-power.md) — server-derived active party Power and a protected custom Top 100.

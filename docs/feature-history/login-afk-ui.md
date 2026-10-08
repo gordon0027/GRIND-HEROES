@@ -22,5 +22,8 @@ existing `ResourceList` rendering.
 Local desktop and 390px viewport checks found no horizontal overflow. The
 mobile AFK dialog was 358px wide with a 230px button; the mobile login card
 was 358px wide. A local DEV guest login showed its pending/disabled state and
-completed successfully. No build was published for this pass while global
-Marketplace statistics lack an authoritative server source.
+completed successfully. These changes went live in the full PROD client build
+v50 (`bld72c510d4860e4e998c5011290a191af6`) with all 107 PNG assets.
+The live game, AFK popup, Marketplace, Shop, Team and Inventory loaded; no
+purchase or chest opening was performed. Marketplace statistics are still
+absent because there is no authoritative server source for global sales.

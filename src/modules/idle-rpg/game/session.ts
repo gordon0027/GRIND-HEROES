@@ -45,11 +45,11 @@ import { HERO_XP_KEY, heroProgress, parseHeroProgress, type HeroProgressMap } fr
 import { FORMATION_KEY, PARTY_CAPACITY_KEY, assignFormation, defaultFormation, partyCapacity,
   restoreFormation, validateFormation, type Formation } from "./formation";
 import { heroArchetype } from "./heroArchetypes";
-import { GOLD_CURRENCY_ID, RECRUITABLE_HERO_IDS, heroRecruitCost } from "./progression";
+import { GOLD_CURRENCY_ID, RECRUITABLE_HERO_IDS, heroRecruitCost, isPlayableHeroID } from "./progression";
 import type { SlotIndex } from "./stageRun";
 import { combatPower, equipProblems, equippedIn, grindFighterStats, ownedGear, stageHeroStats, totalBonuses,
   type GearDefinition, type GearInstance, type GearItem, type GearSlot } from "./equipment";
-import { GrindEquipmentService, emptyGrindEquipment, grindAssignments,
+import { GrindEquipmentService, attestedGrindAssignments, emptyGrindEquipment,
   type GrindEquipmentState } from "./grindEquipment";
 import { chestRewardItemID, chestRewardPreview, newlyGrantedGear } from "./chestReward";
 import { chestIDs, chestPool } from "./chestPools";
@@ -189,6 +189,7 @@ export class IdleSession {
   private enhanceQueue = new Map<string, { pending: number; busy: boolean }>();
   private metricQueue = new Map<string, { pending: number; busy: boolean }>();
   private offClient: Array<() => void> = [];
+  private ownershipRefresh: Promise<void> | null = null;
 
   constructor(
     private readonly client: IDosGamesClient,
@@ -196,8 +197,8 @@ export class IdleSession {
   ) {
     this.stageService = new StageService(client);
     this.equipmentService = new GrindEquipmentService(client);
-    // Removed in destroy(): setup() runs again on every login, and a client subscription that
     this.teamPowerService = new TeamPowerService(client);
+    // Removed in destroy(): setup() runs again on every login, and a client subscription that
     // outlived its session would keep a dead game recomputing — and emitting twice.
     this.offClient.push(
       client.on("user:anyUpdated", () => this.refreshHero()),
@@ -250,12 +251,12 @@ export class IdleSession {
           }
         | undefined
     )?.UnstackableItems;
-    this.gearItems = ownedGear(instances, items, grindAssignments(this.grindEquipment));
+    this.gearItems = ownedGear(instances, items, attestedGrindAssignments(this.grindEquipment, owned));
     const instanceLevels: Record<string, number> = {};
     for (const [k, inst] of Object.entries(instances ?? {}))
       if (inst?.Level) instanceLevels[k] = inst.Level;
     this.roster = Object.entries(section?.Definitions ?? {}).flatMap(([heroID, definition]) => {
-      if (!definition) return [];
+      if (!definition || !isPlayableHeroID(heroID)) return [];
       // Native Character.EquipItems can be called directly. Strip its equipment before any
       // Grind stat or Power calculation, then apply only protected Grind assignments.
       const model = owned[heroID] ? { ...owned[heroID], Equipment: {} } : undefined;
@@ -280,8 +281,23 @@ export class IdleSession {
     if (!validateFormation(this.formation, ownedIDs, this.capacity))
       this.formation = defaultFormation(ownedIDs);
     this.syncParty();
-    this.changed();
     this.queueTeamPowerRefresh();
+    this.changed();
+  }
+
+  /** Reconcile cross-account market sales when returning to the game panels. */
+  refreshOwnership(): Promise<void> {
+    if (this.ownershipRefresh) return this.ownershipRefresh;
+    this.ownershipRefresh = (async () => {
+      await Promise.allSettled([
+        this.client.user.getUserInventory(),
+        this.client.character.getUserCharacters(),
+      ]);
+      try { this.grindEquipment = await this.equipmentService.load(); }
+      catch (error) { this.equipmentError = error instanceof Error ? error.message : String(error); }
+      this.refreshHero();
+    })().finally(() => { this.ownershipRefresh = null; });
+    return this.ownershipRefresh;
   }
 
   ownedHeroIDs(): Set<string> {
@@ -360,22 +376,6 @@ export class IdleSession {
   get activeFormation(): Formation { return this.previewFormation ?? this.formation; }
   get partyPower(): number { return this.run.heroes.reduce((sum, hero) => sum + combatPower(hero), 0); }
 
-  heroPower(heroID: string): number {
-    const stats = this.heroCombatStats(heroID);
-    return stats ? combatPower(stats) : 0;
-  }
-
-  heroCombatStats(heroID: string) {
-    const entry = this.roster.find((candidate) => candidate.id === heroID);
-    if (!entry) return null;
-    return stageHeroStats(entry.baseFighter, heroArchetype(heroID),
-      totalBonuses(this.gearItems, heroID));
-  }
-
-  equipmentProblems(item: GearItem, heroID: string): string[] {
-    if (!this.equipmentReady) return ["Equipment is loading"];
-    const entry = this.roster.find((candidate) => candidate.id === heroID);
-    if (!entry) return ["Unknown hero"];
   private queueTeamPowerRefresh(force = false): void {
     if (!this.loaded || this.isDevPreview) return;
     const signature = JSON.stringify({ formation: this.formation.slots, capacity: this.capacity,
@@ -420,6 +420,22 @@ export class IdleSession {
     } finally { this.teamLeaderboardBusy = false; this.changed(); }
   }
 
+  heroPower(heroID: string): number {
+    const stats = this.heroCombatStats(heroID);
+    return stats ? combatPower(stats) : 0;
+  }
+
+  heroCombatStats(heroID: string) {
+    const entry = this.roster.find((candidate) => candidate.id === heroID);
+    if (!entry) return null;
+    return stageHeroStats(entry.baseFighter, heroArchetype(heroID),
+      totalBonuses(this.gearItems, heroID));
+  }
+
+  equipmentProblems(item: GearItem, heroID: string): string[] {
+    if (!this.equipmentReady) return ["Equipment is loading"];
+    const entry = this.roster.find((candidate) => candidate.id === heroID);
+    if (!entry) return ["Unknown hero"];
     return equipProblems(item, heroID, entry.level, entry.rank > 0,
       new Set(Object.keys(entry.def.Equipment?.Slots ?? {})));
   }
@@ -445,6 +461,11 @@ export class IdleSession {
       this.stagePartyDirty = true;
     } catch (error) {
       this.equipmentError = error instanceof Error ? error.message : String(error);
+      try {
+        this.grindEquipment = await this.equipmentService.load();
+        this.managementRevision++;
+        this.stagePartyDirty = true;
+      } catch { /* Keep the original operation error; a later refresh retries. */ }
     } finally {
       this.managementWrites.delete(request);
       this.equipmentBusy = false;
@@ -466,6 +487,11 @@ export class IdleSession {
       this.stagePartyDirty = true;
     } catch (error) {
       this.equipmentError = error instanceof Error ? error.message : String(error);
+      try {
+        this.grindEquipment = await this.equipmentService.load();
+        this.managementRevision++;
+        this.stagePartyDirty = true;
+      } catch { /* Keep the original operation error; a later refresh retries. */ }
     } finally {
       this.managementWrites.delete(request);
       this.equipmentBusy = false;
@@ -566,6 +592,7 @@ export class IdleSession {
       this.managementRevision++;
       this.stagePartyDirty = true;
       this.syncParty();
+      this.queueTeamPowerRefresh();
       if (this.serverRunId) {
         const sync = this.stageService.syncParty(this.serverRunId);
         this.managementWrites.add(sync);
@@ -592,7 +619,6 @@ export class IdleSession {
       } : null };
     });
     this.run.setSlots(slots);
-      this.queueTeamPowerRefresh();
   }
 
   /** Gold per second the server pays now (display). */
@@ -1039,6 +1065,7 @@ export class IdleSession {
     this.runGeneration++;
     this.cancelAutoAdvance();
     this.suspend();
+    if (this.teamPowerTimer) clearTimeout(this.teamPowerTimer);
     if (this.chestDropTimer) clearTimeout(this.chestDropTimer);
     for (const off of this.offClient) off();
     this.offClient = [];
@@ -1065,7 +1092,6 @@ export class IdleSession {
       this.away = { amount, seconds, currencyID: income.currencyID };
     this.changed();
   }
-    if (this.teamPowerTimer) clearTimeout(this.teamPowerTimer);
 
   dismissAway(): void {
     this.away = null;
@@ -1166,11 +1192,15 @@ export class IdleSession {
         if (Number.isSafeInteger(costs?.slot2) && Number.isSafeInteger(costs?.slot3))
           this.slotCosts = { 2: Number(costs!.slot2), 3: Number(costs!.slot3) };
       }
-      this.formation = restoreFormation(res.data.Private?.[FORMATION_KEY]?.Value,
-        this.ownedHeroIDs(), this.capacity);
+      const savedFormation = res.data.Private?.[FORMATION_KEY]?.Value;
+      const ownedHeroes = this.ownedHeroIDs();
+      this.formation = restoreFormation(savedFormation, ownedHeroes, this.capacity);
       this.formationStored = Number(res.data.Private?.[FORMATION_KEY]?.Version ?? 0) > 0;
       this.syncParty();
-      if (!this.formationStored && this.formation.slots[0]) {
+      let savedFormationValid = false;
+      try { savedFormationValid = validateFormation(JSON.parse(savedFormation ?? "null"), ownedHeroes, this.capacity); }
+      catch { /* Repair malformed saved formations on load. */ }
+      if ((!this.formationStored || !savedFormationValid) && this.formation.slots.some(Boolean)) {
         const initial = await this.client.userCustomData.setPrivateData(FORMATION_KEY,
           JSON.stringify(this.formation));
         this.formationStored = initial.ok;
@@ -1181,6 +1211,7 @@ export class IdleSession {
       this.stageError = `Stage progress load: ${String(res.error ?? res.reason)}`;
     }
     this.loaded = true;
+    this.queueTeamPowerRefresh(true);
     this.changed();
     if (this.autoFlowEnabled) void this.startRun();
   }
@@ -1211,7 +1242,6 @@ export class IdleSession {
     if (this.saveTimer) clearTimeout(this.saveTimer);
     this.saveTimer = null;
     if (!this.loaded) return;
-    this.queueTeamPowerRefresh(true);
     const value = serializeProgress({
       stage: this.battle.stage,
       best: this.battle.best,
@@ -1264,10 +1294,10 @@ export function pickHero(
 ): string | null {
   const defs = section?.Definitions ?? {};
   const playable = (id: string) =>
-    Number(owned[id]?.Level ?? 0) > 0 || !!defs[id]?.Unlock?.UnlockedByDefault;
+    isPlayableHeroID(id) && (Number(owned[id]?.Level ?? 0) > 0 || !!defs[id]?.Unlock?.UnlockedByDefault);
   if (selectedID && defs[selectedID] && playable(selectedID)) return selectedID;
   const strongest = Object.entries(owned)
-    .filter(([id, m]) => defs[id] && Number(m?.Level ?? 0) > 0)
+    .filter(([id, m]) => isPlayableHeroID(id) && defs[id] && Number(m?.Level ?? 0) > 0)
     // Native Character.Power includes native equipment and cannot choose a Grind hero.
     .sort(([, a], [, b]) => Number(b?.Level ?? 0) - Number(a?.Level ?? 0))[0];
   if (strongest) return strongest[0];

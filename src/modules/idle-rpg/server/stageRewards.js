@@ -90,7 +90,7 @@ function ghServerFormationHeroes(signature, data) {
     var slots = JSON.parse(signature).slots;
     if (!Array.isArray(slots)) return [];
     return slots.slice(0, capacity).filter(function (id, index) {
-      return typeof id === "string" && id.length > 0 &&
+      return (id === "Knight" || id === "Archer" || id === "Mage") &&
         slots.indexOf(id) === index && owned[id] && Number(owned[id].Level) > 0;
     });
   } catch (e) { return []; }

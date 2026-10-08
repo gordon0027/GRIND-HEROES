@@ -41,6 +41,12 @@ const server = {
 };
 const sandbox = { server, handlers: {}, log: { Warning: () => {} }, Date, Math, JSON, Number, Object, Array, isFinite, Error };
 runInNewContext(code, sandbox);
+inventory.Character.Characters.Main = { Level: 1 };
+assert.deepEqual(Array.from(sandbox.ghServerFormationHeroes(
+  JSON.stringify({ slots: ["Knight", "Main", "Archer"] }),
+  { ReadOnly: { grind_party_capacity_v2: { Value: "3" } } })), ["Knight", "Archer"],
+"server ignores an obsolete Main player record in a saved formation");
+delete inventory.Character.Characters.Main;
 assert.equal(sandbox.GH_STAGES.length, STAGE_CATALOG.length);
 for (let i = 0; i < STAGE_CATALOG.length; i++) {
   assert.equal(sandbox.GH_STAGES[i].id, STAGE_CATALOG[i].id);

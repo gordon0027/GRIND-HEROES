@@ -63,6 +63,9 @@
 [role="dialog"]:has(.gh-market__popup-marker) > .idos-scroll { box-sizing:border-box;max-width:100vw;font-family:Georgia,"Times New Roman",serif !important; }
 .gh-market__details ul { width: 100%; margin: 0; padding: 0; list-style: none; }
 .gh-market__details li { display: flex; justify-content: space-between; gap: 14px; padding: 6px 0; border-bottom: 1px solid #4a4036; font-size: 13px; }
+.gh-market__buy-confirm { display:grid;gap:8px;justify-items:stretch;text-align:center; }
+.gh-market__buy-confirm p { margin:0;color:#edddbc;font-size:14px;line-height:1.4; }
+.gh-market__buy-confirm p[role="alert"] { color:#f2ad8d;font-size:12px; }
 @media (max-width: 720px) {
   .gh-market__layout { display: block; }
   .gh-market__filter-toggle { display: inline-block; margin-bottom: 10px; }

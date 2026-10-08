@@ -46,10 +46,10 @@ function Inventory({ features }: { features: FeatureRegistry }): ReactNode {
   const [tab, setTab] = useState<Category>("all");
   const [open, setOpen] = useState<string | null>(null);
 
-  // The inventory (instances included) comes with the login state and every reply keeps it fresh;
-  // opening the screen re-checks it through the central cache (a gift, another device).
+  // A sale can settle in another player's session, so re-read on entry even if
+  // the local cache was refreshed recently.
   useEffect(() => {
-    void client.cache.ensureState(["InventoryV2"], { maxAgeMs: 60_000 });
+    void client.user.getUserInventory().catch(() => {});
   }, [client]);
 
   const inventory = state?.InventoryV2 as InventoryView | undefined;

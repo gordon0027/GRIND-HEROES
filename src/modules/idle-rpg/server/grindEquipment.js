@@ -191,6 +191,11 @@ function ghLoadEquipment(ctx) {
       state.heroes[heroID][slot] = null;
       var instance = state.items[instanceID];
       var problem = ghValidateEquip(state, heroID, slot, instanceID, ctx, instance);
+      // Marketplace validates native EquippedSlot at the listing mutation. A direct native
+      // unequip must also revoke this Grind assignment before any new stage signature.
+      var native = ghNativeInstance(ctx, heroID, slot, instanceID);
+      if (!problem && (!native || native.ItemID !== instance.ItemID))
+        problem = "NATIVE_ASSIGNMENT_MISSING";
       if (!problem && usedCounts[instance.ItemID] >=
           Number(ctx.counts[instance.ItemID].UnstackableAmount)) problem = "ITEM_NOT_OWNED";
       if (problem) {
@@ -255,11 +260,12 @@ handlers.unequipGrindItem = function (args) {
     return { unequipped: false, reason: "HERO_NOT_OWNED", equipment: state };
   if (GH_EQUIPMENT_SLOTS.indexOf(slot) < 0)
     return { unequipped: false, reason: "INVALID_SLOT", equipment: state };
-  if (state.heroes[heroID][slot]) {
+  var priorInstanceID = state.heroes[heroID][slot];
+  if (priorInstanceID) {
     state.heroes[heroID][slot] = null;
     ghSaveEquipment(state);
   }
-  return { unequipped: true, equipment: state };
+  return { unequipped: true, unequippedInstanceID: priorInstanceID, equipment: state };
 };
 
 handlers.equipBestGrindHero = function (args) {

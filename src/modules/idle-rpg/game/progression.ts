@@ -1,7 +1,12 @@
 import type { CharacterDefView } from "./heroStats";
 
 export const GOLD_CURRENCY_ID = "GOLD";
+export const PLAYABLE_HERO_IDS = ["Knight", "Archer", "Mage"] as const;
 export const RECRUITABLE_HERO_IDS = ["Archer", "Mage"] as const;
+
+export function isPlayableHeroID(id: string): boolean {
+  return (PLAYABLE_HERO_IDS as readonly string[]).includes(id);
+}
 
 type RecruitDefinition = CharacterDefView & {
   Unlock?: { PriceOptions?: Record<string, { Cost?: { Standard?: { Entries?: Array<{

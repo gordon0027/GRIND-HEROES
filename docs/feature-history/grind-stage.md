@@ -31,17 +31,19 @@ started another 1-1 battle. Reload restored Advance OFF and automatically starte
 Enabling Advance during the restored 1-1 battle kept that battle running; its next
 server-validated victory automatically started 1-2 with Advance ON.
 
-The run generation, single in-flight start request and one-result-per-StageRun guard prevent
-duplicate continuation. Stage completion, unlocks, XP, GOLD and chests remain in the existing
-CloudCode handlers; the client only selects a valid next stage. Reload restores the server
-progress and saved selected stage/Loop preference; a transient in-progress fight starts fresh.
-The full client bundle with 107 PNGs went live directly on PROD as **v45**
-(`bld76d7446d83754ae9a37fb06eebfc0d32`). On a PROD guest, NEXT began
-1-2, validated clears advanced through 1-3 to 1-4, a 1-4 defeat returned to
-1-3 farming, and NEXT manually started 1-4 again. The final live page loaded
-the v45 client; Loop remained ON, Advance showed OFF after the fallback, and
-the selected 1-3 farm survived reload. Turning Advance ON while farming 1-3
-started 1-4 after the next validated clear.
+## Obsolete Main character removed (2026-10-08)
+
+Both DEV and PROD Character catalogues contained an empty `Main` definition with
+`UnlockedByDefault: true`. The client previously displayed every Character
+definition, so this placeholder appeared as a fourth roster hero and could
+occupy one of the three party slots. It reused the Knight icon through the UI
+fallback. This Character record was separate from the PROD Solana
+`CryptoCurrencies.Main` token. The catalogue now contains only Knight, Archer,
+and Mage. The client accepts only those three as Grind heroes, repairs persisted
+formations that contain Main on load while preserving valid teammates, and
+saves the repaired formation. Server stage participation excludes Main even if
+an older player Character record remains. The exact original creation event
+for the placeholder was not available from Title config history.
 
 ## Production release (2026-10-07)
 

@@ -59,6 +59,7 @@ import { MarketBrowse } from "./MarketBrowse";
 import { itemRarity, itemSlot, itemStatLines, offerLevel, GRIND_REQUIRED_LEVEL } from "./itemPresentation";
 import { MarketplaceItemArt } from "./MarketplaceItemArt";
 import { MarketPopup } from "./MarketPopup";
+import { purchaseListing } from "./purchase";
 
 // The marketplace (Unity Alikhan/Marketplace): a window of tabs — the market by item, my lots, my
 // bids, trades, things to claim, history — and everything with detail in popups: an item's lots, one
@@ -355,6 +356,8 @@ function OfferPopup({
   const client = useIDosGamesClient();
   const catalog = useCatalog();
   const state = useUserState();
+  const toast = useToast();
+  const play = useSound();
   const now = useNow();
   const me = client.auth.context?.userID;
   const own = offer.CreatorUserID === me;
@@ -367,6 +370,9 @@ function OfferPopup({
   const price = offerPrice(offer);
   const [bid, setBid] = useState(minNextBid(offer, defs));
   const [confirmBuy, setConfirmBuy] = useState(false);
+  const [buying, setBuying] = useState(false);
+  const buySubmitted = useRef(false);
+  const cannotAfford = balances !== undefined && !canAfford(price, balances);
   const itemDef = offer.GoodsItemID ? catalog.items.get(offer.GoodsItemID) as ItemDefinition | undefined : undefined;
   const rarity = itemRarity(itemDef);
   const level = offerLevel(offer);
@@ -380,12 +386,42 @@ function OfferPopup({
       ]
     : [];
 
+  const buy = async () => {
+    if (buySubmitted.current || !offer.OfferID) return;
+    buySubmitted.current = true;
+    setBuying(true);
+    try {
+      const outcome = await purchaseListing(client, offer.OfferID);
+      if (outcome.kind === "purchased") {
+        play("purchase");
+        onDone();
+        onClose();
+        toast(outcome.inventorySynced ? t("purchased") : t("purchasedRefreshPending"),
+          outcome.inventorySynced ? "success" : "error");
+      } else if (outcome.kind === "unavailable") {
+        onDone();
+        onClose();
+        toast(t("unavailable"), "error");
+      } else if (outcome.kind === "insufficient") {
+        toast(t("insufficientGems"), "error");
+        void client.user.getUserInventory().catch(() => {});
+      } else {
+        toast(errorText(outcome.error), "error");
+      }
+    } catch (error) {
+      toast(errorText(String(error)), "error");
+    } finally {
+      buySubmitted.current = false;
+      setBuying(false);
+    }
+  };
+
   return (
     <MarketPopup
       title={
         offer.GoodsItemID ? catalog.itemName(offer.GoodsItemID) : t("market")
       }
-      onClose={onClose}
+      onClose={buying ? () => {} : onClose}
     >
       <div className="gh-market__details" style={{ "--rarity": catalog.rarityColor(rarity) } as CSSProperties}>
         {offer.GoodsItemID ? <MarketplaceItemArt itemID={offer.GoodsItemID} size={132} /> : null}
@@ -394,6 +430,7 @@ function OfferPopup({
           <li><span>{t("equipmentSlot")}</span><strong>{itemSlot(itemDef) ?? "Item"}</strong></li>
           <li><span>{t("requiredLevel")}</span><strong>{GRIND_REQUIRED_LEVEL[rarity] ?? 1}</strong></li>
           <li><span>{t("upgradeLevel")}</span><strong>{level}</strong></li>
+          <li><span>{t("amount")}</span><strong>{Number(offer.GoodsAmount ?? 1)}</strong></li>
           {itemDef.Equipment?.AllowedCharacterIDs?.length ? <li><span>{t("hero")}</span><strong>{itemDef.Equipment.AllowedCharacterIDs.join(" / ")}</strong></li> : null}
           {itemStatLines(itemDef, level).map((line) => <li key={line}><span>{line}</span></li>)}
         </ul> : null}
@@ -467,6 +504,7 @@ function OfferPopup({
             tone="grey"
             run={() => client.marketplace.cancelListing(offer.OfferID!)}
             onDone={onDone}
+            refreshInventory
           />
         )
       ) : auction ? (
@@ -499,18 +537,22 @@ function OfferPopup({
           </>
         )
         ) : (
-        confirmBuy ? <Act
-          label={<>{t("confirmBuy")} <ResourceList lines={price} size={18} /></>}
-          tone="gold"
-          disabled={!canAfford(price, balances)}
-          run={() => client.marketplace.buy(offer.OfferID!)}
-          onDone={onDone}
-          sound="purchase"
-          celebrateGoods={offer}
-          staleRefresh
-        /> : <button type="button" className="gh-market__button gh-market__button--primary"
-          disabled={!canAfford(price, balances)} onClick={() => setConfirmBuy(true)}>
-          {t("buy")} <ResourceList lines={price} size={18} /></button>
+        confirmBuy ? <div className="gh-market__buy-confirm" aria-busy={buying}>
+          <p>{t("buy")} <strong>{offer.GoodsItemID ? catalog.itemName(offer.GoodsItemID) : t("market")}</strong> {t("for")} <ResourceList lines={price} size={18} />?</p>
+          {cannotAfford ? <p role="alert">{t("insufficientGems")}</p> : null}
+          <Button tone="gold" size="lg" className="gh-market__action gh-market__action--gold"
+            disabled={cannotAfford || buying} busy={buying} onClick={() => void buy()}>
+            {buying ? t("buying") : t("confirmBuy")}
+          </Button>
+          <button type="button" className="gh-market__button" disabled={buying}
+            onClick={() => setConfirmBuy(false)}>{t("back")}</button>
+        </div> : <div className="gh-market__buy-confirm">
+          {cannotAfford ? <p role="alert">{t("insufficientGems")}</p> : null}
+          <button type="button" className="gh-market__button gh-market__button--primary"
+            disabled={cannotAfford} onClick={() => setConfirmBuy(true)}>
+            {t("buy")} <ResourceList lines={price} size={18} />
+          </button>
+        </div>
       )}
     </MarketPopup>
   );
@@ -527,8 +569,7 @@ function Act({
   onDone,
   disabled = false,
   sound = "claim",
-  celebrateGoods,
-  staleRefresh = false,
+  refreshInventory = false,
 }: {
   label: ReactNode;
   tone: "gold" | "grey" | "green" | "red";
@@ -536,9 +577,9 @@ function Act({
   onDone: () => void;
   disabled?: boolean;
   sound?: "claim" | "purchase";
-  celebrateGoods?: MarketplaceOfferView;
-  staleRefresh?: boolean;
+  refreshInventory?: boolean;
 }): ReactNode {
+  const client = useIDosGamesClient();
   const close = usePopupClose();
   const celebrate = useCelebrate();
   const toast = useToast();
@@ -556,29 +597,26 @@ function Act({
         if (submitted.current) return;
         submitted.current = true;
         setBusy(true);
-        void run().then((res) => {
-          submitted.current = false;
-          setBusy(false);
+        void run().then(async (res) => {
           if (!res.ok) {
-            const message = String(res.error ?? "");
-            const stale = /already|completed|expired|not found|unavailable/i.test(message);
-            toast(stale && staleRefresh ? t("unavailable") : errorText(res.error), "error");
-            if (stale && staleRefresh) { close(); onDone(); }
+            submitted.current = false;
+            setBusy(false);
+            toast(errorText(res.error), "error");
             return;
           }
+          let inventory: { ok: boolean } | null = null;
+          if (refreshInventory) {
+            try { inventory = await client.user.getUserInventory(); }
+            catch { inventory = { ok: false }; }
+          }
+          submitted.current = false;
+          setBusy(false);
           play(sound);
           close();
           onDone();
+          if (inventory && !inventory.ok) toast(t("inventoryRefreshPending"), "error");
           const granted = grantedBy(res.data);
           if (granted.length > 0) celebrate(granted);
-          else if (celebrateGoods?.GoodsItemID)
-            celebrate([
-              {
-                kind: "item",
-                id: celebrateGoods.GoodsItemID,
-                amount: Number(celebrateGoods.GoodsAmount ?? 1),
-              },
-            ]);
         }).catch((error) => {
           submitted.current = false;
           setBusy(false);
@@ -900,8 +938,8 @@ function SellPopup({
     );
 
   const create = async (): Promise<Result> => {
-    // Grind equipment is authoritative in protected CloudCode, not native EquippedSlot.
-    // Refuse to trade an assigned instance even if the generic inventory shows it free.
+    // The native slot guards Marketplace mutations; this protected check also
+    // prevents stale Grind assignments from reaching the listing request.
     if (instanceID) {
       const check = await client.cloudCode.execute("isGrindEquipped", { itemInstanceID: instanceID });
       if (!check.ok) return { ok: false, error: String(check.error ?? check.reason ?? "Equipment check failed") };
@@ -1016,7 +1054,7 @@ function SellPopup({
           {t("commission")}: {commissionPercent(defs)}%
         </div>
       ) : null}
-      <Act label={t("create")} tone="gold" run={create} onDone={onDone} />
+      <Act label={t("create")} tone="gold" run={create} onDone={onDone} refreshInventory />
     </MarketPopup>
   );
 }

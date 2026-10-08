@@ -13,11 +13,13 @@ import { emptySlotIcon, rarityColors } from "./inventoryPresentation";
 import { gearImage } from "./itemImage";
 import "./away-popup.css";
 
-/** The Phaser scene stays mounted while these four presentation sections change. */
+/** The Phaser scene stays mounted while the footer sections change. */
 export function makeGamePanel(session: IdleSession, features: FeatureRegistry): ComponentType {
   return function GrindPanel(): ReactNode {
     useSyncExternalStore(session.subscribe, session.getVersion);
     const [section, setSection] = useState<GameSection>("play");
+    const market = features.get("marketplace");
+    const MarketplaceScreen = market?.available ? market.Screen : null;
     const run = session.run;
     const percent = Math.min(100, run.distance / run.stage.length * 100);
     return <div style={{ position: "absolute", inset: 0, pointerEvents: "none", fontFamily: v.font, color: v.text }}>
@@ -48,6 +50,13 @@ export function makeGamePanel(session: IdleSession, features: FeatureRegistry): 
         <div className="gh-game-section__inner">
           {section === "inventory" ? <InventorySection session={session} /> : null}
           {section === "team" ? <TeamSection session={session} /> : null}
+          {section === "marketplace" ? <section className="gh-more-panel gh-more-panel--marketplace"
+            style={{ borderImageSource: `url("${heroUi.panel}")` }}>
+            {MarketplaceScreen ? <MarketplaceScreen close={() => setSection("play")} />
+              : <div className="gh-market-unavailable" role="status">
+                <h2>MARKETPLACE</h2><p>Маркетплейс пока недоступен.</p>
+              </div>}
+          </section> : null}
           {section === "more" ? <MoreSection features={features} session={session} /> : null}
         </div>
       </div>}
@@ -57,7 +66,12 @@ export function makeGamePanel(session: IdleSession, features: FeatureRegistry): 
         <ChestDrop key={session.chestDrop.sequence} drop={session.chestDrop} />
       </div> : null}
       {session.lastLevelNotice ? <div className="gh-level-up-notice" role="status">{session.lastLevelNotice}</div> : null}
-      <GameFooter section={section} onPick={setSection} />
+      <GameFooter section={section} onPick={(next) => {
+        if (next === section) return;
+        setSection(next);
+        if (next === "inventory" || next === "team" || section === "more" || section === "marketplace")
+          void session.refreshOwnership();
+      }} />
       {session.away ? <AwayPopup session={session} /> : null}
     </div>;
   };
@@ -82,11 +96,10 @@ function ChestDrop({ drop }: { drop: NonNullable<IdleSession["chestDrop"]> }): R
 function MoreSection({ features, session }: { features: FeatureRegistry; session: IdleSession }): ReactNode {
   const [open, setOpen] = useState<string | null>(null);
   const Screen = open ? features.get(open)?.Screen : null;
-  const entries = [{ id: "character", label: "Hero upgrades" }, { id: "quests", label: "Quests" }, { id: "store", label: "Shop" }, { id: "marketplace", label: "Marketplace" }]
+  const entries = [{ id: "character", label: "Hero upgrades" }, { id: "quests", label: "Quests" }, { id: "store", label: "Shop" }]
     .filter((entry) => features.get(entry.id)?.available);
-  return <section className={`gh-more-panel${open === "marketplace" ? " gh-more-panel--marketplace" : ""}`}
-    style={open === "marketplace" ? { borderImageSource: `url("${heroUi.panel}")` } : undefined}>
-    {open !== "marketplace" ? <h2>{open ? entries.find((entry) => entry.id === open)?.label ?? "MORE" : "MORE"}</h2> : null}
+  return <section className="gh-more-panel">
+    <h2>{open ? entries.find((entry) => entry.id === open)?.label ?? "MORE" : "MORE"}</h2>
     {Screen ? <><button className="gh-more-panel__back" type="button" onClick={() => setOpen(null)}>← MORE</button>
       <Screen args={open === "character" ? { rankOnly: true } : undefined} close={() => setOpen(null)} /></> : <>
     <div className="gh-more-panel__grid">{entries.map((entry) => <button key={entry.id} type="button"

@@ -49,6 +49,15 @@ export function grindAssignments(state: GrindEquipmentState): Record<string, Gri
   return result;
 }
 
+/** A protected assignment only grants Grind bonuses while the native slot attests it. */
+export function attestedGrindAssignments(
+  state: GrindEquipmentState,
+  characters: Record<string, { Equipment?: Record<string, { ItemInstanceID?: string | null } | null> | null } | undefined>,
+): Record<string, GrindAssignment> {
+  return Object.fromEntries(Object.entries(grindAssignments(state)).filter(([instanceID, assignment]) =>
+    characters[assignment.heroID]?.Equipment?.[assignment.slot]?.ItemInstanceID === instanceID));
+}
+
 export function isGrindEquipped(state: GrindEquipmentState, instanceID: string): boolean {
   return !!grindAssignments(state)[instanceID];
 }
@@ -64,7 +73,8 @@ export const GRIND_EQUIPMENT_ERRORS: Record<string, string> = {
   INVALID_ITEM_LEVEL_RULE: "Item level requirement is unavailable",
 };
 
-type OperationResult = { equipment?: unknown; reason?: string; equipped?: boolean; unequipped?: boolean };
+type OperationResult = { equipment?: unknown; reason?: string; equipped?: boolean;
+  unequipped?: boolean; unequippedInstanceID?: string | null };
 
 export class GrindEquipmentService {
   private readonly client: IDosGamesClient;
@@ -110,6 +120,13 @@ export class GrindEquipmentService {
   async unequip(heroID: string, slot: GearSlot): Promise<GrindEquipmentState> {
     const value = await this.execute("unequipGrindItem", { heroID, slot });
     if (!value.unequipped) throw new Error(GRIND_EQUIPMENT_ERRORS[value.reason ?? ""] ?? value.reason ?? "Unequip failed");
+    // Native EquippedSlot is the Marketplace server's listing guard. Release it only
+    // when it still refers to the same instance that Grind just unequipped.
+    if (value.unequippedInstanceID &&
+        this.nativeAssignment(heroID, slot) === value.unequippedInstanceID) {
+      const native = await this.client.character.unequipItems(heroID, [slot]);
+      if (!native.ok) throw new Error(String(native.error ?? native.reason ?? "Native unequip failed"));
+    }
     return parseGrindEquipment(value.equipment);
   }
 

@@ -38,7 +38,7 @@ systems (shop, heroes, leaderboards…) and the games — is a module. Two kinds
 
 - a game whose route says `inLobby: true` (idle-rpg) lives INSIDE the lobby: after sign-in the player
   lands in it. The host supplies balances and profile at the top (`src/base/lobby/GameFrame.tsx`),
-  while the game owns one four-section footer (PLAY, INVENTORY, TEAM, MORE). Switching
+  while the game owns one five-section footer (PLAY, INVENTORY, TEAM, MARKET, MORE). Switching
   sections keeps the Phaser scene and session mounted;
 - any other game (voxelcraft, board-game) takes the whole screen: sign-in → the lobby, "Play" launches
   it, a small button over the game returns to the lobby (`src/base/lobby/BackToLobby.tsx`).

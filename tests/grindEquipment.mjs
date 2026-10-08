@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { runInNewContext } from "node:vm";
 import { combatPower, ownedGear, stageHeroStats, totalBonuses } from "../src/modules/idle-rpg/game/equipment.ts";
-import { GrindEquipmentService, emptyGrindEquipment, grindAssignments, isGrindEquipped,
+import { GrindEquipmentService, attestedGrindAssignments, emptyGrindEquipment, grindAssignments, isGrindEquipped,
   parseGrindEquipment } from "../src/modules/idle-rpg/game/grindEquipment.ts";
 
 const code = readFileSync(new URL("../src/modules/idle-rpg/server/stageRewards.js", import.meta.url), "utf8") + "\n" +
@@ -85,9 +85,10 @@ assert.equal(sandbox.handlers.equipGrindItem({ heroID: "Knight", slot: "Offhand"
   itemInstanceID: "shieldA" }).reason, "ITEM_NOT_OWNED",
 "CloudCode requires exact native ownership attestation before changing Grind state");
 nativeEquip("Knight", "Boots", "bootsB");
-assert.equal(load().heroes.Knight.Boots, "bootsA", "post-migration native write is ignored");
+assert.equal(load().heroes.Knight.Boots, null,
+  "replacing native gear revokes the old Grind assignment before it can be sold");
 assert.equal(equip("Boots", "bootsB").reason, "HERO_LEVEL_TOO_LOW");
-assert.equal(load().heroes.Knight.Boots, "bootsA", "rejected replacement is atomic");
+assert.equal(load().heroes.Knight.Boots, null, "rejected replacement grants no Grind assignment");
 assert.equal(equip("Weapon", "bootsA").reason, "INVALID_SLOT");
 assert.equal(equip("Weapon", "missing").reason, "ITEM_NOT_OWNED");
 assert.equal(equip("Weapon", "bowA").reason, "WRONG_CHARACTER");
@@ -98,9 +99,9 @@ for (const [below, threshold, instanceID, slot] of [
   [14, 15, "swordEpic", "Weapon"], [19, 20, "swordLegendary", "Weapon"],
 ]) {
   level(below);
-  const before = stateJSON();
   assert.equal(equip(slot, instanceID).reason, "HERO_LEVEL_TOO_LOW");
-  assert.equal(stateJSON(), before, `Lv${below} failure leaves state unchanged`);
+  assert.notEqual(load().heroes.Knight[slot], instanceID,
+    `Lv${below} never grants the native-attested item a Grind assignment`);
   level(threshold);
   assert.equal(equip(slot, instanceID).equipped, true, `Lv${threshold} accepts tier`);
   assert.equal(load().heroes.Knight[slot], instanceID);
@@ -155,6 +156,12 @@ assert.equal(equip("Offhand", "shieldA").equipped, true);
 assert.ok(combatPower(stageHeroStats(base, archetype,
   totalBonuses(ownedGear(instances, defsMap, grindAssignments(load())), "Knight"))) > powerWithoutShield,
 "valid Grind equip increases Power");
+const protectedBeforeNativeUnequip = load();
+delete player.Character.Characters.Knight.Equipment.Offhand;
+assert.equal(attestedGrindAssignments(protectedBeforeNativeUnequip, player.Character.Characters).shieldA, undefined,
+  "a native unequip cannot leave a client-side Grind bonus");
+assert.equal(load().heroes.Knight.Offhand, null,
+  "direct native unequip revokes protected Grind gear before the next stage signature");
 
 delete instances.shieldA;
 syncCounts();
@@ -168,10 +175,14 @@ const client = { data: { user: { state: { Character: { Characters: {
   character: { equipItems: async (_heroID, pairs) => {
     calls.push({ type: "native", pairs });
     return { ok: true, data: { Equipment: { Boots: { ItemInstanceID: "bootsSplit" } } } };
+  }, unequipItems: async (_heroID, slots) => {
+    calls.push({ type: "native-unequip", slots });
+    return { ok: true, data: {} };
   } },
   cloudCode: { execute: async (handler, args) => {
     calls.push({ type: "cloud", handler, args });
-    return { ok: true, data: { FunctionResult: { equipped: true, equipment: emptyGrindEquipment() } } };
+    return { ok: true, data: { FunctionResult: { equipped: true, unequipped: true,
+      unequippedInstanceID: "helmOwned", equipment: emptyGrindEquipment() } } };
   } },
 };
 const service = new GrindEquipmentService(client);
@@ -185,4 +196,9 @@ assert.equal(calls[0].pairs[0].SlotID, "Boots");
 assert.equal(calls[1].args.slots.Helmet, "helmOwned");
 assert.equal(calls[1].args.slots.Boots, "bootsSplit",
   "server receives the native-confirmed ID if iDos split an instance");
+calls.length = 0;
+await service.unequip("Knight", "Helmet");
+assert.deepEqual(calls.map((entry) => entry.type), ["cloud", "native-unequip"],
+  "Grind unequip releases the native Marketplace listing guard");
+assert.deepEqual(calls[1].slots, ["Helmet"]);
 console.log("Grind equipment migration, authority, boundaries, class, ownership, slots, replace, best, bypass and stale cleanup passed");

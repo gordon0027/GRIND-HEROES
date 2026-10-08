@@ -104,6 +104,12 @@ assert.deepEqual(restoreFormation(JSON.stringify(threeFormation), owned, 3), thr
 assert.deepEqual(restoreFormation(JSON.stringify(threeFormation), owned, 1), formation,
   "saved assignment cannot bypass a locked party slot");
 assert.deepEqual(restoreFormation('{broken', owned, 3), formation);
+const obsoleteOwned = new Set(["Knight", "Archer", "Mage", "Main"]);
+assert.equal(assignFormation(formation, 2, "Main", obsoleteOwned, 3), null,
+  "obsolete Character.Main cannot be assigned even if an old account owns it");
+assert.deepEqual(restoreFormation(JSON.stringify({ version: 2, slots: ["Main", "Archer", null] }),
+  obsoleteOwned, 3).slots, ["Knight", "Archer", null],
+"loading an old formation replaces Main with Knight and keeps valid teammates");
 
 const formationStage = { id: "formation-test", name: "Formation", length: 10, encounters: [],
   boss: { id: "test-boss", distance: 10, enemies: [{ type: "Dummy", maxHp: 1000,
