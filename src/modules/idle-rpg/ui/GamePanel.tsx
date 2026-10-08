@@ -39,9 +39,6 @@ export function makeGamePanel(session: IdleSession, features: FeatureRegistry): 
           </div>
           <div className="gh-stage-hud__controls">
             <span className="gh-stage-hud__stage">Stage {run.stage.chapter}-{run.stage.stage}</span>
-            <label className="gh-stage-hud__advance" title="Try the next unlocked stage after a clear"><input
-              type="checkbox" checked={session.autoProgressEnabled}
-              onChange={(event) => session.setAutoProgressEnabled(event.target.checked)} /> Advance</label>
           </div>
           {session.lastClearNotice ? <div className="gh-stage-hud__notice" role="status">{session.lastClearNotice}</div> : null}
           {session.lootItems.length ? <div className="gh-stage-hud__notice" role="status">{session.lootItems.join(", ")}</div> : null}

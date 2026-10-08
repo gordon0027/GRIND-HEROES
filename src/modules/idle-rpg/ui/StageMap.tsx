@@ -104,7 +104,10 @@ export function StageMap({ session, play }: { session: IdleSession; play: boolea
       </div>
       <div className="gh-stage-map__detail">
         <div className="gh-stage-map__detail-main"><strong>{selectedVisible ? current.name : chapterName}</strong>
-          <span>{selectedVisible ? (session.stageProgress.completed[current.id] ?? 0) > 0 ? "FARMING HERE" : "PROGRESSING HERE" : `Current ${current.chapter}-${current.stage} · Act ${current.chapter}`}</span></div>
+          <span>{selectedVisible ? (session.stageProgress.completed[current.id] ?? 0) > 0 ? "FARMING HERE" : "PROGRESSING HERE" : `Current ${current.chapter}-${current.stage} · Act ${current.chapter}`}</span>
+          <label className="gh-stage-map__advance" title="Try the next unlocked stage after a clear"><input
+            type="checkbox" checked={session.autoProgressEnabled}
+            onChange={(event) => session.setAutoProgressEnabled(event.target.checked)} /> Advance</label></div>
         {selectedVisible && <div className="gh-stage-map__detail-stats">
           <span>Best <b>{session.stageProgress.bestSeconds[current.id] == null ? "—" : `${session.stageProgress.bestSeconds[current.id]!.toFixed(1)}s`}</b></span>
           <span>Power <b>{current.recommendedPower ?? "—"}</b></span>

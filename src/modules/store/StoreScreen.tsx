@@ -31,17 +31,14 @@ import {
   grantLines,
   grantedBy,
   outlined,
-  panel,
   useCatalog,
   useCelebrate,
-  useGameLayout,
   useNow,
   usePopupClose,
   useSound,
   useStagger,
   useToast,
   useUiKit,
-  v,
   type ResourceLine,
   tokenGlyph,
 } from "@idosgames/react/ui";
@@ -175,22 +172,12 @@ function LiveStoreScreen({ args }: Pick<FeatureScreenProps, "args">): ReactNode 
           >
             {first.Identity?.DisplayName ?? first.SectionID}
           </SectionTitle>
-          <div
-            className="idos-scroll"
-            style={{
-              display: "flex",
-              gap: 12,
-              overflowX: "auto",
-              padding: "4px 4px 12px",
-              scrollSnapType: "x mandatory",
-            }}
-          >
+          <OfferGrid>
             {slotsOf(first).map((slot, i) => (
               <OfferCard
                 key={slot.SlotID}
                 slot={slot}
                 now={now}
-                wide
                 index={i}
                 onPick={(offer) =>
                   setPicked({
@@ -202,7 +189,7 @@ function LiveStoreScreen({ args }: Pick<FeatureScreenProps, "args">): ReactNode 
                 }
               />
             ))}
-          </div>
+          </OfferGrid>
         </div>
       ) : null}
       {rest.map((section) => (
@@ -245,53 +232,31 @@ function LiveStoreScreen({ args }: Pick<FeatureScreenProps, "args">): ReactNode 
 }
 
 function OfferGrid({ children }: { children: ReactNode }): ReactNode {
-  const layout = useGameLayout();
-  return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: `repeat(auto-fill, minmax(${layout === "phone" ? 150 : 180}px, 1fr))`,
-        gap: layout === "phone" ? 12 : 16,
-      }}
-    >
-      {children}
-    </div>
-  );
+  return <div className="gh-shop__offer-grid">{children}</div>;
 }
 
 function OfferCard({
   slot,
   now,
-  wide = false,
   index,
   onPick,
 }: {
   slot: StorefrontSlotView;
   now: number;
-  wide?: boolean;
   index: number;
   onPick: (offer: StorefrontOfferView) => void;
 }): ReactNode {
   const catalog = useCatalog();
-  const layout = useGameLayout();
   const stagger = useStagger();
   const state = useUserState();
   const offer = slot.Offer;
-  const width = wide ? (layout === "phone" ? 170 : 200) : undefined;
 
   // An EMPTY slot is still drawn — the shelf must not jump when a window closes.
   if (!offer)
     return (
       <div
+        className="gh-shop__offer-card gh-shop__offer-card--empty"
         style={{
-          ...panel,
-          width,
-          minHeight: 200,
-          display: "grid",
-          placeItems: "center",
-          opacity: 0.55,
-          scrollSnapAlign: "start",
-          flex: "none",
           ...stagger(index),
         }}
       >
@@ -312,46 +277,21 @@ function OfferCard({
 
   return (
     <div
-      className={free && !disabled ? "idos-shine" : undefined}
+      className={`gh-shop__offer-card${free && !disabled ? " idos-shine" : ""}`}
       style={{
-        ...panel,
-        width,
-        flex: wide ? "none" : undefined,
-        scrollSnapAlign: "start",
-        padding: 12,
-        display: "grid",
-        gap: 8,
-        justifyItems: "center",
-        background:
-          free && !disabled
-            ? `linear-gradient(180deg, color-mix(in srgb, ${v.blue} 45%, ${v.panelDeep}) 0%, ${v.panelDeep} 100%)`
-            : panel.background,
         ...stagger(index),
       }}
     >
       <div
+        className="gh-shop__offer-name"
         style={{
           ...outlined,
-          fontSize: 14,
-          textAlign: "center",
-          minHeight: 36,
-          display: "grid",
-          placeItems: "center",
         }}
       >
         {name}
       </div>
       <div
-        className={free && !disabled ? "idos-bounce" : undefined}
-        style={{
-          width: 84,
-          height: 84,
-          display: "grid",
-          placeItems: "center",
-          borderRadius: 20,
-          background:
-            "radial-gradient(circle, rgba(255,255,255,.18), transparent 70%)",
-        }}
+        className={`gh-shop__offer-art${free && !disabled ? " idos-bounce" : ""}`}
       >
         <Icon
           glyph={
@@ -361,30 +301,27 @@ function OfferCard({
                 : catalog.iconOf(main)
               : "gift"
           }
-          size={62}
+          size={58}
         />
       </div>
-      <div style={{ minHeight: 22 }}>
+      <div className="gh-shop__offer-rewards">
         <ResourceList lines={rewards} />
       </div>
       {remaining != null ? (
-        <div
+        <div className="gh-shop__offer-remaining"
           style={{
             ...outlined,
-            fontSize: 11,
-            color: v.textDim,
-            fontWeight: 700,
           }}
         >
           {t("left")}: {remaining}
         </div>
       ) : null}
       <Button
+        className="gh-shop__offer-buy"
         tone={free ? "green" : "gold"}
         disabled={disabled}
         attract={free && !disabled}
         onClick={() => onPick(offer)}
-        style={{ width: "100%" }}
       >
         {soldOut ? (
           t("soldOut")

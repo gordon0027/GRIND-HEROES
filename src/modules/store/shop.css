@@ -23,18 +23,18 @@
 .gh-shop__deposit:hover { background: #4a3822; }
 .gh-shop__deposit:focus-visible { outline: 2px solid #e8c17d; outline-offset: 2px; }
 .gh-shop__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
-.gh-shop__card { --accent: #72bdda; box-sizing: border-box; position: relative; display: flex; flex-direction: column; align-items: center; gap: 5px; min-width: 0; min-height: 263px; padding: 10px; border: 1px solid color-mix(in srgb, var(--accent), #3b332b 55%); border-radius: 3px; background: linear-gradient(#312a25, #211d1b); box-shadow: inset 0 1px #ad8c5940, 0 3px 8px #0004; color: #f2e6d3; text-align: center; cursor: pointer; font: inherit; }
+.gh-shop__card { --accent: #72bdda; box-sizing: border-box; position: relative; display: flex; flex-direction: column; align-items: center; gap: 5px; min-width: 0; min-height: 246px; padding: 9px; border: 2px solid color-mix(in srgb, var(--accent), #6e5332 55%); border-radius: 3px; background: linear-gradient(#312a25, #211d1b); box-shadow: inset 0 0 0 2px #171310, inset 0 1px #ad8c5940, 0 3px 8px #0007; color: #f2e6d3; text-align: center; cursor: pointer; font: inherit; }
 .gh-shop__card:hover { border-color: var(--accent); box-shadow: 0 0 15px color-mix(in srgb, var(--accent), transparent 80%); }
 .gh-shop__card:disabled { opacity: .55; cursor: not-allowed; }
 .gh-shop__card--rare { --accent: #75a8ed; } .gh-shop__card--epic, .gh-shop__card--premium { --accent: #bf85e9; } .gh-shop__card--legendary { --accent: #f0b75b; }
-.gh-shop__art { display: grid; place-items: center; width: 100%; height: 120px; background: radial-gradient(circle, color-mix(in srgb, var(--accent), transparent 78%), transparent 70%); }
-.gh-shop__art img { max-width: 122px; max-height: 112px; object-fit: contain; image-rendering: pixelated; }
+.gh-shop__art { display: grid; place-items: center; box-sizing: border-box; width: 94px; height: 94px; margin: 2px 0 4px; border: 2px solid color-mix(in srgb, var(--accent), #5c4935 60%); background: radial-gradient(circle, color-mix(in srgb, var(--accent), transparent 78%), transparent 72%), url("/assets/ui/revamp/slots/base.png") center / cover; box-shadow: inset 0 0 0 2px #1a1511, 0 2px 6px #0008; }
+.gh-shop__art img { max-width: 78px; max-height: 78px; object-fit: contain; }
 .gh-shop__art span, .gh-shop__detail-art span { color: var(--accent, #bf85e9); font-size: 58px; }
 .gh-shop__kind { color: var(--accent); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .16em; }
 .gh-shop__kind--rare { color: #75a8ed; } .gh-shop__kind--epic, .gh-shop__kind--premium { color: #bf85e9; } .gh-shop__kind--legendary { color: #f0b75b; }
-.gh-shop__card strong { min-height: 38px; display: grid; place-items: center; font-size: 16px; line-height: 1.2; }
+.gh-shop__card strong { min-height: 36px; display: grid; place-items: center; font-size: 15px; line-height: 1.2; overflow-wrap: anywhere; }
 .gh-shop__price { color: #e6bd79; font-size: 14px; font-weight: 700; }
-.gh-shop__card-action { width: 100%; margin-top: auto; padding-top: 7px; border-top: 1px solid #4a4036; color: #fff0be; font-size: 11px; font-weight: 700; }
+.gh-shop__card-action { box-sizing: border-box; display: grid; place-items: center; width: 100%; min-height: 31px; margin-top: auto; padding: 2px 5px; border: 7px solid transparent; border-image-source: url("/assets/ui/source/Component/Button/btn_rectangle_01_n_dark.png"); border-image-slice: 24 fill; border-image-width: 7px; color: #fff0be; font-size: 10px; font-weight: 800; letter-spacing: .03em; }
 .gh-shop__badge { position: absolute; right: 7px; top: 7px; color: #f9d18a; font-size: 10px; }
 .gh-shop__empty { padding: 36px 16px; border: 1px solid #564c3d; background: #211e1c; text-align: center; }
 [role="dialog"]:has(.gh-shop__details) > .idos-scroll { box-sizing: border-box; max-width: 100vw; }
@@ -46,4 +46,13 @@
 .gh-shop__detail-price small { display: block; color: #a99c89; font-size: 11px; font-weight: 400; }
 .gh-shop__buy { width: 100%; }
 .gh-shop__unavailable { color: #f2ad8d !important; }
-@media (max-width: 560px) { .gh-shop__intro { align-items: start; flex-wrap: wrap; } .gh-shop__balances { justify-content: flex-start; } .gh-shop__actions { flex-wrap: wrap; } .gh-shop__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .gh-shop__card { min-height: 236px; padding: 7px; } .gh-shop__art { height: 96px; } .gh-shop__art img { max-width: 100px; max-height: 92px; } .gh-shop-shell__tabs button { min-height: 34px; padding: 1px 6px; border-width: 7px; border-image-width: 7px; font-size: 11px; } }
+.gh-shop__offer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 170px), 1fr)); gap: 10px; min-width: 0; }
+.gh-shop__offer-card { box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 7px; min-width: 0; min-height: 224px; padding: 10px; border: 2px solid #806646; border-radius: 3px; background: linear-gradient(#312a25,#211d1b); box-shadow: inset 0 0 0 2px #171310,inset 0 1px #ad8c5940,0 3px 8px #0007; color: #f2e6d3; text-align: center; }
+.gh-shop__offer-card--empty { justify-content: center; opacity: .55; }
+.gh-shop__offer-name { display: grid; place-items: center; min-height: 34px; max-width: 100%; font: 700 14px Georgia,serif; overflow-wrap: anywhere; }
+.gh-shop__offer-art { box-sizing: border-box; display: grid; place-items: center; width: 82px; height: 82px; border: 2px solid #9b7850; background: radial-gradient(circle,#9b785044,transparent 75%),url("/assets/ui/revamp/slots/base.png") center / cover; box-shadow: inset 0 0 0 2px #171310,0 2px 6px #0008; }
+.gh-shop__offer-rewards { min-height: 22px; max-width: 100%; overflow-wrap: anywhere; }
+.gh-shop__offer-remaining { color: #b6ad9f; font: 700 11px system-ui,sans-serif; }
+.gh-shop__offer-buy.idos-press { box-sizing: border-box; width: 100% !important; min-width: 0; min-height: 36px; margin-top: auto; border: 8px solid transparent !important; border-image-source: url("/assets/ui/source/Component/Button/btn_rectangle_01_n_brown.png") !important; border-image-slice: 24 fill !important; border-image-width: 8px !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; color: #fff0be !important; font: 700 12px Georgia,serif !important; }
+.gh-shop__offer-buy.idos-press:disabled { opacity: .55; filter: grayscale(.7); }
+@media (max-width: 560px) { .gh-shop__intro { align-items: start; flex-wrap: wrap; } .gh-shop__balances { justify-content: flex-start; } .gh-shop__actions { flex-wrap: wrap; } .gh-shop__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .gh-shop__card { min-height: 228px; padding: 7px; } .gh-shop__art { width: 76px; height: 76px; } .gh-shop__art img { max-width: 64px; max-height: 64px; } .gh-shop-shell__tabs button { min-height: 34px; padding: 1px 6px; border-width: 7px; border-image-width: 7px; font-size: 11px; } .gh-shop__offer-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 145px), 1fr)); } }
