@@ -1,6 +1,6 @@
 import { useRef, useState, useSyncExternalStore, type ComponentType, type CSSProperties, type ReactNode } from "react";
 import type { FeatureRegistry } from "@idosgames/module-sdk";
-import { Button, Popup, ResourceList, useCelebrate, v } from "@idosgames/react/ui";
+import { Button, Popup, ResourceList, v } from "@idosgames/react/ui";
 import type { IdleSession } from "../game/session";
 import { formatBig, formatDuration } from "../game/format";
 import { t } from "../i18n";
@@ -18,6 +18,7 @@ export function makeGamePanel(session: IdleSession, features: FeatureRegistry): 
   return function GrindPanel(): ReactNode {
     useSyncExternalStore(session.subscribe, session.getVersion);
     const [section, setSection] = useState<GameSection>("play");
+    const [collectedAway, setCollectedAway] = useState<{ currencyID: string; amount: number } | null>(null);
     const market = features.get("marketplace");
     const MarketplaceScreen = market?.available ? market.Screen : null;
     const run = session.run;
@@ -69,7 +70,19 @@ export function makeGamePanel(session: IdleSession, features: FeatureRegistry): 
         if (next === "inventory" || next === "team" || section === "more" || section === "marketplace")
           void session.refreshOwnership();
       }} />
-      {session.away ? <AwayPopup session={session} /> : null}
+      {session.away ? <AwayPopup session={session} onCollect={setCollectedAway} /> : null}
+      {collectedAway ? <Popup title="AFK REWARDS" onClose={() => setCollectedAway(null)} width={380} variant="center">
+        <div className="gh-away gh-away--collected">
+          <div className="gh-away__caption">You got</div>
+          <div className="gh-away__reward">
+            {collectedAway.currencyID === "GOLD" ? <>
+              <img src={heroUi.gold} alt="Gold" />
+              <strong>+{formatBig(collectedAway.amount)}</strong><span>GOLD</span>
+            </> : <ResourceList lines={[{ kind: "currency", id: collectedAway.currencyID, amount: collectedAway.amount }]} size={28} />}
+          </div>
+          <Button className="gh-away__button" tone="gold" size="lg" onClick={() => setCollectedAway(null)}>Great!</Button>
+        </div>
+      </Popup> : null}
     </div>;
   };
 }
@@ -119,15 +132,14 @@ function MoreSection({ features, session }: { features: FeatureRegistry; session
   </section>;
 }
 
-function AwayPopup({ session }: { session: IdleSession }): ReactNode {
+function AwayPopup({ session, onCollect }: { session: IdleSession; onCollect: (reward: { currencyID: string; amount: number }) => void }): ReactNode {
   const away = session.away!;
-  const celebrate = useCelebrate();
   const closed = useRef(false);
   const lines = [{ kind: "currency" as const, id: away.currencyID, amount: away.amount }];
   const close = () => {
     if (closed.current) return;
     closed.current = true;
-    celebrate(lines);
+    onCollect({ currencyID: away.currencyID, amount: away.amount });
     session.dismissAway();
   };
   return <Popup title="AFK REWARDS" onClose={close} width={380} variant="center">

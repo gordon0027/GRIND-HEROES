@@ -36,7 +36,7 @@ export interface GameFrameOptions {
 const ghIcon = "https://cloud.idosgames.com/drive/img/98JRCAKG/hard-token.png";
 
 function formatGhBalance(amount: string | undefined): string {
-  if (!amount || !/^\d+(?:\.0+)?$/.test(amount)) return "—";
+  if (!amount || !/^\d+(?:\.0+)?$/.test(amount)) return "0";
   return BigInt(amount.split(".")[0]!).toLocaleString("en-US");
 }
 

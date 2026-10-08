@@ -27,3 +27,9 @@ v50 (`bld72c510d4860e4e998c5011290a191af6`) with all 107 PNG assets.
 The live game, AFK popup, Marketplace, Shop, Team and Inventory loaded; no
 purchase or chest opening was performed. Marketplace statistics are still
 absent because there is no authoritative server source for global sales.
+
+## AFK collected reward confirmation (2026-10-08)
+
+After the already credited AFK payout is collected, the second confirmation now uses the same Grind Heroes brown/gold dialog, button, and Gold icon as the first AFK popup. The generic blue iDos `useCelebrate` dialog is no longer invoked for this payout. Closing either popup still only dismisses UI; the authoritative reward claim is unchanged and the second confirmation cannot grant or collect again. The game header's GH counter now displays `0` for a missing/zero balance, and GOLD, GEMS, and GH counters share a fixed 37px height. Local desktop and 390px checks confirmed the two popup sequence and equal counter heights.
+
+The full v52 upload attempt was rejected by iDos storage quota, leaving PROD v51 live. The user elected to upload the build themselves; no old files were deleted.
