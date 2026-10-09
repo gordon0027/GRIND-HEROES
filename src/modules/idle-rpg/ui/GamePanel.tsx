@@ -102,9 +102,8 @@ export function makeGamePanel(session: IdleSession, features: FeatureRegistry): 
       {mapOpen && section === "play" ? <div className="gh-stage-map-overlay"
         role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setMapOpen(false); }}>
         <div className="gh-stage-map-dialog" role="dialog" aria-modal="true" aria-label="Stage map">
-          <button type="button" className="gh-stage-map-close" aria-label="Close stage map"
-            onClick={() => setMapOpen(false)}>×</button>
-          <StageMap session={session} onSelect={() => setMapOpen(false)} />
+          <StageMap session={session} onSelect={() => setMapOpen(false)}
+            onClose={() => setMapOpen(false)} />
         </div>
       </div> : null}
       <StagePresentation run={run} visible={section === "play"} />

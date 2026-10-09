@@ -40,7 +40,9 @@ function MapRoute({ stages, session, positions, mobile }: {
   </svg>;
 }
 
-export function StageMap({ session, onSelect }: { session: IdleSession; onSelect: () => void }): ReactNode {
+export function StageMap({ session, onSelect, onClose }: {
+  session: IdleSession; onSelect: () => void; onClose: () => void;
+}): ReactNode {
   const [chapter, setChapter] = useState(session.run.stage.chapter);
   const selectedID = session.run.stage.id;
   useEffect(() => setChapter(session.run.stage.chapter), [selectedID, session.run.stage.chapter]);
@@ -55,6 +57,8 @@ export function StageMap({ session, onSelect }: { session: IdleSession; onSelect
     aria-label="Stage map" data-chapter={chapter}>
     <div className="gh-stage-map">
       <header className="gh-stage-map__header">
+        <button type="button" className="gh-stage-map-close" aria-label="Close stage map"
+          onClick={onClose}>×</button>
         <div className="gh-stage-map__heading"><img src={heroUi.functionIcon("function_icon_map")} alt="" />
           <div><span>PORTAL</span><strong>Stage Map</strong></div></div>
         <div className="gh-stage-map__chapters" role="group" aria-label="Chapters">

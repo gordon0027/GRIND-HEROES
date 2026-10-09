@@ -145,8 +145,8 @@
 .gh-play-dashboard__card strong{font:700 17px Georgia,serif;color:#ffe0a0}
 .gh-stage-map-overlay{position:absolute;z-index:30;inset:0;display:grid;place-items:center;box-sizing:border-box;padding:12px;background:#0c0a09c9;pointer-events:auto}
 .gh-stage-map-dialog{position:relative;width:min(1190px,100%);height:min(780px,100%);min-height:0}
-.gh-stage-map-close{position:absolute;z-index:20;top:5px;right:7px;width:34px;height:34px;border:2px solid #b88b4e;border-radius:4px;background:#3d2922;color:#ffe0a0;font:700 25px Georgia,serif;cursor:pointer}
+.gh-stage-map-close{position:absolute;z-index:5;top:8px;right:8px;display:grid;place-items:center;width:30px;height:30px;padding:0;border:2px solid #b88b4e;border-radius:4px;background:#3d2922;color:#ffe0a0;font:700 23px/1 Georgia,serif;cursor:pointer}
 .gh-stage-map-dialog .gh-stage-map-host{display:block;position:relative;inset:auto;width:100%;height:100%;padding:0;overflow-y:auto;border-radius:7px}
 .gh-stage-map-dialog .gh-stage-map{min-height:100%}
 .gh-stage-map-dialog .gh-stage-map__header{padding-right:48px}
-@media(max-width:700px){.gh-play-lower{bottom:70px;padding:6px}.gh-stage-navigator{padding:6px 7px}.gh-stage-navigator__controls strong{font-size:13px}.gh-stage-navigator__controls button{min-width:29px;padding:2px 5px}.gh-stage-map-overlay{padding:5px}.gh-stage-map-dialog{height:100%}.gh-stage-map-dialog .gh-stage-map-host{bottom:auto;padding:0}.gh-stage-map-dialog .gh-stage-map__header{padding-right:45px}.gh-play-dashboard__card{padding:4px 7px}.gh-play-dashboard__card strong{font-size:15px}}
+@media(max-width:700px){.gh-play-lower{bottom:70px;padding:6px}.gh-stage-navigator{padding:6px 7px}.gh-stage-navigator__controls strong{font-size:13px}.gh-stage-navigator__controls button{min-width:29px;padding:2px 5px}.gh-stage-map-overlay{padding:5px}.gh-stage-map-dialog{height:100%}.gh-stage-map-dialog .gh-stage-map-host{bottom:auto;padding:0}.gh-stage-map-dialog .gh-stage-map__header{padding-right:45px}.gh-stage-map-close{top:7px;right:7px}.gh-play-dashboard__card{padding:4px 7px}.gh-play-dashboard__card strong{font-size:15px}}
