@@ -1,4 +1,4 @@
-import { useRef, useState, useSyncExternalStore, type ComponentType, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, type ComponentType, type CSSProperties, type ReactNode } from "react";
 import type { FeatureRegistry } from "@idosgames/module-sdk";
 import { Button, Popup, ResourceList, v } from "@idosgames/react/ui";
 import type { IdleSession } from "../game/session";
@@ -7,6 +7,8 @@ import { t } from "../i18n";
 import { InventorySection, TeamSection } from "./ManagementSections";
 import { GameFooter, type GameSection } from "./GameFooter";
 import { StageMap } from "./StageMap";
+import { STAGE_CATALOG } from "../game/stageCatalog";
+import { stageUnlocked } from "../game/stageProgress";
 import { heroUi } from "./heroAssets";
 import { StagePresentation } from "./StagePresentation";
 import { emptySlotIcon, rarityColors } from "./inventoryPresentation";
@@ -18,10 +20,24 @@ export function makeGamePanel(session: IdleSession, features: FeatureRegistry): 
   return function GrindPanel(): ReactNode {
     useSyncExternalStore(session.subscribe, session.getVersion);
     const [section, setSection] = useState<GameSection>("play");
+    const [mapOpen, setMapOpen] = useState(false);
+    useEffect(() => {
+      if (!mapOpen) return;
+      const closeOnEscape = (event: KeyboardEvent) => { if (event.key === "Escape") setMapOpen(false); };
+      window.addEventListener("keydown", closeOnEscape);
+      return () => window.removeEventListener("keydown", closeOnEscape);
+    }, [mapOpen]);
     const [collectedAway, setCollectedAway] = useState<{ currencyID: string; amount: number } | null>(null);
     const market = features.get("marketplace");
     const MarketplaceScreen = market?.available ? market.Screen : null;
     const run = session.run;
+    const stageIndex = STAGE_CATALOG.findIndex((stage) => stage.id === run.stage.id);
+    const previous = STAGE_CATALOG[stageIndex - 1];
+    const next = STAGE_CATALOG[stageIndex + 1];
+    const canSelect = !session.lootPending && !session.lootBusy;
+    const canGo = (stage: typeof previous) => !!stage && canSelect &&
+      (session.isDevPreview || stageUnlocked(session.stageProgress, stage.id));
+    const location = run.stage.name.split(" · ")[1] ?? run.stage.name;
     const percent = Math.min(100, run.distance / run.stage.length * 100);
     return <div style={{ position: "absolute", inset: 0, pointerEvents: "none", fontFamily: v.font, color: v.text }}>
       {section === "play" ? <div className="gh-stage-hud" style={{ top: 8 }}>
@@ -58,7 +74,39 @@ export function makeGamePanel(session: IdleSession, features: FeatureRegistry): 
           {section === "more" ? <MoreSection features={features} session={session} /> : null}
         </div>
       </div>}
-      <StageMap session={session} play={section === "play"} />
+      {section === "play" ? <div className="gh-play-lower">
+        <section className="gh-stage-navigator" aria-label="Stage navigator">
+          <div className="gh-stage-navigator__top">
+            <span>ACT {run.stage.chapter} · {location}</span>
+            <label className="gh-stage-navigator__advance">
+              <input type="checkbox" checked={session.autoProgressEnabled}
+                onChange={(event) => session.setAutoProgressEnabled(event.target.checked)} />
+              AUTO ADVANCE {session.autoProgressEnabled ? "ON" : "OFF"}
+            </label>
+          </div>
+          <div className="gh-stage-navigator__controls">
+            <button type="button" aria-label="Previous stage" disabled={!canGo(previous)}
+              onClick={() => { if (previous) session.selectStage(previous.id); }}>‹</button>
+            <strong>Current Stage: {run.stage.chapter}-{run.stage.stage}</strong>
+            <button type="button" aria-label="Next stage" disabled={!canGo(next)}
+              onClick={() => { if (next) session.selectStage(next.id); }}>›</button>
+            <button type="button" className="gh-stage-navigator__map" aria-label="Open stage map"
+              onClick={() => setMapOpen(true)}><img src={heroUi.functionIcon("function_icon_map")} alt="" /> MAP</button>
+          </div>
+        </section>
+        <div className="gh-play-dashboard">
+          <div className="gh-play-dashboard__card"><span>TEAM POWER</span><strong>{session.teamPower === null ? "—" : session.teamPower.toLocaleString("en-US")}</strong></div>
+          <div className="gh-play-dashboard__card"><span>GH RANK</span><strong>{session.teamLeaderboard?.rank ? `#${session.teamLeaderboard.rank}` : "—"}</strong></div>
+        </div>
+      </div> : null}
+      {mapOpen && section === "play" ? <div className="gh-stage-map-overlay"
+        role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setMapOpen(false); }}>
+        <div className="gh-stage-map-dialog" role="dialog" aria-modal="true" aria-label="Stage map">
+          <button type="button" className="gh-stage-map-close" aria-label="Close stage map"
+            onClick={() => setMapOpen(false)}>×</button>
+          <StageMap session={session} onSelect={() => setMapOpen(false)} />
+        </div>
+      </div> : null}
       <StagePresentation run={run} visible={section === "play"} />
       {session.chestDrop ? <div className="gh-chest-drop-host">
         <ChestDrop key={session.chestDrop.sequence} drop={session.chestDrop} />
@@ -66,6 +114,7 @@ export function makeGamePanel(session: IdleSession, features: FeatureRegistry): 
       {session.lastLevelNotice ? <div className="gh-level-up-notice" role="status">{session.lastLevelNotice}</div> : null}
       <GameFooter section={section} onPick={(next) => {
         if (next === section) return;
+        setMapOpen(false);
         setSection(next);
         if (next === "inventory" || next === "team" || section === "more" || section === "marketplace")
           void session.refreshOwnership();
