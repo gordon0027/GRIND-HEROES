@@ -40,7 +40,7 @@ function MapRoute({ stages, session, positions, mobile }: {
   </svg>;
 }
 
-export function StageMap({ session, play }: { session: IdleSession; play: boolean }): ReactNode {
+export function StageMap({ session, onSelect }: { session: IdleSession; onSelect: () => void }): ReactNode {
   const [chapter, setChapter] = useState(session.run.stage.chapter);
   const selectedID = session.run.stage.id;
   useEffect(() => setChapter(session.run.stage.chapter), [selectedID, session.run.stage.chapter]);
@@ -51,7 +51,7 @@ export function StageMap({ session, play }: { session: IdleSession; play: boolea
   const chapterName = stages[0]?.name.split(" · ")[1] ?? `Chapter ${chapter}`;
   const selectedVisible = current.chapter === chapter;
 
-  return <section className={`gh-stage-map-host${play ? " is-play" : ""}`}
+  return <section className="gh-stage-map-host"
     aria-label="Stage map" data-chapter={chapter}>
     <div className="gh-stage-map">
       <header className="gh-stage-map__header">
@@ -89,7 +89,7 @@ export function StageMap({ session, play }: { session: IdleSession; play: boolea
             aria-label={`Stage ${stage.chapter}-${stage.stage}, ${selected ? completed ? "currently farming" : "current progression stage" : completed ? "completed" : unlocked ? "unlocked" : "locked"}${boss ? ", chapter boss" : ""}`}
             aria-current={selected ? "location" : undefined}
             title={`${stage.name} · ${selected ? completed ? "Farming" : "Progressing" : unlocked ? "Select this stage" : "Locked"}`}
-            onClick={() => session.selectStage(stage.id)}>
+            onClick={() => { if (session.selectStage(stage.id)) onSelect(); }}>
             {selected && <span className="gh-map-node__party"><img src={heroUi.functionIcon("function_icon_battle")} alt="" /></span>}
             <span className="gh-map-node__disc">
               {boss ? <span className="gh-map-node__ogre" style={{ backgroundImage: `url(${import.meta.env.BASE_URL}${bossSheets[chapter - 1]})` }} /> :
