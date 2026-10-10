@@ -1,5 +1,10 @@
 node_modules/
 dist/
+.tmp/
+.pitch_build/
+pitch_assets/
+pitch_output/
+make_colosseum_demo.py
 .env.local
 .env.*.local
 *.log

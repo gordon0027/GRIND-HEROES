@@ -127,3 +127,169 @@ unreserved budget. A full 27 MB v59 upload hit the Title storage quota, so
 complete build without changing source assets; v60 includes all 113 game files.
 The underlying cause of the failed or unfinished crypto
 grant was not available through the connected MCP or dashboard API metrics.
+
+## 2026-10-09 payout investigation (local only)
+
+PROD Title `98JRCAKG` still serves client v60 and CloudCode revision 12. The
+protected `grind_power_reward_state_v1` read at 2026-10-09 14:21 UTC held **seven**
+in-flight claims totaling 1,229 GH, all with `paidUnits: "0"`; the two first
+claims (180 and 82 GH, reserved 2026-10-08 18:04:57 and 18:07:57 UTC) remain
+among them. The public Title page showed about 46.52K GH in the player pool
+and 160 GH in the developer pool at the time of inspection. These are live
+platform figures, distinct from the game's manual 40,000 GH accounting seed.
+The live Currency config has active zero-decimal `Main`, both crypto IOU
+fallback flags false, and CloudCode `ResourcePolicy.AllowedGrantTypes` includes
+`CryptoCurrency`. The public pool figure is not proof that a particular
+CloudCode grant succeeded or that its funding rule selects that pool.
+
+The active code sends `server.ApplyResourceOperation({ Reason: claimID,
+Operation: { Grant: { Standard: { Entries: [{ Type: "CryptoCurrency",
+CurrencyID: "Main", Amount: wholeGH }] } } } })`. The official iDos registry
+describes this resource entry shape and says `server.*` calls return
+`{ Success, Error, Data }`, but it does not document `Reason` as an
+idempotency key. Treat `Reason` as a correlation label only. The title MCP
+exposes active config and protected TitleData, not historical CloudCode
+execution results, player `Main` inventories, grant transaction records, or
+the exact platform grant response. PROD has `PersistExecutionLog: true` with a
+30-day TTL, but no available MCP reader for those records. The dashboard's
+Cloud Functions page shows the schedule and its plan restriction, not an
+execution log; API Metrics aggregates `CloudCode.Execute` without handler,
+claim ID, or response detail. Consequently the
+seven claims are **unknown outcomes**, not proved failed payouts. No historical
+reservation was changed and no grant was retried.
+
+Local `powerRewards.js` now stores the claim day, one-based window, frozen
+daily share, amount split between saved inactivity credit and current window,
+and previous claim timestamp with each new reservation. It logs a one-way
+diagnostic claim key around the grant and finalization, with the response's
+field names and a transaction/operation ID if the platform supplies one;
+player IDs and raw claim IDs are omitted from logs. The new internal
+reconciliation helper supports a confirmed-success finalization for old or
+new reservations, a confirmed-rejected rollback **only** for new reservations
+with intact amount-source metadata, and an unknown no-op. It is not exposed as
+a player-callable handler. Old reservations lack the amount split, so a
+rejected old grant needs manual reconstruction from a protected historical
+snapshot and independent platform evidence; if either is unavailable, leave
+the lock in place. The nonce never decreases or reuses a claim ID.
+
+Recovery requires a publisher/platform read-only audit per claim ID/Reason,
+recipient, `Main` amount and reservation time, plus the player's trusted
+`Main` balance/transaction history. If the grant is confirmed, apply a
+compare-and-swap ledger finalization to move its reserved units into
+`paidUnits` without calling `ApplyResourceOperation`. If the platform proves
+rejection, reconstruct the original inactivity/window split, previous
+timestamp and day from records, then apply a reviewed CAS rollback; never
+infer this from today's snapshot. If the result is missing or ambiguous, keep
+`inFlight` and escalate to platform support. A live controlled test also needs
+access to the execution result and balance/transaction evidence before any
+approval to publish or grant.
+
+## 2026-10-09 one-GH controlled probe preparation
+
+The official iDos CloudCode skill and the publisher tool's `server.*` API list
+do not include `server.ApplyResourceOperation`, although the current PROD
+revision calls it. This is a **suspected** API mismatch, not the historical
+execution result. The reward-system skill describes native static Claims using
+`ResourceGrant` but does not establish a server-calculated Power amount or
+publisher-funded `Main` CryptoCurrency payout route. `Reason` remains a
+correlation label, not a proven idempotency key. `Main` is active, the
+CloudCode policy allows CryptoCurrency, and `CryptoRewardsFromDeveloperShare`
+is false. The 46.52K GH player pool and 160 GH developer pool shown by the
+publisher dashboard do not prove which pool a script grant would debit.
+
+Local `server/oneGhPayoutProbe.js` adds a fixed-account, exact-one-GH test
+handler and a read-only status handler. The recipient ID is intentionally blank
+in source, so an accidental publication cannot run it. Before making the
+platform call, the server writes an independent permanent CAS lock to
+`Runtime.Private.grind_main_one_gh_probe_v1`. The title currently sets
+`RejectUnregisteredKeys: false` and a default 8,192-byte value limit, so this
+small protected record can be written without changing the existing Power
+reward key schema. The handler ignores browser arguments, returns a redacted
+platform response only to its fixed account, and never clears its lock on a
+rejection or unknown result. The browser reads `InventoryV2.CryptoCurrencies.Main`
+before the click and again afterward, looking for exactly +1 GH. It does not
+infer a payout from a successful CloudCode transport response.
+The status handler also reports whether the runtime exposes
+`server.ApplyResourceOperation`; if absent, the test button stays disabled and
+the grant handler returns `unsupported_api` before writing any lock.
+
+`scripts/prepare-gh-probe.mjs` pins the fetched PROD revision 12 source hash,
+replaces only its Power reward tail with the local protected version, appends
+the temporary probe and builds an ignored `.tmp/gh-prod-one-gh-probe.js` draft.
+The local source has no authorized UserID until the draft builder inserts the
+fixed account. The draft passed `node --check`; its actual publication and
+test result are recorded below. The new Power handler and Earnings client both
+leave regular claims disabled until the real test is verified. The local game
+no longer calls `claimPowerRewards` at login or on its eight-hour timer;
+protected Power recalculation remains. Earnings now has a manual Claim button
+and a simpler six-field layout, but the button stays disabled while the probe
+is pending. After a successful test, a separate reviewed release must switch
+both claim gates on and remove the temporary probe. All seven historical
+in-flight claims remain untouched.
+Typecheck, the full test suite, production build, syntax check of the
+publisher draft, and `git diff --check` passed. Browser inspection at 390 px
+used a temporary local overview fixture to verify the six-field layout and
+disabled Claim button; the fixture was removed immediately afterward. The
+real local DEV CloudCode does not whitelist `getPowerRewardOverview`, so that
+browser run cannot verify live reward figures or the actual payout animation.
+An optimized, local-only PROD-targeted preview package is prepared at
+`.tmp/gh-one-gh-prod-preview.zip` (8.64 MB). Its bundle explicitly contains
+`VITE_IDOS_ENV: "prod"`; the ordinary local build defaults to DEV. The zip was
+uploaded as Staged client v61, never deployed to the live slot. The temporary test UI is requested with
+`?ghProbe=1`, reads the protected status after the overview to avoid immediate
+CloudCode throttling, and appears only when the fixed account is authorized.
+
+## 2026-10-09 PROD one-GH result
+
+The publisher explicitly authorized one real-GH test on the authenticated
+`[redacted publisher UserID]` account. PROD CloudCode revision 13 was published
+with the 19 existing handlers plus two temporary probe handlers. It keeps
+`GH_POWER_REWARD_CLAIMS_ENABLED = false`, so live client v60 cannot create more
+Power claim reservations. Client v61 was uploaded as **Staged** only; live client
+remains v60. The staged PROD preview ran under the account shown by the iDos
+profile as `[redacted publisher UserID]`.
+
+The authenticated, read-only status handler reported that
+`server.ApplyResourceOperation` exists in the PROD runtime. The account's
+`Main` inventory was 840 GH before the attempt. Exactly one probe call
+reserved a separate permanent key, `Runtime.Private.grind_main_one_gh_probe_v1`,
+then submitted:
+
+```json
+{"Reason":"grind_main_one_gh_probe_v1:[redacted publisher UserID]","Operation":{"Grant":{"Standard":{"Entries":[{"Type":"CryptoCurrency","CurrencyID":"Main","Amount":1}]}}}}
+```
+
+The actual `server.ApplyResourceOperation` response was:
+
+```json
+{"Success":false,"Error":"Server-issued grants of crypto 'Main' are disabled for this title.","Data":null,"QuestProgress":null,"TutorialProgress":null,"StateVersions":null,"StateEpoch":null}
+```
+
+The probe returned `platform_rejected` with `auditStored: true`. The protected
+probe record is Version 2, with attempt at `2026-10-09T15:07:32.332Z` and
+rejection at `2026-10-09T15:07:32.362Z`. A post-attempt inventory refresh
+still showed 840 GH. Never clear this probe lock or run the handler again.
+
+This proves the current GH grant request is rejected by a title-level platform
+gate on **server-issued crypto `Main` grants**. It does not prove the outcome of
+the seven earlier Power reservations because their execution responses and
+transaction records remain unavailable through the current MCP. They total
+1,229 GH, and the protected reward ledger is still Version 9 with `paidUnits =
+0`. In particular, the 180 GH historical reservation for the publisher account
+was not part of the one-GH probe and remains `review_required`.
+
+`ResourcePolicy.AllowedGrantTypes` already includes `CryptoCurrency`, `Main`
+is Active and zero-decimal, and Stage rewards use the same
+`ApplyResourceOperation` envelope for GOLD and items. The platform has not
+documented an exposed publisher setting or funding route that would enable
+server-issued real-crypto grants for this title. Do not toggle
+`CryptoRewardsFromDeveloperShare`, enable `Main_IOU`, or release regular claims
+without an authoritative platform answer and a **new** separately authorized
+controlled test. Keep revision 13's maintenance guard active. The staged v61
+client is not ready for live deployment while real `Main` payouts are blocked.
+
+The subsequent comparison of native iDos payout features and a publisher-funded
+Solana SPL route, including the six-decimal on-chain mint discrepancy and the
+requirements for a separate secure signer, is recorded in
+[`docs/gh-real-payout-path.md`](../gh-real-payout-path.md). No further platform
+configuration or balances were changed during that investigation.

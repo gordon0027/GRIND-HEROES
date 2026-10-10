@@ -456,3 +456,16 @@ on a progressed DEV account; the current guest has only reached Stage 1-3.
 ## Battle HUD cleanup (2026-10-08)
 
 The redundant small `Stage 1-5` label strip below the chest buttons was removed. The selected stage and Advance toggle remain together in the Stage Map below the battle. The distance progress bar, boss marker, chest controls, and stage progression logic are unchanged. Full build v51 went live on PROD; desktop and 390 px local views and the live PROD battle were checked.
+
+## Self-contained PROD art package (2026-10-08)
+
+Client builds v53–v56 uploaded only HTML, JS, CSS and `sw.js`, rewriting local
+`assets/` paths to full build v51. The platform later returned 404 for v51
+image files even though its old `index.html` and build metadata remained.
+That broke chest, hero, equipment and other DOM images in PROD. Build v57
+(`bldbc8ad36d3183457292a1a3d20d1e4674`) restored the full 113-file
+`dist/` package, including all PNGs. Stage and inventory image URLs returned
+200 on the staged version and the live root after deployment. A HEAD audit of
+all 113 package files on the live root returned no failures. Future PROD
+uploads must include their own image files; a prior build is not a durable
+asset host. The temporary shared-asset packer was removed.

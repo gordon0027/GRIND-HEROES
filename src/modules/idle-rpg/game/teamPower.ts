@@ -42,16 +42,4 @@ export class TeamPowerService {
     return value;
   }
 
-  async claimPendingReward(): Promise<{ status: string; amountUnits?: string }> {
-    const value = await this.execute("claimPowerRewards") as
-      { status?: unknown; amountUnits?: unknown } | null;
-    if (!value || typeof value.status !== "string") throw new Error("Invalid Power reward response");
-    if (value.status === "granted") {
-      // The server has already paid the reward; a failed refresh cannot undo it.
-      try { await this.client.user.getClientState(); }
-      catch { /* The next normal state fetch will show the confirmed balance. */ }
-    }
-    return { status: value.status,
-      amountUnits: typeof value.amountUnits === "string" ? value.amountUnits : undefined };
-  }
 }

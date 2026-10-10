@@ -6,6 +6,9 @@ var GH_POWER_REWARD_SCHEDULE_ID = "grind_power_rewards_daily_v1";
 var GH_POWER_REWARD_MAX_CALL_UNITS = 9007199254740991;
 var GH_POWER_REWARD_DAY_MS = 86400000;
 var GH_POWER_REWARD_COOLDOWN_MS = 28800000;
+// Keep all Power grants closed until a separate 1 GH PROD probe has proved
+// that Main is credited from the intended pool and inventory moves by 1.
+var GH_POWER_REWARD_CLAIMS_ENABLED = false;
 
 function ghRewardTitleData() {
   var read = server.GetTitleCustomData();
@@ -153,18 +156,62 @@ function ghRewardCurrencyReady() {
     throw new Error("power_reward_backing_policy_changed");
 }
 
+function ghRewardReconcileAccount(state, playerID, claimID, outcome) {
+  var account = ghRewardAccount(state, playerID);
+  var claim = account.inFlight;
+  if (!claim || claim.id !== claimID) throw new Error("power_reward_claim_reservation_missing");
+  if (outcome === "unknown") return false;
+  if (outcome === "confirmed_success") {
+    account.inFlight = null;
+    account.paidUnits = ghAddUnits(account.paidUnits, claim.units);
+    return true;
+  }
+  if (outcome !== "confirmed_rejected") throw new Error("power_reward_reconciliation_outcome_invalid");
+  // Older reservations lack these fields. Their source cannot be reconstructed
+  // from today's snapshot after a day rollover, so manual review must keep them locked.
+  var source = claim.amountSource;
+  if (!source || typeof claim.day !== "string" || !Number.isSafeInteger(claim.window) ||
+      claim.window < 1 || claim.window > 3 ||
+      !/^(0|[1-9][0-9]*)$/.test(source.inactiveUnits) ||
+      !/^(0|[1-9][0-9]*)$/.test(source.windowUnits) ||
+      ghAddUnits(source.inactiveUnits, source.windowUnits) !== claim.units ||
+      typeof source.previousLastClaimAtUtc !== "string" ||
+      account.inactiveUnits !== "0" || state.day < claim.day)
+    throw new Error("power_reward_rejection_rollback_requires_manual_review");
+  if (state.day === claim.day && source.windowUnits !== "0" &&
+      !(account.claimedMask & (1 << (claim.window - 1))))
+    throw new Error("power_reward_rejection_window_state_changed");
+  state.remainingUnits = ghAddUnits(state.remainingUnits, source.windowUnits);
+  account.inactiveUnits = source.inactiveUnits;
+  account.lastClaimAtUtc = source.previousLastClaimAtUtc;
+  if (state.day === claim.day && source.windowUnits !== "0")
+    account.claimedMask &= ~(1 << (claim.window - 1));
+  // Keep nonce monotonic: a rejected claim ID must never name another grant.
+  account.inFlight = null;
+  return true;
+}
+
+function ghRewardLogKey(claimID) {
+  var hash = 2166136261;
+  for (var i = 0; i < claimID.length; i++) hash = Math.imul(hash ^ claimID.charCodeAt(i), 16777619);
+  return (hash >>> 0).toString(16);
+}
+
+function ghRewardGrantError(value, playerID, claimID) {
+  var message = value && (value.Error || value.Message) || value || "unknown";
+  return String(message).split(claimID).join("[claim]")
+    .split(playerID).join("[player]")
+    .replace(/Bearer\s+[^\s]+|sk-[A-Za-z0-9_-]+/gi, "[credential]")
+    .replace(/[A-Za-z0-9+/_=-]{32,}/g, "[opaque-id]").slice(0, 240);
+}
+
 function ghRewardFinalizeClaim(playerID, claimID) {
   for (var attempt = 0; attempt < 6; attempt++) {
     var data = ghRewardTitleData();
     var record = ghRewardRecord(data);
     if (!record) throw new Error("power_reward_claim_state_missing");
     var state = ghRewardState(record, ghRewardSeed(data));
-    var account = ghRewardAccount(state, playerID);
-    if (!account.inFlight || account.inFlight.id !== claimID)
-      throw new Error("power_reward_claim_reservation_missing");
-    var amount = account.inFlight.units;
-    account.inFlight = null;
-    account.paidUnits = ghAddUnits(account.paidUnits, amount);
+    ghRewardReconcileAccount(state, playerID, claimID, "confirmed_success");
     var write = ghRewardWrite(state, record);
     if (write.Success) return;
     if (attempt === 5) throw new Error("power_reward_claim_finalize_failed: " + write.Error);
@@ -201,6 +248,8 @@ function ghClaimPowerReward(context, now) {
       throw new Error("power_reward_claim_too_large");
     ghRewardCurrencyReady();
     var claimID = "grind_power_reward_v2:" + playerID + ":" + (account.nonce + 1);
+    var previousLastClaimAtUtc = account.lastClaimAtUtc;
+    var inactiveUnits = account.inactiveUnits;
     account.nonce++;
     account.inactiveUnits = "0";
     account.lastClaimAtUtc = now;
@@ -208,27 +257,54 @@ function ghClaimPowerReward(context, now) {
       account.claimedMask |= 1 << slot;
       state.remainingUnits = ghSubtractUnits(state.remainingUnits, slotUnits);
     }
-    account.inFlight = { id: claimID, units: units, startedAtUtc: now };
+    account.inFlight = { id: claimID, units: units, startedAtUtc: now,
+      day: state.day, window: slot + 1, amountSource: {
+        inactiveUnits: inactiveUnits, windowUnits: slotUnits,
+        dailyShareUnits: share ? share.amountUnits : "0",
+        previousLastClaimAtUtc: previousLastClaimAtUtc,
+      } };
     var write = ghRewardWrite(state, record);
     if (write.Success) { reservation = account.inFlight; break; }
     if (attempt === 5) throw new Error("power_reward_claim_cas_failed: " + write.Error);
   }
   if (!reservation) throw new Error("power_reward_claim_not_reserved");
-  var grant = server.ApplyResourceOperation({ Reason: reservation.id,
-    Operation: { Grant: { Standard: { Entries: [
-      { Type: "CryptoCurrency", CurrencyID: "Main", Amount: Number(reservation.units) },
-    ] } } } });
-  if (!grant.Success) {
-    log.Warning("power_reward_grant_rejected", { player: playerID,
-      claim: reservation.id, error: String(grant.Error || "unknown") });
+  var diagnostic = { claimKey: ghRewardLogKey(reservation.id),
+    day: reservation.day, window: reservation.window, units: reservation.units,
+    currency: "Main", type: "CryptoCurrency" };
+  log.Info("power_reward_grant_attempt", diagnostic);
+  var grant;
+  try {
+    grant = server.ApplyResourceOperation({ Reason: reservation.id,
+      Operation: { Grant: { Standard: { Entries: [
+        { Type: "CryptoCurrency", CurrencyID: "Main", Amount: Number(reservation.units) },
+      ] } } } });
+  } catch (error) {
+    log.Error("power_reward_grant_exception", { claimKey: diagnostic.claimKey,
+      error: ghRewardGrantError(error, playerID, reservation.id) });
+    throw error;
+  }
+  if (!grant || grant.Success !== true) {
+    log.Warning("power_reward_grant_rejected", { claimKey: diagnostic.claimKey,
+      success: grant && grant.Success, error: ghRewardGrantError(grant && grant.Error, playerID, reservation.id) });
     return { status: "grant_rejected_review_required" };
   }
-  ghRewardFinalizeClaim(playerID, reservation.id);
+  var receipt = grant.Data && (grant.Data.TransactionID || grant.Data.OperationID);
+  log.Info("power_reward_grant_accepted", { claimKey: diagnostic.claimKey,
+    receiptId: typeof receipt === "string" ? receipt.slice(0, 120) : null,
+    dataKeys: grant.Data && typeof grant.Data === "object" ? Object.keys(grant.Data) : [] });
+  try { ghRewardFinalizeClaim(playerID, reservation.id); }
+  catch (error) {
+    log.Error("power_reward_finalize_failed_after_grant", { claimKey: diagnostic.claimKey,
+      error: ghRewardGrantError(error, playerID, reservation.id) });
+    throw error;
+  }
+  log.Info("power_reward_finalized", { claimKey: diagnostic.claimKey });
   return { status: "granted", amountUnits: reservation.units };
 }
 
 handlers.claimPowerRewards = function (_args, context) {
   if (!context || !context.UserID) throw new Error("power_reward_player_only");
+  if (!GH_POWER_REWARD_CLAIMS_ENABLED) return { status: "verification_pending" };
   var now = new Date().toISOString();
   ghRewardCatchUp(now);
   return ghClaimPowerReward(context, now);
