@@ -106,7 +106,12 @@ export function makeGamePanel(session: IdleSession, features: FeatureRegistry): 
             onClose={() => setMapOpen(false)} />
         </div>
       </div> : null}
-      <StagePresentation run={run} visible={section === "play"} />
+      <StagePresentation run={run} visible={section === "play"}
+        confirmedReward={!session.isDevPreview && run.state === "clear" &&
+          session.validatedClearSeconds !== null && !session.lootPending &&
+          session.lootItems.length > 0
+          ? [`+${session.lootGold.toLocaleString("en-US")} GOLD`, ...session.lootItems].join(" · ")
+          : null} />
       {session.chestDrop ? <div className="gh-chest-drop-host">
         <ChestDrop key={session.chestDrop.sequence} drop={session.chestDrop} />
       </div> : null}

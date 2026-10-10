@@ -16,6 +16,9 @@
 .gh-stage-transition strong{position:relative;z-index:2;max-width:90%;padding:7px 24px;border:2px solid #cf9d56;border-radius:3px;background:linear-gradient(#423027ef,#231b19ed);box-shadow:0 4px 14px #000b;color:#ffe1a0;font:900 clamp(20px,4vw,34px) Georgia,serif;letter-spacing:.12em;text-align:center;text-shadow:0 2px 2px #160f0c;animation:gh-result-banner 1.1s ease-out both}
 .gh-stage-transition--failed strong{color:#ffb7a0;border-color:#b9614a}
 .gh-stage-transition--opening strong{animation:gh-stage-title .85s ease-out both}
+.gh-stage-transition--clear strong{border-color:#f5c46a;box-shadow:0 0 22px #f5c46a88,0 4px 14px #000b}
+.gh-stage-transition__victory-glow{position:absolute;width:min(70vw,340px);aspect-ratio:1;border-radius:50%;background:repeating-conic-gradient(from 5deg,#ffd98655 0deg 7deg,transparent 7deg 30deg);mask-image:radial-gradient(circle,transparent 0 20%,#000 48%,transparent 72%);animation:gh-victory-glow 1s ease-out both}
+.gh-stage-reward{position:absolute;z-index:19;top:min(35%,330px);left:50%;box-sizing:border-box;max-width:calc(100% - 24px);padding:8px 14px;transform:translateX(-50%);border:2px solid #e2b264;border-radius:6px;background:linear-gradient(#604221ed,#2b2119f5);box-shadow:0 0 18px #d49a4b77,0 3px 12px #000a;color:#ffe8ab;text-align:center;font:800 clamp(12px,2.5vw,16px) Georgia,serif;pointer-events:none;animation:gh-reward-notice 2.5s ease-out both}
 .gh-stage-transition__shutter{position:absolute;z-index:1;top:0;bottom:0;width:52%;background:repeating-linear-gradient(90deg,#100c0ab0 0 3px,transparent 3px 25px),linear-gradient(90deg,#281c16,#61422b 48%,#302018);border-right:5px ridge #9b7040;box-shadow:inset 0 0 28px #000c,0 0 24px #000b}
 .gh-stage-transition__shutter--left{left:0;animation:gh-shutter-left .8s ease-in-out both}
 .gh-stage-transition__shutter--right{right:0;transform:scaleX(-1);animation:gh-shutter-right .8s ease-in-out both}
@@ -23,7 +26,9 @@
 @keyframes gh-shutter-right{0%{translate:0}100%{translate:102%}}
 @keyframes gh-stage-title{0%{opacity:0;scale:.86}20%,58%{opacity:1;scale:1}100%{opacity:0;scale:1.04}}
 @keyframes gh-result-banner{0%{opacity:0;scale:.85}15%,75%{opacity:1;scale:1}100%{opacity:0;scale:1.06}}
-@media(prefers-reduced-motion:reduce){.gh-stage-transition strong,.gh-stage-transition__shutter{animation-duration:.1s}}
+@keyframes gh-victory-glow{0%{opacity:0;rotate:-25deg;scale:.65}30%{opacity:1}100%{opacity:0;rotate:20deg;scale:1.25}}
+@keyframes gh-reward-notice{0%{opacity:0;translate:0 12px}12%,82%{opacity:1;translate:0 0}100%{opacity:0;translate:0 -8px}}
+@media(prefers-reduced-motion:reduce){.gh-stage-transition strong,.gh-stage-transition__shutter,.gh-stage-transition__victory-glow{animation-duration:.1s}.gh-stage-reward{animation:none}}
 .gh-stage-hud__chests{display:flex;justify-content:center;gap:7px;margin-top:4px}
 .gh-stage-hud__chest{position:relative;display:grid;place-items:center;box-sizing:border-box;width:68px;height:54px;padding:3px;border:2px solid #9d7742;border-radius:6px;background:radial-gradient(ellipse at 50% 12%,#62472d,#2b211b 72%);box-shadow:inset 0 1px #e6b77955,inset 0 -3px #160f0b,0 3px 7px #0009;cursor:pointer;transition:filter .15s,transform .15s,box-shadow .15s}
 .gh-stage-hud__chest img{display:block;width:52px;height:44px;object-fit:contain;filter:drop-shadow(0 2px 2px #000a)}

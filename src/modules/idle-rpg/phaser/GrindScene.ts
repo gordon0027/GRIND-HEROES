@@ -26,6 +26,7 @@ const ARROW_FRAME = 3; // 3 columns x 2 rows: bottom-left is (0, 128, 128, 128).
 const ORB_KEY = "grind-mage-red-orb";
 const PROJECTILE_SIZE = { ARROW: 32, MAGIC_ORB: 18 } as const;
 const PROJECTILE_TARGET_Y = { normal: -55, boss: -85 } as const;
+const MAX_FEEDBACK_OBJECTS = 24;
 
 interface HeroActor {
   sprite: Phaser.GameObjects.Sprite;
@@ -70,6 +71,8 @@ export class GrindScene extends Phaser.Scene {
   private visualTime = 0;
   private lastRun: StageRun | null = null;
   private lastElapsed = 0;
+  private reducedMotion = false;
+  private numberLane = 0;
 
   constructor(private readonly session: IdleSession,
     private readonly getRenderSize: () => BattleRenderSize) { super("grind-stage"); }
@@ -92,6 +95,7 @@ export class GrindScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
     this.syncCameraResolution();
     this.scale.on(Phaser.Scale.Events.RESIZE, this.syncCameraResolution, this);
     registerHeroAnimations(this);
@@ -141,13 +145,19 @@ export class GrindScene extends Phaser.Scene {
     this.actors.clear();
     for (const actor of this.enemyActors.values()) actor.sprite.destroy();
     this.enemyActors.clear();
-    for (const corpse of this.corpses.values()) corpse.sprite.destroy();
+    for (const corpse of this.corpses.values()) {
+      this.tweens.killTweensOf(corpse.sprite);
+      corpse.sprite.destroy();
+    }
     this.corpses.clear();
     for (const actor of this.projectileActors.values()) actor.sprite.destroy();
     this.projectileActors.clear();
     for (const actor of this.enemyProjectileActors.values()) actor.sprite.destroy();
     this.enemyProjectileActors.clear();
-    for (const effect of this.feedbackObjects) effect.destroy();
+    for (const effect of this.feedbackObjects) {
+      this.tweens.killTweensOf(effect);
+      effect.destroy();
+    }
     this.feedbackObjects.clear();
   }
 
@@ -293,9 +303,12 @@ export class GrindScene extends Phaser.Scene {
           offsetX, offsetY, flashUntil: this.visualTime + (old.boss ? 120 : 90) });
         actor.sprite.setPosition(projectWorldX(old.worldX, this.world.cameraWorldX, w) +
           offsetX, groundY + offsetY).setTint(0xffb4b4);
+        this.spawnDeathBurst(actor.sprite.x, groundY - (old.boss ? 88 : 52), old.boss);
+        this.fadeCorpse(actor.sprite);
         actor.sprite.anims.timeScale = 1;
         actor.sprite.play(enemyAnimationKey(visual, "death"));
         actor.sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+          this.tweens.killTweensOf(actor.sprite);
           actor.sprite.destroy();
           this.corpses.delete(id);
         });
@@ -319,8 +332,11 @@ export class GrindScene extends Phaser.Scene {
       this.corpses.set(id, { sprite, deathWorldX: old.worldX, offsetX, offsetY,
         flashUntil: this.visualTime + (old.boss ? 120 : 90) });
       sprite.setTint(0xffb4b4);
+      this.spawnDeathBurst(sprite.x, groundY - (old.boss ? 88 : 52), old.boss);
+      this.fadeCorpse(sprite);
       sprite.play(enemyAnimationKey(visualID, "death"));
       sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+        this.tweens.killTweensOf(sprite);
         sprite.destroy();
         this.corpses.delete(id);
       });
@@ -463,6 +479,8 @@ export class GrindScene extends Phaser.Scene {
         const x = projectWorldX(old.worldX, this.world.cameraWorldX, w) +
           visual.contactOffsetPx;
         this.spawnImpact(x, groundY - (old.boss ? 90 : 54), event.source, old.boss);
+      } else if (event.type === "encounterStarted" && event.boss) {
+        this.spawnBossWarning(w / 2, groundY - 130);
       } else if (event.type === "enemyAttacked") {
         const boss = current.get(event.id)?.boss ?? before.get(event.id)?.boss;
         if (boss) this.cameras.main.shake(55, 0.0008);
@@ -472,14 +490,72 @@ export class GrindScene extends Phaser.Scene {
 
   private spawnImpact(x: number, y: number,
     source: "MELEE" | "ARROW" | "MAGIC_ORB", boss: boolean): void {
+    if (this.feedbackObjects.size >= MAX_FEEDBACK_OBJECTS) return;
     const color = source === "MAGIC_ORB" ? 0xff6262 :
       source === "ARROW" ? 0xffd889 : 0xfff1c2;
     const effect = this.add.graphics({ x, y }).setDepth(8);
-    effect.lineStyle(boss ? 3 : 2, color, 0.95);
-    effect.strokeCircle(0, 0, boss ? 9 : 6);
-    effect.fillStyle(0xffffff, 0.75).fillCircle(0, 0, 2);
+    if (source === "MELEE") {
+      // A forward slash and a few short sparks point back toward the attacker.
+      effect.lineStyle(boss ? 5 : 3, 0xfff4d5, 0.95);
+      effect.lineBetween(-18, 15, 13, -17);
+      effect.lineStyle(2, color, 0.85);
+      effect.lineBetween(-23, 11, 8, -22);
+      effect.lineBetween(-6, -3, -17, -14);
+      effect.lineBetween(3, 3, 17, 11);
+    } else if (source === "ARROW") {
+      effect.fillStyle(0xffffff, 0.9).fillCircle(0, 0, 3);
+      effect.lineStyle(2, color, 0.9);
+      effect.lineBetween(-10, -8, -3, -2);
+      effect.lineBetween(3, -3, 11, -11);
+      effect.lineBetween(3, 2, 10, 7);
+      effect.lineBetween(-4, 3, -9, 10);
+    } else {
+      effect.fillStyle(color, 0.16).fillCircle(0, 0, boss ? 26 : 18);
+      effect.lineStyle(boss ? 4 : 3, color, 0.9).strokeCircle(0, 0, boss ? 17 : 12);
+      effect.fillStyle(0xfff2d6, 0.9).fillCircle(0, 0, 4);
+      for (let i = 0; i < 6; i++) {
+        const angle = i * Math.PI / 3;
+        effect.fillStyle(color, 0.85).fillCircle(Math.cos(angle) * 20, Math.sin(angle) * 20, 2);
+      }
+    }
+    if (boss) effect.lineStyle(2, 0xffa65a, 0.7).strokeCircle(0, 0, 28);
+    this.animateFeedback(effect, this.reducedMotion ? 90 : 190, boss ? 1.6 : 1.35);
+  }
+
+  private fadeCorpse(sprite: Phaser.GameObjects.Sprite): void {
+    if (this.reducedMotion) return;
+    this.tweens.add({ targets: sprite, alpha: 0, delay: 360, duration: 310,
+      ease: "Sine.easeIn" });
+  }
+
+  private spawnDeathBurst(x: number, y: number, boss: boolean): void {
+    if (this.feedbackObjects.size >= MAX_FEEDBACK_OBJECTS) return;
+    const burst = this.add.graphics({ x, y }).setDepth(8);
+    const radius = boss ? 31 : 18;
+    burst.lineStyle(boss ? 3 : 2, boss ? 0xffcc72 : 0xffd59b, 0.9);
+    burst.strokeCircle(0, 0, radius * 0.55);
+    for (let i = 0; i < (boss ? 10 : 6); i++) {
+      const angle = i * Math.PI * 2 / (boss ? 10 : 6);
+      burst.lineBetween(Math.cos(angle) * radius * 0.6, Math.sin(angle) * radius * 0.6,
+        Math.cos(angle) * radius, Math.sin(angle) * radius);
+    }
+    this.animateFeedback(burst, this.reducedMotion ? 100 : boss ? 380 : 250,
+      boss ? 1.9 : 1.5);
+  }
+
+  private spawnBossWarning(x: number, y: number): void {
+    if (this.feedbackObjects.size >= MAX_FEEDBACK_OBJECTS) return;
+    const label = this.add.text(x, y, "BOSS ENCOUNTER", {
+      fontFamily: "Georgia, serif", fontSize: "24px", fontStyle: "bold",
+      color: "#ffe0a0", stroke: "#521e17", strokeThickness: 5,
+    }).setOrigin(0.5).setDepth(9);
+    this.animateFeedback(label, this.reducedMotion ? 200 : 900, 1.08);
+  }
+
+  private animateFeedback(effect: Phaser.GameObjects.GameObject,
+    duration: number, scale: number): void {
     this.feedbackObjects.add(effect);
-    this.tweens.add({ targets: effect, alpha: 0, scale: 1.5, duration: 150,
+    this.tweens.add({ targets: effect, alpha: 0, scale, duration,
       onComplete: () => {
         effect.destroy();
         this.feedbackObjects.delete(effect);
@@ -487,8 +563,9 @@ export class GrindScene extends Phaser.Scene {
   }
 
   private floatNumber(x: number, y: number, amount: number, color: number): void {
-    if (amount <= 0) return;
-    const label = this.add.text(x, y, String(Math.ceil(amount)), {
+    if (amount <= 0 || this.feedbackObjects.size >= MAX_FEEDBACK_OBJECTS) return;
+    const lane = this.numberLane++ % 3;
+    const label = this.add.text(x + (lane - 1) * 13, y - lane * 8, String(Math.ceil(amount)), {
       fontFamily: "sans-serif", fontSize: "16px", fontStyle: "bold",
       color: `#${color.toString(16).padStart(6, "0")}`,
       stroke: "#202030", strokeThickness: 3,
