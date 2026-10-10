@@ -37,6 +37,9 @@ export function makeGamePanel(session: IdleSession, features: FeatureRegistry): 
     const canSelect = !session.lootPending && !session.lootBusy;
     const canGo = (stage: typeof previous) => !!stage && canSelect &&
       (session.isDevPreview || stageUnlocked(session.stageProgress, stage.id));
+    const stageChestReady = session.chestCount("stage_chest") > 0;
+    const gearReady = session.gearItems.some((item) => !item.equippedBy &&
+      session.roster.some((hero) => !session.equipmentProblem(item, hero.id)));
     const location = run.stage.name.split(" · ")[1] ?? run.stage.name;
     const percent = Math.min(100, run.distance / run.stage.length * 100);
     return <div style={{ position: "absolute", inset: 0, pointerEvents: "none", fontFamily: v.font, color: v.text }}>
@@ -50,10 +53,12 @@ export function makeGamePanel(session: IdleSession, features: FeatureRegistry): 
           </div>
           <div className="gh-stage-hud__chests">
             {(["stage_chest", "boss_chest"] as const).map((itemID) => <button type="button" key={itemID}
-              className="gh-stage-hud__chest" disabled={!session.chestConfigured(itemID) || session.chestCount(itemID) === 0 || session.lootBusy}
+              className={`gh-stage-hud__chest${session.chestCount(itemID) > 0 ? " is-ready" : ""}`}
+              disabled={!session.chestConfigured(itemID) || session.chestCount(itemID) === 0 || session.lootBusy}
               aria-label={`${itemID === "stage_chest" ? "Stage" : "Boss"} chest, ${session.chestCount(itemID)} available`}
               onClick={() => void session.openChest(itemID)}>
               <img src={`${import.meta.env.BASE_URL}assets/ui/chests/${itemID}.png`} alt="" />
+              {session.chestCount(itemID) > 0 ? <span className="gh-stage-hud__chest-action">OPEN</span> : null}
               <b aria-hidden="true">×{session.chestCount(itemID)}</b>
             </button>)}
           </div>
@@ -97,6 +102,16 @@ export function makeGamePanel(session: IdleSession, features: FeatureRegistry): 
         <div className="gh-play-dashboard">
           <div className="gh-play-dashboard__card"><span>TEAM POWER</span><strong>{session.teamPower === null ? "—" : session.teamPower.toLocaleString("en-US")}</strong></div>
           <div className="gh-play-dashboard__card"><span>GH RANK</span><strong>{session.teamLeaderboard?.rank ? `#${session.teamLeaderboard.rank}` : "—"}</strong></div>
+        </div>
+        <div className="gh-play-goal" aria-label="Next step">
+          <span>NEXT STEP</span>
+          {stageChestReady ? <><strong>Stage Chest ready</strong><p>Open the chest to reveal your equipment.</p>
+            <button type="button" disabled={session.lootBusy} onClick={() => void session.openChest("stage_chest")}>OPEN CHEST</button></>
+            : gearReady ? <><strong>Equip your new gear</strong><p>Equipment raises your hero's Power.</p>
+              <button type="button" onClick={() => { setSection("inventory"); void session.refreshOwnership(); }}>INVENTORY</button></>
+            : <><strong>Defeat the boss</strong><p>{next && !stageUnlocked(session.stageProgress, next.id)
+              ? `Clear this stage to unlock ${next.chapter}-${next.stage} and earn a Stage Chest.`
+              : "Keep fighting for confirmed rewards. Gear raises Power for Rankings."}</p></>}
         </div>
       </div> : null}
       {mapOpen && section === "play" ? <div className="gh-stage-map-overlay"

@@ -1,4 +1,4 @@
-import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { availableGear, equippedIn, gearAllowsHero, type GearItem, type GearSlot } from "../game/equipment";
 import type { HeroView, IdleSession } from "../game/session";
 import type { SlotIndex } from "../game/stageRun";
@@ -164,7 +164,8 @@ function InventoryGrid({ session, heroID, selectedID, selectItem }: {
   const heroLevel = session.roster.find((entry) => entry.id === heroID)?.level ?? 1;
   return <section className="gh-inventory" aria-label="Equipment inventory">
     <div className="gh-section-title"><strong>Equipment</strong><span>{available.length} items</span>
-      <FantasyButton disabled={!session.equipmentReady || session.equipmentBusy}
+      <FantasyButton disabled={!available.some((item) => !session.equipmentProblem(item, heroID)) ||
+        !session.equipmentReady || session.equipmentBusy}
         onClick={() => void session.equipBestGear(heroID)}>Equip Best</FantasyButton>
     </div>
     {available.length ? <div className="gh-inventory__grid">
@@ -176,7 +177,7 @@ function InventoryGrid({ session, heroID, selectedID, selectItem }: {
           label={`${item.name}, ${item.rarity}, ${item.slot}, requires Lv ${item.requiredLevel}${incompatible ? `, requires ${item.allowedHeroes.join(" or ")}` : ""}`}
           onClick={() => selectItem(item.instanceID)} />;
       })}
-    </div> : <p className="gh-empty">Your first equipment will appear here after a stage clear.</p>}
+    </div> : <p className="gh-empty">Clear stages for gear and chests. Open earned Stage Chests on Play; their equipment appears here.</p>}
   </section>;
 }
 
@@ -303,7 +304,25 @@ export function InventorySection({ session }: { session: IdleSession }): ReactNo
   const [statsOpen, setStatsOpen] = useState(false);
   const chosenHero = inventoryHero(session.roster, preferredHeroID ?? session.selectedID);
   const selected = session.gearItems.find((item) => item.instanceID === selectedID) ?? null;
+  const power = chosenHero ? session.heroPower(chosenHero) : 0;
+  const equipped = session.gearItems.filter((item) => item.equippedBy?.heroID === chosenHero)
+    .map((item) => item.instanceID).join("|");
+  const previousPower = useRef<{ heroID: string; equipped: string; power: number } | null>(null);
+  const [powerGain, setPowerGain] = useState<string | null>(null);
+  useEffect(() => {
+    if (!chosenHero) return;
+    const before = previousPower.current;
+    if (before?.heroID === chosenHero && before.equipped !== equipped && power > before.power)
+      setPowerGain(`${chosenHero} Power ${before.power} → ${power} (+${power - before.power})`);
+    previousPower.current = { heroID: chosenHero, equipped, power };
+  }, [chosenHero, equipped, power]);
+  useEffect(() => {
+    if (!powerGain) return;
+    const timer = setTimeout(() => setPowerGain(null), 3000);
+    return () => clearTimeout(timer);
+  }, [powerGain]);
   return <SectionFrame title="INVENTORY" kicker="GRIND HEROES / EQUIPMENT" className="gh-management--inventory">
+    {powerGain ? <div className="gh-power-gain" role="status">{powerGain}</div> : null}
     <PremiumChestPanel session={session} />
     {!chosenHero ? <p className="gh-empty" role="status">Loading inventory…</p> : <>
     <div className="gh-management__inventory-layout">
