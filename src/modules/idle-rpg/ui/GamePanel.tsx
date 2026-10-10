@@ -4,7 +4,7 @@ import { Button, Popup, ResourceList, v } from "@idosgames/react/ui";
 import type { IdleSession } from "../game/session";
 import { formatBig, formatDuration } from "../game/format";
 import { t } from "../i18n";
-import { InventorySection, TeamSection } from "./ManagementSections";
+import { InventorySection, RankingsSection, TeamSection } from "./ManagementSections";
 import { GameFooter, type GameSection } from "./GameFooter";
 import { StageMap } from "./StageMap";
 import { STAGE_CATALOG } from "../game/stageCatalog";
@@ -71,7 +71,7 @@ export function makeGamePanel(session: IdleSession, features: FeatureRegistry): 
                 <h2>MARKETPLACE</h2><p>Маркетплейс пока недоступен.</p>
               </div>}
           </section> : null}
-          {section === "more" ? <MoreSection features={features} session={session} /> : null}
+          {section === "rankings" ? <RankingsSection session={session} /> : null}
         </div>
       </div>}
       {section === "play" ? <div className="gh-play-lower">
@@ -115,7 +115,8 @@ export function makeGamePanel(session: IdleSession, features: FeatureRegistry): 
         if (next === section) return;
         setMapOpen(false);
         setSection(next);
-        if (next === "inventory" || next === "team" || section === "more" || section === "marketplace")
+        if (next === "rankings") void session.loadTeamLeaderboard();
+        if (next === "inventory" || next === "team" || section === "marketplace")
           void session.refreshOwnership();
       }} />
       {session.away ? <AwayPopup session={session} onCollect={setCollectedAway} /> : null}
@@ -149,35 +150,6 @@ function ChestDrop({ drop }: { drop: NonNullable<IdleSession["chestDrop"]> }): R
     </div>
     <div className="gh-chest-drop__text"><strong>{item.name}</strong><span>{item.rarity}</span></div>
   </div>;
-}
-
-function MoreSection({ features, session }: { features: FeatureRegistry; session: IdleSession }): ReactNode {
-  const [open, setOpen] = useState<string | null>(null);
-  const Screen = open ? features.get(open)?.Screen : null;
-  const entries = [{ id: "character", label: "Hero upgrades" }, { id: "quests", label: "Quests" }, { id: "store", label: "Shop" }]
-    .filter((entry) => features.get(entry.id)?.available);
-  return <section className="gh-more-panel">
-    <h2>{open ? entries.find((entry) => entry.id === open)?.label ?? "MORE" : "MORE"}</h2>
-    {Screen ? <><button className="gh-more-panel__back" type="button" onClick={() => setOpen(null)}>← MORE</button>
-      <Screen args={open === "character" ? { rankOnly: true } : undefined} close={() => setOpen(null)} /></> : <>
-    <div className="gh-more-panel__grid">{entries.map((entry) => <button key={entry.id} type="button"
-      style={{ borderImageSource: `url("${heroUi.navIdle}")` }}
-      onClick={() => setOpen(entry.id)}>{entry.label}</button>)}</div>
-    {session.devPreviewAvailable ? <details style={{ marginTop: 24, color: "#a89c8b" }}><summary>DEV preview</summary>
-      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 8 }}>
-        <button onClick={() => session.setDevPreview(null)}>Real party</button>
-        <button onClick={() => session.setDevPreview(2)}>2 heroes</button>
-        <button onClick={() => session.setDevPreview(3)}>3 heroes</button>
-        <button onClick={() => session.previewStage("grind-stage-1-10")}>Act 1 boss stage</button>
-        <button onClick={() => session.previewStage("grind-stage-2-1")}>Act 2 start</button>
-        <button onClick={() => session.previewStage("grind-stage-2-5")}>Act 2 middle</button>
-        <button onClick={() => session.previewStage("grind-stage-2-10")}>Act 2 boss stage</button>
-        <button onClick={() => session.previewStage("grind-stage-3-1")}>Act 3 start</button>
-        <button onClick={() => session.previewStage("grind-stage-3-5")}>Act 3 middle</button>
-        <button onClick={() => session.previewStage("grind-stage-3-10")}>Act 3 boss stage</button>
-      </div>
-    </details> : null}</>}
-  </section>;
 }
 
 function AwayPopup({ session, onCollect }: { session: IdleSession; onCollect: (reward: { currencyID: string; amount: number }) => void }): ReactNode {

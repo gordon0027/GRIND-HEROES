@@ -332,10 +332,22 @@ export function TeamSection({ session }: { session: IdleSession }): ReactNode {
     <div className="gh-team-power"><span>TEAM POWER</span><strong>{session.teamPower === null ? "…" : session.teamPower.toLocaleString("en-US")}</strong>
       <button type="button" onClick={() => { setShowLeaderboard((open) => !open); if (!showLeaderboard) void session.loadTeamLeaderboard(); }}>
         {showLeaderboard ? "Back to team" : "Power leaderboard"}</button></div>
-    {session.teamPowerError ? <p role="alert" className="gh-hero-window__error">{session.teamPowerError}</p> : null}
-    {showLeaderboard ? <section className="gh-power-board" aria-label="Power leaderboard">
+    {session.teamPowerError && !showLeaderboard ? <p role="alert" className="gh-hero-window__error">{session.teamPowerError}</p> : null}
+    {showLeaderboard ? <PowerLeaderboard session={session} /> : <FormationPanel session={session} heroID={heroID} selectHero={setHeroID} />}
+  </SectionFrame>;
+}
+
+export function RankingsSection({ session }: { session: IdleSession }): ReactNode {
+  return <SectionFrame title="RANKINGS" kicker="GRIND HEROES / TOP 100" className="gh-management--rankings">
+    <PowerLeaderboard session={session} />
+  </SectionFrame>;
+}
+
+function PowerLeaderboard({ session }: { session: IdleSession }): ReactNode {
+  return <section className="gh-power-board" aria-label="Power leaderboard">
       <h3>POWER LEADERBOARD · TOP 100</h3>
-      {session.teamLeaderboardBusy && !session.teamLeaderboard ? <p>Loading…</p> : null}
+      {session.teamLeaderboardBusy && !session.teamLeaderboard ? <p>Loading rankings…</p> : null}
+      {session.teamPowerError && !session.teamLeaderboardBusy ? <p role="alert" className="gh-hero-window__error">{session.teamPowerError}</p> : null}
       {session.teamLeaderboard?.entries.map((row) => <div key={row.rank}
         className={`gh-power-board__row${row.isYou ? " gh-power-board__row--you" : ""}`}>
         <b>#{row.rank}</b>{row.avatar ? <img src={row.avatar} alt="" /> : <span className="gh-power-board__avatar">⚔</span>}
@@ -346,6 +358,5 @@ export function TeamSection({ session }: { session: IdleSession }): ReactNode {
         <strong>{session.teamLeaderboard.power.toLocaleString("en-US")}</strong>
         <small>{session.teamLeaderboard.rank ? `#${session.teamLeaderboard.rank} in Top 100` : "Not in Top 100"}</small></div> : null}
       <button type="button" disabled={session.teamLeaderboardBusy} onClick={() => void session.loadTeamLeaderboard()}>Refresh</button>
-    </section> : <FormationPanel session={session} heroID={heroID} selectHero={setHeroID} />}
-  </SectionFrame>;
+    </section>;
 }

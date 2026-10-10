@@ -2,6 +2,7 @@
 .gh-game-footer button{min-width:0;display:flex;align-items:center;justify-content:center;gap:8px;border:10px solid transparent;border-image-slice:24 fill;border-image-width:10px;background:#252525;color:#d4c4a4;cursor:pointer;font:700 12px system-ui,sans-serif;letter-spacing:.04em}
 .gh-game-footer button.is-active{color:#ffdf92;filter:brightness(1.15)}
 .gh-game-footer button img{width:28px;height:28px;object-fit:contain;filter:drop-shadow(0 1px #0008)}
+.gh-footer-trophy{width:28px;height:28px;color:#e7c073;filter:drop-shadow(0 1px #0008)}
 .gh-game-footer button.is-active img{filter:sepia(1) saturate(2) hue-rotate(342deg) brightness(1.35)}
 .gh-game-section{position:absolute;inset:0 0 74px;z-index:10;overflow-y:auto;overscroll-behavior:contain;padding:clamp(12px,2vw,24px);background:linear-gradient(145deg,#242527,#151618 72%);color:#edddbc;pointer-events:auto;scrollbar-color:#8f744d #1b1c1d}
 .gh-game-section__inner{max-width:1080px;margin:0 auto}

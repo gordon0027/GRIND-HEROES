@@ -397,8 +397,16 @@ export class IdleSession {
     const revision = this.teamPowerRevision;
     this.teamPowerRefresh = (async () => {
       try {
-        const value = await this.teamPowerService.refresh();
-        this.teamPower = value.power;
+        // The leaderboard handler publishes the same authoritative Power and also
+        // supplies rank for Play. Older DEV CloudCode may not expose this handler.
+        try {
+          const value = await this.teamPowerService.leaderboard();
+          this.teamPower = value.power;
+          this.teamLeaderboard = value;
+        } catch {
+          const value = await this.teamPowerService.refresh();
+          this.teamPower = value.power;
+        }
         this.teamPowerError = null;
       } catch (error) {
         this.teamPowerError = error instanceof Error ? error.message : String(error);

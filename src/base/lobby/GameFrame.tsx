@@ -2,10 +2,12 @@ import {
   useCallback,
   useEffect,
   useRef,
+  useState,
   useSyncExternalStore,
   type ComponentType,
   type ReactNode,
 } from "react";
+import { createPortal } from "react-dom";
 import type { FeatureRegistry, ModeRegistry } from "@idosgames/module-sdk";
 import { useLayout, useUiKit, v } from "@idosgames/react/ui";
 import type { AppConfig } from "../app-config";
@@ -84,6 +86,54 @@ function GrindFrameBalances(): ReactNode {
   </div>;
 }
 
+function GrindHeaderMenu({ features }: { features: FeatureRegistry }): ReactNode {
+  const [open, setOpen] = useState(false);
+  const [screen, setScreen] = useState<string | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const entries = [
+    { id: "character", label: "Hero Upgrades" },
+    { id: "quests", label: "Quests" },
+    { id: "store", label: "Shop" },
+  ].filter((entry) => features.get(entry.id)?.available);
+  const Screen = screen ? features.get(screen)?.Screen : null;
+
+  useEffect(() => {
+    if (!open && !screen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") { setOpen(false); setScreen(null); }
+    };
+    const onPointer = (event: PointerEvent) => {
+      if (open && !menuRef.current?.contains(event.target as Node)) setOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("pointerdown", onPointer);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("pointerdown", onPointer);
+    };
+  }, [open, screen]);
+
+  return <div className="grind-header-menu" ref={menuRef}>
+    <button type="button" className="grind-header-menu__trigger" aria-label="Open game menu"
+      aria-expanded={open} onClick={() => setOpen((value) => !value)}>☰</button>
+    {open && <div className="grind-header-menu__dropdown" role="menu" aria-label="Game menu">
+      {entries.map((entry) => <button key={entry.id} type="button" role="menuitem"
+        onClick={() => { setOpen(false); setScreen(entry.id); }}>{entry.label}</button>)}
+      {!entries.length && <span>No features available</span>}
+    </div>}
+    {Screen && createPortal(<div className="grind-header-feature-overlay"
+      onMouseDown={(event) => { if (event.target === event.currentTarget) setScreen(null); }}>
+      <section className="grind-header-feature" role="dialog" aria-modal="true"
+        aria-label={entries.find((entry) => entry.id === screen)?.label ?? "Game feature"}>
+        <header><strong>{entries.find((entry) => entry.id === screen)?.label}</strong>
+          <button type="button" aria-label="Close game feature" onClick={() => setScreen(null)}>×</button></header>
+        <Screen args={screen === "character" ? { rankOnly: true } : undefined}
+          close={() => setScreen(null)} />
+      </section>
+    </div>, document.body)}
+  </div>;
+}
+
 /** A game that lives inside the lobby (`inLobby`) is on screen — a full-screen game is not framed. */
 function useInGame(modes: ModeRegistry): boolean {
   const current = useSyncExternalStore(
@@ -106,7 +156,10 @@ export function makeFrameHeader(options: GameFrameOptions): ComponentType {
     if (gameMode === "idle-rpg") {
       return <div className="grind-frame-header">
         <GrindFrameBalances />
-        <Account features={options.features} />
+        <div className="grind-frame-header__actions">
+          <GrindHeaderMenu features={options.features} />
+          <Account features={options.features} />
+        </div>
       </div>;
     }
     const store = features.some((f) => f.id === "store" && f.available);
