@@ -27,6 +27,16 @@ export interface PetOffer {
   slotID: string;
 }
 
+/** Server-confirmed selection controls the visual immediately; run stats keep their snapshot. */
+export function visiblePetId(state: PetState | null, runPetId: string | null,
+  runReady: boolean): string | null {
+  if (state) {
+    const selected = state.hasPendingChange ? state.pendingPetId : state.equippedPetId;
+    return selected && state.ownedPetIds.includes(selected) ? selected : null;
+  }
+  return runReady ? null : runPetId;
+}
+
 const validPet = (pet: PetDefinition): boolean =>
   !!pet && typeof pet.id === "string" && typeof pet.name === "string" &&
   typeof pet.offerID === "string" && typeof pet.assetKey === "string" &&

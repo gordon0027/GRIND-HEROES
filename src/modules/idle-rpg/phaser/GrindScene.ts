@@ -142,7 +142,7 @@ export class GrindScene extends Phaser.Scene {
     this.drawBackground(run, w, h, groundY);
     this.drawEnemies(this.world.visibleEnemies(run), events, beforeEnemies, w, groundY, h);
     this.syncHeroes(run.heroes, events, beforeHeroes, w, groundY, h);
-    this.petActor.update(this.session.battlePetId, run, this.world, w, groundY, h, deltaMs / 1000);
+    this.petActor.update(this.session.visiblePetId, run, this.world, w, groundY, h, deltaMs / 1000);
     this.syncProjectiles(run.projectiles, run.enemies, w, groundY, h);
     this.syncEnemyProjectiles(run.enemyProjectiles, w, groundY, h);
     this.showCombatFeedback(run.enemies, beforeEnemies, events, w, groundY);

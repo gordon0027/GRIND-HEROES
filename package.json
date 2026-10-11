@@ -27,7 +27,7 @@
     "test:power-rewards": "node tests/powerRewardPlan.mjs",
     "test:power-payouts": "node tests/powerRewards.mjs",
     "test:gh-probe": "node tests/oneGhPayoutProbe.mjs",
-    "test:pets": "node tests/pets.mjs",
+    "test:pets": "node --experimental-strip-types tests/pets.mjs",
     "test:team-power": "node --experimental-strip-types tests/teamPower.mjs",
     "test:gh-mint": "node tests/ghSolanaMint.mjs",
     "test:gh-balance": "node --experimental-strip-types tests/ghBalance.mjs",

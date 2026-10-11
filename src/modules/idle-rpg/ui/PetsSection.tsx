@@ -20,7 +20,8 @@ function balance(session: IdleSession, id: string): number {
 
 function PetCard({ session, pet }: { session: IdleSession; pet: PetDefinition }): ReactNode {
   const owned = session.petState?.ownedPetIds.includes(pet.id) ?? false;
-  const active = session.petState?.equippedPetId === pet.id;
+  const active = session.visiblePetId === pet.id;
+  const bonusActive = session.petState?.equippedPetId === pet.id;
   const pending = session.petState?.hasPendingChange && session.petState.pendingPetId === pet.id;
   const offer = session.petOffer(pet);
   const currencyReady = session.petCurrencyConfigured(pet.currencyID);
@@ -39,11 +40,11 @@ function PetCard({ session, pet }: { session: IdleSession; pet: PetDefinition })
         <strong>{pet.price.toLocaleString("en-US")} {pet.currencyID === "Main" ? "GH" : pet.currencyID}</strong></div>
     </div>
     <div className="gh-pet-card__action">
-      {pending ? <span>EQUIP QUEUED</span> : active ? <>
-        <span>{session.petState?.hasPendingChange ?
-          session.petState.pendingPetId ? "SWITCH QUEUED" : "UNEQUIP QUEUED" : "EQUIPPED"}</span><button type="button" disabled={session.petBusy}
+      {active ? <>
+        <span>{pending && !bonusActive ? "IN BATTLE · BONUS NEXT RUN" : "EQUIPPED"}</span><button type="button" disabled={session.petBusy}
           onClick={() => void session.selectPet(null)}>UNEQUIP</button></> : owned ?
-        <button type="button" disabled={session.petBusy} onClick={() => void session.selectPet(pet.id)}>EQUIP</button> :
+        <>{bonusActive && session.petState?.hasPendingChange ? <span>BONUS THIS RUN</span> : null}
+          <button type="button" disabled={session.petBusy} onClick={() => void session.selectPet(pet.id)}>EQUIP</button></> :
         <button type="button" disabled={session.petBusy || !offer || !currencyReady || !canAfford}
           onClick={() => void session.buyPet(pet)}>{!offer ? "NO OFFER" : !currencyReady ? "UNAVAILABLE" : canAfford ? "BUY" : "INSUFFICIENT"}</button>}
     </div>
@@ -53,13 +54,15 @@ function PetCard({ session, pet }: { session: IdleSession; pet: PetDefinition })
 export function PetsSection({ session }: { session: IdleSession }): ReactNode {
   return <section className="gh-pets" style={{ borderImageSource: `url("${heroUi.panel}")` }}>
     <header><span>GRIND HEROES / COMPANIONS</span><h2>PETS</h2>
-      <p>One pet helps your whole active team. Changes during a battle take effect next run.</p></header>
+      <p>One pet helps your whole active team. Your chosen pet appears immediately; bonuses change next run.</p></header>
     {session.petError ? <p className="gh-pets__error" role="alert">{session.petError}
       <button type="button" onClick={() => void session.loadPets()}>Retry</button></p> : null}
     {!session.petState ? <p role="status">Loading pets…</p> : <div className="gh-pets__grid">
       {session.petState.catalog.map((pet) => <PetCard key={pet.id} session={session} pet={pet} />)}
     </div>}
-    {session.petState?.hasPendingChange ? <p className="gh-pets__queued" role="status">
-      Pet change queued for the next run.</p> : null}
+    {session.petState?.hasPendingChange &&
+      session.petState.pendingPetId !== session.petState.equippedPetId ?
+      <p className="gh-pets__queued" role="status">
+      Pet visual updated now. Passive bonuses change next run.</p> : null}
   </section>;
 }

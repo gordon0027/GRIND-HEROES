@@ -54,7 +54,7 @@ import { GrindEquipmentService, attestedGrindAssignments, emptyGrindEquipment,
 import { chestRewardItemID, chestRewardPreview, newlyGrantedGear } from "./chestReward";
 import { chestIDs, chestPool } from "./chestPools";
 import { TeamPowerService, type TeamPowerLeaderboard } from "./teamPower";
-import { PetService, petBonus, resolvePetOffer, type PetDefinition, type PetState, type PetOffer } from "./pets";
+import { PetService, petBonus, resolvePetOffer, visiblePetId, type PetDefinition, type PetState, type PetOffer } from "./pets";
 import type { GetStorefrontResponse } from "@idosgames/core";
 
 /** The private custom-data key of the stage progress ("." and "$" are not allowed in keys). */
@@ -180,8 +180,8 @@ export class IdleSession {
   petState: PetState | null = null;
   private combatPetId: string | null = null;
 
-  get battlePetId(): string | null {
-    return this.run.state === "ready" ? this.petState?.equippedPetId ?? null : this.combatPetId;
+  get visiblePetId(): string | null {
+    return visiblePetId(this.petState, this.combatPetId, this.run.state === "ready");
   }
   petStorefront: GetStorefrontResponse | null = null;
   petError: string | null = null;
