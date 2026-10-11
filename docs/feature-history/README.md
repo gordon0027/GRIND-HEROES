@@ -19,3 +19,4 @@ instead.
 - [Login and AFK presentation](login-afk-ui.md) — RPG login panel and Gold reward popup; existing auth and claim behavior retained.
 - [Grind Heroes Shop](shop.md) — native GH Store purchases for GEMS and Premium Chests, deployed to PROD.
 - [Secure Team Power](team-power.md) — server-derived active party Power and a protected custom Top 100.
+- [Pet System V1](pets.md) — native Store ownership, protected account selection and next-run bonus application.

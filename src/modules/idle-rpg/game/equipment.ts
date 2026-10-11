@@ -155,10 +155,11 @@ export function compareGear(candidate: GearItem, current: GearItem | null): Gear
 /** One stage-stat pipeline: server character base + equipped iDos item flats + local archetype. */
 export function stageHeroStats(base: FighterStats, archetype: {
   moveSpeed: number; attackRange: number; cadence: number; hit: number;
-}, gear: GearBonuses): Pick<HeroSource, "maxHp" | "attack" | "defence" | "attackSpeed" | "moveSpeed" | "attackRange"> {
+}, gear: GearBonuses, pet: { attack: number; maxHp: number } = { attack: 0, maxHp: 0 }):
+  Pick<HeroSource, "maxHp" | "attack" | "defence" | "attackSpeed" | "moveSpeed" | "attackRange"> {
   return {
-    maxHp: Math.max(1, base.maxHp + gear.maxHp),
-    attack: Math.max(1, (base.damage + gear.attack) * archetype.hit),
+    maxHp: Math.max(1, base.maxHp + gear.maxHp + pet.maxHp),
+    attack: Math.max(1, (base.damage + gear.attack) * archetype.hit + pet.attack),
     defence: Math.max(0, base.armor + gear.defence),
     attackSpeed: Math.max(0.1, (base.attackSpeed + gear.attackSpeed) * archetype.cadence),
     moveSpeed: Math.max(1, archetype.moveSpeed + gear.moveSpeed),

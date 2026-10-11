@@ -9,6 +9,7 @@ const base = new URL("../src/modules/idle-rpg/", import.meta.url);
 const source = readFileSync(new URL("game/powerFormula.js", base), "utf8").replace("export function", "function") + "\n" +
   readFileSync(new URL("server/stageRewards.js", base), "utf8") + "\n" +
   readFileSync(new URL("server/grindEquipment.js", base), "utf8") + "\n" +
+  readFileSync(new URL("server/pets.js", base), "utf8") + "\n" +
   readFileSync(new URL("server/teamPower.js", base), "utf8") + "\n" +
   readFileSync(new URL("server/powerRewardPlan.js", base), "utf8") + "\n" +
   readFileSync(new URL("server/powerRewards.js", base), "utf8");
@@ -45,6 +46,8 @@ for (const hero of Object.keys(equipment.heroes))
     equipment.heroes[hero][slot] = null;
 records.ReadOnly.grind_equipment_v1.Value = JSON.stringify(equipment);
 const title = { value: null, version: 0 };
+const petCounts = {};
+let activePet = null;
 let conflict = false;
 const server = {
   GetUserCustomData: () => ({ Success: true, Data: records }),
@@ -56,6 +59,7 @@ const server = {
     ? { PublicData: { Username: "Tester" } }
     : { Character: { Characters: models }, InventoryV2: { Items: {
       sword: { UnstackableAmount: 1 },
+      ...petCounts,
     } } },
   GetTitleConfig: () => ({ Success: true, Data: config }),
   GetTitleCustomData: () => ({ Success: true, Data: { Runtime: { Private: title.value
@@ -82,7 +86,9 @@ const expectedPower = (id) => {
   const baseStats = fighterStats({ section: config.Character, def, model, items: new Map() });
   const gear = id === "Knight" && equipment.heroes.Knight.Weapon
     ? gearBonuses(item, 2) : { attack: 0, maxHp: 0, defence: 0, attackSpeed: 0, moveSpeed: 0 };
-  return combatPower(stageHeroStats(baseStats, heroArchetype(id), gear));
+  const pet = activePet && context.GH_PET_CATALOG.find((entry) => entry.id === activePet);
+  return combatPower(stageHeroStats(baseStats, heroArchetype(id), gear,
+    pet?.bonus ?? { attack: 0, maxHp: 0 }));
 };
 let result = call({ power: 999999999, score: 999999999, equipment: { Damage: 999999999 } });
 assert.equal(result.power, expectedPower("Knight"), "one hero; forged inputs ignored");
@@ -119,6 +125,21 @@ models.Knight.StatLevels.Damage++;
 result = call();
 assert.equal(result.power, expectedPower("Knight"));
 assert.ok(result.power > beforeLevel, "stat level changes Power");
+
+petCounts.pet_gold_v1 = { StackableAmount: 1 };
+activePet = "pet_gold_v1";
+records.ReadOnly.grind_pets_v1 = { Value: JSON.stringify({ equippedPetId: activePet }) };
+result = call({ petId: "pet_gh_v1", bonus: { attack: 99999 } });
+assert.equal(result.power, expectedPower("Knight"), "owned active pet adds HP exactly once");
+assert.ok(result.power > one, "pet HP increases Power");
+delete petCounts.pet_gold_v1;
+result = call();
+assert.equal(result.power, combatPower(stageHeroStats(
+  fighterStats({ section: config.Character, def: definitions.Knight,
+    model: { ...models.Knight, Equipment: {} }, items: new Map() }),
+  heroArchetype("Knight"), { attack: 0, maxHp: 0, defence: 0, attackSpeed: 0, moveSpeed: 0 })),
+  "lost ownership revokes the pet bonus");
+activePet = null;
 
 const fake = Array.from({ length: 101 }, (_, i) => ({ playerId: `p-${i}`, power: 10000 - i,
   scoreAt: `2026-01-01T00:00:${String(i % 60).padStart(2, "0")}Z` }));

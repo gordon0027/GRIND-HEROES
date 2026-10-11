@@ -1,0 +1,22 @@
+.gh-pets{box-sizing:border-box;max-width:920px;margin:auto;padding:18px;border:20px solid transparent;border-image-slice:29 fill;border-image-width:20px;color:#edddbc;background:#211d1a;box-shadow:0 12px 28px #0008}
+.gh-pets header span{color:#ba965e;font:800 10px system-ui,sans-serif;letter-spacing:.12em}
+.gh-pets h2{margin:4px 0;color:#ffe0a1;font:700 28px Georgia,serif}
+.gh-pets header p{margin:0 0 18px;color:#c5b396;font:13px/1.45 system-ui,sans-serif}
+.gh-pets__grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:11px}
+.gh-pet-card{display:flex;flex-direction:column;align-items:center;gap:11px;min-width:0;padding:15px;border:2px solid #84613d;border-radius:5px;background:linear-gradient(#3d3027,#241d19);box-shadow:inset 0 0 0 2px #1b1511,0 4px 9px #0007;text-align:center}
+.gh-pet-card.is-equipped{border-color:#e6bc70;box-shadow:inset 0 0 0 2px #6d4e2a,0 0 12px #c9955680}
+.gh-pet-card__art{display:grid;place-items:center;width:86px;height:86px;border:3px solid #b28b53;border-radius:7px;background:radial-gradient(#684b32,#2b211a);box-shadow:inset 0 0 0 3px #211911}
+.gh-pet-card__art img{width:72px;height:72px;object-fit:contain;image-rendering:pixelated}
+.gh-pet-card__art span{color:#aa8a5d;font:800 40px Georgia,serif}
+.gh-pet-card__body h3{margin:0 0 5px;color:#ffe3a4;font:700 18px Georgia,serif}
+.gh-pet-card__body p{margin:0 0 8px;color:#dac9aa;font:12px/1.4 system-ui,sans-serif}
+.gh-pet-card__price{display:flex;align-items:center;justify-content:center;gap:5px;color:#ffe1a0;font:700 13px system-ui,sans-serif}
+.gh-pet-card__price img{width:20px;height:20px;object-fit:contain}
+.gh-pet-card__action{display:grid;gap:5px;margin-top:auto;min-height:46px;align-content:end}
+.gh-pet-card__action span{color:#e4bf76;font:900 10px system-ui,sans-serif;letter-spacing:.1em}
+.gh-pet-card__action button,.gh-pets__error button{min-width:112px;min-height:35px;padding:5px 11px;border:2px solid #c49758;border-radius:4px;background:linear-gradient(#75512f,#42301f);color:#ffe9ba;font:800 11px system-ui,sans-serif;cursor:pointer}
+.gh-pet-card__action button:disabled{opacity:.5;cursor:default}
+.gh-pet-card__action button:focus-visible,.gh-pets__error button:focus-visible{outline:2px solid #f3d49c;outline-offset:2px}
+.gh-pets__error{display:flex;align-items:center;gap:10px;color:#ffb5a4;font:12px system-ui,sans-serif}
+.gh-pets__queued{color:#e8ca8d;font:12px system-ui,sans-serif}
+@media(max-width:560px){.gh-pets{padding:8px;border-width:13px;border-image-width:13px}.gh-pets__grid{grid-template-columns:1fr}.gh-pet-card{display:grid;grid-template-columns:70px 1fr auto;gap:9px;padding:9px;text-align:left}.gh-pet-card__art{width:64px;height:64px}.gh-pet-card__art img{width:55px;height:55px}.gh-pet-card__action{min-height:0}.gh-pet-card__action button{min-width:78px;padding:5px}.gh-pet-card__body h3{font-size:15px}.gh-pet-card__body p{font-size:10px}}

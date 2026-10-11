@@ -402,37 +402,56 @@ function BuyButton({
   const play = useSound();
   const kit = useUiKit();
   const ref = useRef<HTMLDivElement>(null);
+  const inFlight = useRef(false);
   const [busy, setBusy] = useState(false);
   const option = picked.offer.PriceOptions?.[0];
   const price: ResourceLine[] = costLines(option?.Cost);
   const free = isFree(picked.offer);
 
   const buy = async () => {
+    if (inFlight.current) return;
+    inFlight.current = true;
     setBusy(true);
-    const res = await client.store.purchase(picked.offer.OfferID, 1, {
-      selectedOptionID: option?.OptionID,
-      slot: {
-        storeID: picked.storeID,
-        sectionID: picked.section.SectionID,
-        slotID: picked.slot.SlotID,
-      },
-    });
-    setBusy(false);
-    if (!res.ok) {
-      if (res.error === OFFER_NOT_IN_ROTATION) {
-        close();
-        await onReload(); // the shelf reshuffled — redraw silently
+    let settled = false;
+    try {
+      const res = await client.store.purchase(picked.offer.OfferID, 1, {
+        selectedOptionID: option?.OptionID,
+        slot: {
+          storeID: picked.storeID,
+          sectionID: picked.section.SectionID,
+          slotID: picked.slot.SlotID,
+        },
+      });
+      if (!res.ok) {
+        if (res.error === OFFER_NOT_IN_ROTATION) {
+          close();
+          await onReload(); // the shelf reshuffled — redraw silently
+          return;
+        }
+        toast(/insufficient|not enough|balance/i.test(res.error ?? "")
+          ? t("insufficient") : errorText(res.error), "error");
         return;
       }
-      toast(errorText(res.error), "error");
-      return;
+      settled = true;
+      play("purchase");
+      kit.fx.burst(ref.current);
+      close();
+      const granted = grantedBy(res.data);
+      celebrate(granted.length > 0 ? granted : grantLines(picked.offer.Rewards));
+      let synced = false;
+      try {
+        const inventory = await client.user.getUserInventory();
+        synced = inventory.ok;
+      } catch { /* A confirmed charge is never recast as a failed purchase. */ }
+      toast(synced ? t("purchased") : t("purchasedRefreshPending"), "success");
+      try { await onReload(); } catch { /* The next open will retry the storefront. */ }
+    } catch (error) {
+      toast(settled ? t("purchasedRefreshPending") :
+        errorText(error instanceof Error ? error.message : String(error)), settled ? "success" : "error");
+    } finally {
+      inFlight.current = false;
+      setBusy(false);
     }
-    play("purchase");
-    kit.fx.burst(ref.current);
-    close();
-    const granted = grantedBy(res.data);
-    celebrate(granted.length > 0 ? granted : grantLines(picked.offer.Rewards));
-    await onReload();
   };
 
   return (
@@ -440,6 +459,7 @@ function BuyButton({
       <Button
         tone={free ? "green" : "gold"}
         busy={busy}
+        disabled={busy}
         attract
         onClick={() => void buy()}
         style={{ width: "100%" }}

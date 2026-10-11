@@ -5,6 +5,7 @@ import type { IdleSession } from "../game/session";
 import { formatBig, formatDuration } from "../game/format";
 import { t } from "../i18n";
 import { InventorySection, RankingsSection, TeamSection } from "./ManagementSections";
+import { PetsSection } from "./PetsSection";
 import { GameFooter, type GameSection } from "./GameFooter";
 import { StageMap } from "./StageMap";
 import { STAGE_CATALOG } from "../game/stageCatalog";
@@ -69,6 +70,7 @@ export function makeGamePanel(session: IdleSession, features: FeatureRegistry): 
         <div className="gh-game-section__inner">
           {section === "inventory" ? <InventorySection session={session} /> : null}
           {section === "team" ? <TeamSection session={session} /> : null}
+          {section === "pets" ? <PetsSection session={session} /> : null}
           {section === "marketplace" ? <section className="gh-more-panel gh-more-panel--marketplace"
             style={{ borderImageSource: `url("${heroUi.panel}")` }}>
             {MarketplaceScreen ? <MarketplaceScreen close={() => setSection("play")} />
@@ -136,7 +138,7 @@ export function makeGamePanel(session: IdleSession, features: FeatureRegistry): 
         setMapOpen(false);
         setSection(next);
         if (next === "rankings") void session.loadTeamLeaderboard();
-        if (next === "inventory" || next === "team" || section === "marketplace")
+        if (next === "inventory" || next === "team" || next === "pets" || section === "marketplace")
           void session.refreshOwnership();
       }} />
       {session.away ? <AwayPopup session={session} onCollect={setCollectedAway} /> : null}

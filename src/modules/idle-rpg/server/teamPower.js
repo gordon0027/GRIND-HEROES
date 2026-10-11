@@ -57,7 +57,7 @@ function ghPowerGearBonuses(equipment, heroID, ctx) {
   return result;
 }
 
-function ghPowerForHero(heroID, ctx, equipment, section) {
+function ghPowerForHero(heroID, ctx, equipment, section, petBonus) {
   var def = ctx.heroDefinitions[heroID];
   if (!def || !ghHeroOwned(heroID, ctx)) return 0;
   var model = ctx.characters[heroID] || {};
@@ -72,8 +72,8 @@ function ghPowerForHero(heroID, ctx, equipment, section) {
   var archetype = GH_TEAM_ARCHETYPES[heroID];
   var global = 1 + allMight;
   return ghCombatPower({
-    maxHp: Math.max(1, Math.max(1, health * global) + gear.maxHp),
-    attack: Math.max(1, (damage * global + gear.attack) * archetype.hit),
+    maxHp: Math.max(1, Math.max(1, health * global) + gear.maxHp + petBonus.maxHp),
+    attack: Math.max(1, (damage * global + gear.attack) * archetype.hit + petBonus.attack),
     defence: Math.max(0, armor + gear.defence),
     attackSpeed: Math.max(0.1, (Math.max(0.1, speed) + gear.attackSpeed) * archetype.cadence),
     moveSpeed: Math.max(1, archetype.moveSpeed + gear.moveSpeed),
@@ -88,9 +88,12 @@ function ghCalculateTeamPower(data) {
   var character = root.Character || root.CharacterDefinitions;
   if (!character || !character.Definitions) throw new Error("team_character_config_invalid");
   var equipment = ghLoadEquipment(ctx).equipment;
+  var pet = typeof ghPetRecord === "function"
+    ? ghPetByID(ghPetRecord(data, ghPetOwnedIds()).equippedPetId) : null;
+  var petBonus = pet ? pet.bonus : { attack: 0, maxHp: 0 };
   var signature = ghFormationSignature(data);
   var heroes = ghServerFormationHeroes(signature, data);
-  var scores = heroes.map(function (id) { return { heroID: id, power: ghPowerForHero(id, ctx, equipment, character) }; });
+  var scores = heroes.map(function (id) { return { heroID: id, power: ghPowerForHero(id, ctx, equipment, character, petBonus) }; });
   return { power: scores.reduce(function (sum, row) { return sum + row.power; }, 0), heroes: scores };
 }
 

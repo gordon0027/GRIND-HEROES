@@ -237,6 +237,9 @@ handlers.startStageRun = function (args, context) {
   var progress = ghProgress(data.Data);
   if (stage.index >= progress.highestUnlocked)
     return { accepted: false, reason: "stage_locked" };
+  // Pet changes made during the previous run become active at this boundary.
+  var equippedPetId = typeof ghPetApplyPending === "function"
+    ? ghPetApplyPending(data.Data) : null;
   var now = ghNow(context);
   var runId = stage.config.id + ":" + now + ":" + Math.floor(Math.random() * 1000000000);
   var formation = ghFormationSignature(data.Data);
@@ -248,9 +251,10 @@ handlers.startStageRun = function (args, context) {
     formation: formation, formationHeroes: formationHeroes,
     formationVersion: ghFormationVersion(data.Data),
     formationUpdatedAt: ghFormationUpdatedAt(data.Data), equipment: ghEquipmentSignature(data.Data),
-    partyAt: now, participation: participation,
+    partyAt: now, participation: participation, equippedPetId: equippedPetId,
   });
   return { accepted: true, runId: runId, stageId: stage.config.id,
+    equippedPetId: equippedPetId,
     minimumClearSeconds: stage.config.minSeconds };
 };
 

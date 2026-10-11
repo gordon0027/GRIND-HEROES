@@ -1,5 +1,9 @@
 # Grind Heroes Shop V1
 
+## GOLD for GEMS purchase investigation (2026-10-11)
+
+The published PROD and DEV Store configs both retain `gold_bag_small` (50 GEMS → 5,000 GOLD) and `gold_bag_big` (200 GEMS → 25,000 GOLD) in fixed `shop/gold` slots. Both appeared in each environment's resolved storefront. A new guest purchased `gold_bag_small` through the SDK on each title: the native Store response confirmed the GEMS consume and GOLD grant; immediate cache and fresh inventory reads showed 300 → 250 GEMS and 500 → 5,500 GOLD. The published UI also showed the GOLD offers and reached its confirmation dialog. The reported PROD failure was therefore not reproduced at the native Store layer; the exact original account/UI failure remains unknown. The client checkout now has a synchronous duplicate-click guard, explicit inventory refresh and settled-purchase feedback, including when refresh fails. This fixes concrete UI weaknesses without changing prices or adding any client-side grant. The updated client has not been deployed to PROD.
+
 ## Game header GH balance (2026-10-08)
 
 The in-game header now shows `CryptoCurrencies.Main.Amount` beside GOLD and GEMS, using the same GH icon as the Shop. It reads the SDK user state, so a successful Shop purchase and inventory refresh updates the header too. Opening the game, returning focus after an external deposit, and tapping the GH counter request `getUserInventory()`; the counter shows an unavailable dash until the account supplies a balance. It does not infer GH from the separate platform wallet panel or change checkout behavior. This UI update shipped on PROD in full build v51 (`bld47e7f5b0640a4b9186e780f0b16979db`).

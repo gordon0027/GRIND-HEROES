@@ -54,6 +54,8 @@ import { GrindEquipmentService, attestedGrindAssignments, emptyGrindEquipment,
 import { chestRewardItemID, chestRewardPreview, newlyGrantedGear } from "./chestReward";
 import { chestIDs, chestPool } from "./chestPools";
 import { TeamPowerService, type TeamPowerLeaderboard } from "./teamPower";
+import { PetService, petBonus, resolvePetOffer, type PetDefinition, type PetState, type PetOffer } from "./pets";
+import type { GetStorefrontResponse } from "@idosgames/core";
 
 /** The private custom-data key of the stage progress ("." and "$" are not allowed in keys). */
 export const PROGRESS_KEY = "idle_rpg_progress";
@@ -120,6 +122,7 @@ export class IdleSession {
   private readonly stageService: StageService;
   private readonly equipmentService: GrindEquipmentService;
   private readonly teamPowerService: TeamPowerService;
+  private readonly petService: PetService;
   /** The hero the Heroes screen selected, or null until it says (then the fallback fights). */
   selectedID: string | null = "Knight";
   hero: HeroView | null = null;
@@ -174,6 +177,10 @@ export class IdleSession {
   teamPowerError: string | null = null;
   teamLeaderboard: TeamPowerLeaderboard | null = null;
   teamLeaderboardBusy = false;
+  petState: PetState | null = null;
+  petStorefront: GetStorefrontResponse | null = null;
+  petError: string | null = null;
+  petBusy = false;
   private teamPowerSignature = "";
   private teamPowerRevision = 0;
   private teamPowerTimer: ReturnType<typeof setTimeout> | null = null;
@@ -198,6 +205,7 @@ export class IdleSession {
     this.stageService = new StageService(client);
     this.equipmentService = new GrindEquipmentService(client);
     this.teamPowerService = new TeamPowerService(client);
+    this.petService = new PetService(client);
     // Removed in destroy(): setup() runs again on every login, and a client subscription that
     // outlived its session would keep a dead game recomputing — and emitting twice.
     this.offClient.push(
@@ -264,7 +272,7 @@ export class IdleSession {
       const baseFighter = fighterStats(input);
       const gear = totalBonuses(this.gearItems, heroID);
       const fighter = grindFighterStats(baseFighter, gear);
-      const stageStats = stageHeroStats(baseFighter, heroArchetype(heroID), gear);
+      const stageStats = stageHeroStats(baseFighter, heroArchetype(heroID), gear, petBonus(this.petState));
       return [{
         id: heroID, name: definition.Identity?.DisplayName ?? heroID,
         classID: definition.Classification?.ClassID ?? "",
@@ -295,6 +303,7 @@ export class IdleSession {
       ]);
       try { this.grindEquipment = await this.equipmentService.load(); }
       catch (error) { this.equipmentError = error instanceof Error ? error.message : String(error); }
+      await this.loadPets();
       this.refreshHero();
     })().finally(() => { this.ownershipRefresh = null; });
     return this.ownershipRefresh;
@@ -376,9 +385,65 @@ export class IdleSession {
   get activeFormation(): Formation { return this.previewFormation ?? this.formation; }
   get partyPower(): number { return this.run.heroes.reduce((sum, hero) => sum + combatPower(hero), 0); }
 
+  petOffer(pet: PetDefinition): PetOffer | null { return resolvePetOffer(this.petStorefront, pet); }
+
+  userInventory(): { VirtualCurrencies?: Record<string, { Amount?: number | string }>;
+    CryptoCurrencies?: Record<string, { Amount?: number | string }> } | null {
+    return this.client.data.user.state?.InventoryV2 ?? null;
+  }
+
+  petCurrencyConfigured(id: string): boolean {
+    const currencies = configSection<{ VirtualCurrencies?: Record<string, unknown>;
+      CryptoCurrencies?: Record<string, unknown> }>(this.client, "Currency");
+    return id === "Main" ? !!currencies?.CryptoCurrencies?.Main : !!currencies?.VirtualCurrencies?.[id];
+  }
+
+  async loadPets(): Promise<void> {
+    try {
+      const [state, storefront] = await Promise.all([
+        this.petService.load(), this.petService.storefront(),
+      ]);
+      this.petState = state;
+      this.petStorefront = storefront;
+      this.petError = null;
+      this.refreshHero();
+    } catch (error) {
+      this.petError = error instanceof Error ? error.message : String(error);
+      this.changed();
+    }
+  }
+
+  async buyPet(pet: PetDefinition): Promise<void> {
+    if (this.petBusy || this.petState?.ownedPetIds.includes(pet.id)) return;
+    const offer = this.petOffer(pet);
+    if (!offer) { this.petError = "Pet offer unavailable"; this.changed(); return; }
+    this.petBusy = true;
+    this.petError = null;
+    this.changed();
+    try {
+      this.petState = await this.petService.buy(pet, offer);
+      this.petStorefront = await this.petService.storefront();
+      this.refreshHero();
+    } catch (error) { this.petError = error instanceof Error ? error.message : String(error); }
+    finally { this.petBusy = false; this.changed(); }
+  }
+
+  async selectPet(petId: string | null): Promise<void> {
+    if (this.petBusy) return;
+    this.petBusy = true;
+    this.petError = null;
+    this.changed();
+    try {
+      this.petState = await this.petService.select(petId);
+      this.refreshHero();
+    } catch (error) { this.petError = error instanceof Error ? error.message : String(error); }
+    finally { this.petBusy = false; this.changed(); }
+  }
+
   private queueTeamPowerRefresh(force = false): void {
     if (!this.loaded || this.isDevPreview) return;
     const signature = JSON.stringify({ formation: this.formation.slots, capacity: this.capacity,
+      pet: this.petState?.equippedPetId,
       powers: this.roster.map((hero) => [hero.id, hero.rank, hero.power]),
       gear: this.gearItems.filter((item) => item.equippedBy)
         .map((item) => [item.instanceID, item.equippedBy?.heroID, item.level, item.bonuses]) });
@@ -437,7 +502,7 @@ export class IdleSession {
     const entry = this.roster.find((candidate) => candidate.id === heroID);
     if (!entry) return null;
     return stageHeroStats(entry.baseFighter, heroArchetype(heroID),
-      totalBonuses(this.gearItems, heroID));
+      totalBonuses(this.gearItems, heroID), petBonus(this.petState));
   }
 
   equipmentProblems(item: GearItem, heroID: string): string[] {
@@ -620,7 +685,7 @@ export class IdleSession {
       const usable = entry && (entry.rank > 0 || this.isDevPreview) ? entry : null;
       const archetype = usable ? heroArchetype(usable.id) : null;
       const final = usable && archetype ? stageHeroStats(usable.baseFighter, archetype,
-        totalBonuses(this.gearItems, usable.id)) : null;
+        totalBonuses(this.gearItems, usable.id), petBonus(this.petState)) : null;
       return { index, unlocked: index <= this.activeCapacity, hero: usable && archetype ? {
         id: usable.id, classId: usable.classID, level: Math.max(1, usable.rank),
         ...final!, combatType: archetype.combatType, projectile: archetype.projectile,
@@ -822,6 +887,11 @@ export class IdleSession {
           return false;
         }
         this.serverRunId = started.runId;
+        if (this.petState?.hasPendingChange) {
+          this.petState = { ...this.petState, equippedPetId: started.equippedPetId ?? null,
+            pendingPetId: null, hasPendingChange: false };
+          this.refreshHero();
+        }
       }
       const started = this.run.start();
       if (!started) {
@@ -1186,6 +1256,7 @@ export class IdleSession {
         this.stageError = `Equipment load: ${this.equipmentError}`;
       }
       this.refreshHero();
+      await this.loadPets();
       try {
         const preferences = JSON.parse(res.data.Private?.[STAGE_PREFERENCES_KEY]?.Value ?? "{}");
         this.run = new StageRun(stageByID(farmingStageID(preferences.selectedStageID, this.stageProgress))!);

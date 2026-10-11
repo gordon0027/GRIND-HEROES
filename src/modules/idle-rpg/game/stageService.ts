@@ -6,6 +6,7 @@ export interface StartedStageRun {
   runId: string;
   stageId: string;
   minimumClearSeconds: number;
+  equippedPetId?: string | null;
 }
 
 export interface CompletedStageRun {
@@ -50,7 +51,8 @@ export class StageService {
     const value = await this.execute("startStageRun", { stageId });
     if (value.accepted !== true || typeof value.runId !== "string")
       throw new Error(String(value.reason ?? "stage start rejected"));
-    return { runId: value.runId, stageId, minimumClearSeconds: Number(value.minimumClearSeconds ?? 0) };
+    return { runId: value.runId, stageId, minimumClearSeconds: Number(value.minimumClearSeconds ?? 0),
+      equippedPetId: typeof value.equippedPetId === "string" ? value.equippedPetId : null };
   }
 
   async complete(stageId: string, runId: string): Promise<CompletedStageRun> {
