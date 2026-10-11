@@ -5,6 +5,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { createPortal } from "react-dom";
 import {
   OFFER_NOT_IN_ROTATION,
   type GetStorefrontResponse,
@@ -18,7 +19,6 @@ import {
   Center,
   EmptyState,
   Icon,
-  Popup,
   ResourceList,
   SectionTitle,
   Spinner,
@@ -34,7 +34,6 @@ import {
   useCatalog,
   useCelebrate,
   useNow,
-  usePopupClose,
   useSound,
   useStagger,
   useToast,
@@ -347,13 +346,25 @@ function ConfirmPurchase({
   onClose: () => void;
 }): ReactNode {
   const catalog = useCatalog();
+  const kit = useUiKit();
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const rewards = grantLines(picked.offer.Rewards);
   const name = catalog.localize(
     picked.offer.Identity?.DisplayName ?? picked.offer.OfferID,
   );
-  return (
-    <Popup title={t("confirmTitle")} onClose={onClose}>
-      <div style={{ display: "grid", justifyItems: "center", gap: 10 }}>
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (dialog && !dialog.open) dialog.showModal();
+    return () => { if (dialog?.open) dialog.close(); };
+  }, []);
+  return createPortal(
+    <dialog ref={dialogRef} className="gh-shop-confirm" aria-labelledby="gh-shop-confirm-title"
+      onCancel={(event) => { event.preventDefault(); onClose(); }}>
+      <header className="gh-shop-confirm__header">
+        <h2 id="gh-shop-confirm-title">{t("confirmTitle")}</h2>
+        <button type="button" onClick={onClose} aria-label={t("close")}>×</button>
+      </header>
+      <div className="gh-shop-confirm__body">
         <div style={{ ...outlined, fontSize: 17, textAlign: "center" }}>
           {name}
         </div>
@@ -383,20 +394,21 @@ function ConfirmPurchase({
           ))}
         </div>
       </div>
-      <BuyButton picked={picked} onReload={onReload} />
-    </Popup>
+      <BuyButton picked={picked} onReload={onReload} onClose={onClose} />
+    </dialog>, kit.layer ?? document.body,
   );
 }
 
 function BuyButton({
   picked,
   onReload,
+  onClose,
 }: {
   picked: Picked;
   onReload: () => Promise<void>;
+  onClose: () => void;
 }): ReactNode {
   const client = useIDosGamesClient();
-  const close = usePopupClose();
   const celebrate = useCelebrate();
   const toast = useToast();
   const play = useSound();
@@ -424,7 +436,7 @@ function BuyButton({
       });
       if (!res.ok) {
         if (res.error === OFFER_NOT_IN_ROTATION) {
-          close();
+          onClose();
           await onReload(); // the shelf reshuffled — redraw silently
           return;
         }
@@ -435,7 +447,7 @@ function BuyButton({
       settled = true;
       play("purchase");
       kit.fx.burst(ref.current);
-      close();
+      onClose();
       const granted = grantedBy(res.data);
       celebrate(granted.length > 0 ? granted : grantLines(picked.offer.Rewards));
       let synced = false;

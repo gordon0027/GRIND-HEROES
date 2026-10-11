@@ -55,4 +55,12 @@
 .gh-shop__offer-remaining { color: #b6ad9f; font: 700 11px system-ui,sans-serif; }
 .gh-shop__offer-buy.idos-press { box-sizing: border-box; width: 100% !important; min-width: 0; min-height: 36px; margin-top: auto; border: 8px solid transparent !important; border-image-source: url("/assets/ui/source/Component/Button/btn_rectangle_01_n_brown.png") !important; border-image-slice: 24 fill !important; border-image-width: 8px !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; color: #fff0be !important; font: 700 12px Georgia,serif !important; }
 .gh-shop__offer-buy.idos-press:disabled { opacity: .55; filter: grayscale(.7); }
+.gh-shop-confirm { box-sizing: border-box; width: min(400px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); overflow-y: auto; margin: auto; padding: 18px; border: 2px solid #9b7749; border-radius: 6px; background: linear-gradient(#352b24, #201c1a); box-shadow: 0 20px 55px #000d; color: #edddbc; font-family: Georgia, "Times New Roman", serif; pointer-events: auto; }
+.gh-shop-confirm::backdrop { background: #080706c9; }
+.gh-shop-confirm__header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 16px; }
+.gh-shop-confirm__header h2 { margin: 0; color: #f1cc84; font-size: 21px; }
+.gh-shop-confirm__header button { flex: none; width: 32px; height: 32px; padding: 0; border: 1px solid #9b7749; border-radius: 3px; background: #3b2820; color: #f1cc84; font: 24px/1 Georgia, serif; cursor: pointer; }
+.gh-shop-confirm__header button:focus-visible { outline: 2px solid #f1cc84; }
+.gh-shop-confirm__body { display: grid; justify-items: center; gap: 10px; margin-bottom: 16px; }
+.gh-shop-confirm > div:last-child { width: 100%; }
 @media (max-width: 560px) { .gh-shop__intro { align-items: start; flex-wrap: wrap; } .gh-shop__balances { justify-content: flex-start; } .gh-shop__actions { flex-wrap: wrap; } .gh-shop__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .gh-shop__card { min-height: 228px; padding: 7px; } .gh-shop__art { width: 76px; height: 76px; } .gh-shop__art img { max-width: 64px; max-height: 64px; } .gh-shop-shell__tabs button { min-height: 34px; padding: 1px 6px; border-width: 7px; border-image-width: 7px; font-size: 11px; } .gh-shop__offer-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 145px), 1fr)); } }
