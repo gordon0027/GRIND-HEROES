@@ -5,16 +5,26 @@
 Локальная игра: `http://127.0.0.1:5180/`, Title `98JRCAKG-DEV`.
 DEV CloudCode **34**, SHA-256 `0c7fe34a773fc7bb8c415d389256e96fb01f2a8ac6d60f4e81e495da4e5bc471`.
 Store, Reward, Character и CloudCode прочитаны обратно. Сохранены 15 handlers,
-ResourcePolicy и токеновые предложения. Загружен и проверен hosted DEV **v66**,
-`bld683870c6163a49c185c78cf3d2f80cb7`:119 files,11,218,300 bytes, ZIP9,143,648.
-Существующий `optimize-deploy-pngs.py` сокращает палитру38 PNG до256 цветов,
-не меняет frame geometry и source PNG. Backgrounds сохраняют true colour.
-Полные исходные PNG отклонены квотой в v65 и v67 (после очистки пользователя тоже).
-v66 содержит все ресурсы и не зависит от файлов старых версий.
+ResourcePolicy и токеновые предложения. Итоговая версия **v68**,
+`bldaec3cc5cc2954ab09207417465641270`:119 files,31,786,320 bytes, ZIP27,637,122.
+Все исходные PNG сохранены без оптимизации палитры, изменения кадров и размеров.
+Архив самодостаточный. Проверены все118 CDN resources: HTTP200.
+Попытки v65/v67 были отклонены квотой; v66 с палитрой256 успешно прошла DEV,
+но после очистки хранилища её JS на CDN стал404. Итоговый повторный upload v68
+с исходными PNG принят, проверен в DEV и опубликован на PROD.
 Пользователь отдельно разрешил PROD в конце работы и повторно попросил выпуск.
 План PROD сохраняет21 существующий handler, добавляет getPetState/selectPet,
 обычные Donkey/Pug offers/items и protected pet key. Watchdog GH offer не создаётся:
-токеновая покупка остаётся недоступной, как на исходном PROD. Статус выпуска ниже.
+токеновая покупка остаётся недоступной, как на исходном PROD.
+
+**Выпущено на PROD: v68, Status Live; CloudCode14,23 handlers.**
+Основной адрес: https://98jrcakg.idos.games/ . Код commit `acd6b44` отправлен origin/main.
+Все6 изменённых разделов прочитаны обратно и совпали с планом; ResourcePolicy
+не менялся. SHA-256 CloudCode `8d451bf229ea5094dc6810d46abdd5eff0eb4330cc5151f615ecccc0689c306d`.
+[Аудит выпуска](../../artifacts/combat-polish/prod-release-audit.json).
+Основной PROD-адрес проверен в браузере: существующий аккаунт/этап1-3,
+активный бой, Stage Chest57→58, TEAM slots3,000/12,000 и Donkey/Pug100/20.
+Портреты загружены, Watchdog показывает NO OFFER. GH покупки не выполнялись.
 
 ## 1. Выравнивание персонажей
 
@@ -108,7 +118,7 @@ Knight 630 HP. Donkey увеличивает запас HP, время боя с
 Uncommon duo 1-10 64→73s, Rare trio 2-10 81→92s.
 Fixtures с полным комплектом одной редкости не моделируют RNG сундуков живых игроков.
 
-## 5. Обычные цены — DEV и проверенный план PROD
+## 5. Обычные цены — применены DEV и PROD
 
 Before — фактический DEV. Локальный старый source слотов содержал 50,000/250,000,
 хотя сервер реально взимал 5,000/25,000. Клиент берёт цены из CloudCode/Character/Storefront.
@@ -179,7 +189,8 @@ ownership и без progression/reward/leaderboard writes. В production build �
 не измерение VRAM. Старые актовые sheets/animations/backgrounds освобождаются.
 Один общий shadow, transient VFX limit24. После clear 3-10:0 enemies/corpses/VFX/
 projectiles, desktop16 объектов, mobile14 (разное число background tiles).
-FPS/objects берутся из настоящего Phaser loop, наблюдения сохранены в JSON.
+FPS/objects берутся из настоящего Phaser loop, наблюдения сохранены в JSON:
+desktop10 samples235–279 FPS, mobile viewport16 samples250–281 FPS.
 IAB работает с uncapped FPS; mobile — viewport на этом desktop, **не физический
 телефон**. Hardware-mobile/GC benchmark не выполнен. Pixel-art PNG не размываются.
 
@@ -198,7 +209,8 @@ maximum1200s сохранены. Сначала clear, затем server confirm
 Существующая серверная проверка времени/run marker сохранена; серверное
 воспроизведение самого боя этим изменением не вводилось.
 
-Hosted DEV v66 проверен с реальной покупкой Donkey за100 GOLD и выбором пета.
+Hosted DEV v66 проверен с реальной покупкой Donkey за100 GOLD и выбором пета;
+итоговый v68 повторно проверен в живой сцене Knight+Donkey с исходными PNG.
 `scripts/prod-combat-plan.mjs` строит объединение от фактического PROD13, сравнивает
 все функции: разрешены только startStageRun и две функции серверного pet Power;
 token handlers, GH rewards/payout implementation и все существующие остальные

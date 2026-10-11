@@ -4,6 +4,12 @@ Presentation follow-up: [Combat Polish V1](combat-polish-v1.md) updates scales,
 per-frame feet anchors, follow spacing and shared shadows. Ownership, selection
 and passive bonuses are unchanged.
 
+2026-10-11 release: PROD v68 / CloudCode14 now includes selection, server pet Power,
+Donkey for100 GOLD and Pug for20 GEMS. All21 prior PROD handlers and GH payout
+maintenance protections were preserved. No GH pet offer/item/slot was installed;
+Watchdog purchase stays unavailable on PROD. Historical DEV-only status below
+describes the earlier V1/V2 deliveries.
+
 ## V1 implementation
 
 Pet ownership is represented by three nontradable, stackable iDos Items. The native Store offers grant exactly one Item and have a per-player `TotalCap: 1`; the same Store transaction consumes GOLD, GEMS, or `CryptoCurrencies.Main`. The client never grants pet Items. `grind_pets_v1` is a ReadOnly UserCustomData JSON key containing the equipped ID and an optional pending ID. CloudCode checks actual Item counts before accepting any selection. A removed Item loses its bonus even if the protected selected ID remains.

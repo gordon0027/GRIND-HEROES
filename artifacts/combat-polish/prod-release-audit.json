@@ -1,0 +1,45 @@
+{
+  "title": "98JRCAKG",
+  "version": 68,
+  "buildID": "bldaec3cc5cc2954ab09207417465641270",
+  "status": "Live",
+  "liveUrl": "https://98jrcakg.idos.games/",
+  "sourceCommit": "acd6b44",
+  "cloudRevision": 14,
+  "cloudCodeSHA256": "8d451bf229ea5094dc6810d46abdd5eff0eb4330cc5151f615ecccc0689c306d",
+  "handlerCount": 23,
+  "priorHandlers": 21,
+  "existingHandlersPreserved": true,
+  "allProtectedFunctionsByteIdentical": true,
+  "resourcePolicyUnchanged": true,
+  "tokenOffersUnchanged": true,
+  "tokenTransactionsPerformed": false,
+  "ordinaryConfigReadbackMatches": true,
+  "ordinaryPetsPublished": [
+    "Donkey: 100 GOLD",
+    "Pug: 20 GEMS"
+  ],
+  "watchdogGhOffer": "not created or changed; unavailable on original and current PROD",
+  "publishedAtUTC": "2026-10-11T17:56:19Z",
+  "fullOriginalPNGUpload": "v68 accepted and Live",
+  "deploymentAssets": "119 files; 31786320 bytes; original PNGs without palette or dimension changes; 118 CDN resources returned HTTP 200",
+  "priorV66Issue": "after publisher storage cleanup, v66 script returned404; replaced with fresh full v68",
+  "productionBrowserVerified": {
+    "mainAddress": true,
+    "existingAccountAndProgress": true,
+    "stage": "1-3",
+    "slotPrices": [
+      3000,
+      12000
+    ],
+    "petPrices": {
+      "Donkey": "100 GOLD",
+      "Pug": "20 GEMS",
+      "Watchdog": "NO OFFER"
+    },
+    "normalStageChestIncrementObserved": true,
+    "rootIndex200": true,
+    "rootScript200": true,
+    "all118Resources200": true
+  }
+}

@@ -25,16 +25,20 @@
     "duplicateRejected": true
   },
   "clientUpload": {
-    "version": 65,
-    "buildID": "bld8d67a3762f5142b0acae585290bcae8a",
-    "deploy": false,
-    "status": "Failed",
-    "reason": "Storage quota exceeded",
-    "finalClient": "local only"
+    "version": 68,
+    "buildID": "bldaec3cc5cc2954ab09207417465641270",
+    "status": "Live",
+    "testedInDEV": true,
+    "files": 119,
+    "bytes": 31786320,
+    "pngPaletteOptimization": false
   },
   "prod": {
-    "writes": 0,
-    "clientVersion": 64,
-    "cloudRevision": 13
+    "clientVersion": 68,
+    "cloudRevision": 14,
+    "handlerCount": 23,
+    "ordinaryPricesReadbackVerified": true,
+    "tokenEconomyUnchanged": true,
+    "releaseAudit": "prod-release-audit.json"
   }
 }
