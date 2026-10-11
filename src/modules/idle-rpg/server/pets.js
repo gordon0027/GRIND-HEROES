@@ -2,11 +2,11 @@
 // this code only reads the resulting server-owned Item and selects one team pet.
 var GH_PET_KEY = "grind_pets_v1";
 var GH_PET_CATALOG = [
-  { id: "pet_gold_v1", name: "Trail Pup", itemID: "pet_gold_v1", offerID: "pet_gold_v1",
+  { id: "pet_gold_v1", name: "Donkey", itemID: "pet_gold_v1", offerID: "pet_gold_v1",
     assetKey: "pet_gold_v1", currencyID: "GOLD", price: 100, bonus: { attack: 0, maxHp: 20 } },
-  { id: "pet_gems_v1", name: "Spark Fox", itemID: "pet_gems_v1", offerID: "pet_gems_v1",
+  { id: "pet_gems_v1", name: "Pug", itemID: "pet_gems_v1", offerID: "pet_gems_v1",
     assetKey: "pet_gems_v1", currencyID: "GEMS", price: 20, bonus: { attack: 3, maxHp: 0 } },
-  { id: "pet_gh_v1", name: "Astral Wisp", itemID: "pet_gh_v1", offerID: "pet_gh_v1",
+  { id: "pet_gh_v1", name: "Watchdog", itemID: "pet_gh_v1", offerID: "pet_gh_v1",
     assetKey: "pet_gh_v1", currencyID: "Main", price: 1, bonus: { attack: 5, maxHp: 30 } },
 ];
 

@@ -1,15 +1,10 @@
 import type { ReactNode } from "react";
 import type { IdleSession } from "../game/session";
 import type { PetDefinition } from "../game/pets";
+import { PET_VISUALS } from "../phaser/petVisuals";
 import { heroUi } from "./heroAssets";
 import "./pets.css";
 
-// Swap these null entries for PNG paths when the final pet art is ready.
-const petAssets: Record<string, string | null> = {
-  pet_gold_v1: null,
-  pet_gems_v1: null,
-  pet_gh_v1: null,
-};
 const currencyIcons: Record<string, string> = {
   GOLD: heroUi.gold,
   GEMS: `${import.meta.env.BASE_URL}assets/ui/source/Component/UI_Etc/status_icon_gem.png`,
@@ -30,9 +25,9 @@ function PetCard({ session, pet }: { session: IdleSession; pet: PetDefinition })
   const offer = session.petOffer(pet);
   const currencyReady = session.petCurrencyConfigured(pet.currencyID);
   const canAfford = balance(session, pet.currencyID) >= pet.price;
-  const asset = petAssets[pet.assetKey];
+  const asset = PET_VISUALS[pet.id]?.portraitPath;
   return <article className={`gh-pet-card${active ? " is-equipped" : ""}`}>
-    <div className="gh-pet-card__art" aria-label={`${pet.name} placeholder`}>
+    <div className="gh-pet-card__art" aria-label={`${pet.name} portrait`}>
       {asset ? <img src={asset} alt="" /> : <span aria-hidden="true">?</span>}
     </div>
     <div className="gh-pet-card__body">
@@ -44,12 +39,13 @@ function PetCard({ session, pet }: { session: IdleSession; pet: PetDefinition })
         <strong>{pet.price.toLocaleString("en-US")} {pet.currencyID === "Main" ? "GH" : pet.currencyID}</strong></div>
     </div>
     <div className="gh-pet-card__action">
-      {pending ? <span>QUEUED</span> : active ? <>
-        <span>EQUIPPED</span><button type="button" disabled={session.petBusy}
+      {pending ? <span>EQUIP QUEUED</span> : active ? <>
+        <span>{session.petState?.hasPendingChange ?
+          session.petState.pendingPetId ? "SWITCH QUEUED" : "UNEQUIP QUEUED" : "EQUIPPED"}</span><button type="button" disabled={session.petBusy}
           onClick={() => void session.selectPet(null)}>UNEQUIP</button></> : owned ?
         <button type="button" disabled={session.petBusy} onClick={() => void session.selectPet(pet.id)}>EQUIP</button> :
         <button type="button" disabled={session.petBusy || !offer || !currencyReady || !canAfford}
-          onClick={() => void session.buyPet(pet)}>{!offer || !currencyReady ? "UNAVAILABLE" : canAfford ? "BUY" : "INSUFFICIENT"}</button>}
+          onClick={() => void session.buyPet(pet)}>{!offer ? "NO OFFER" : !currencyReady ? "UNAVAILABLE" : canAfford ? "BUY" : "INSUFFICIENT"}</button>}
     </div>
   </article>;
 }

@@ -178,6 +178,11 @@ export class IdleSession {
   teamLeaderboard: TeamPowerLeaderboard | null = null;
   teamLeaderboardBusy = false;
   petState: PetState | null = null;
+  private combatPetId: string | null = null;
+
+  get battlePetId(): string | null {
+    return this.run.state === "ready" ? this.petState?.equippedPetId ?? null : this.combatPetId;
+  }
   petStorefront: GetStorefrontResponse | null = null;
   petError: string | null = null;
   petBusy = false;
@@ -887,12 +892,14 @@ export class IdleSession {
           return false;
         }
         this.serverRunId = started.runId;
+        this.combatPetId = started.equippedPetId ?? null;
         if (this.petState?.hasPendingChange) {
           this.petState = { ...this.petState, equippedPetId: started.equippedPetId ?? null,
             pendingPetId: null, hasPendingChange: false };
           this.refreshHero();
         }
       }
+      else this.combatPetId = this.petState?.equippedPetId ?? null;
       const started = this.run.start();
       if (!started) {
         if (this.serverRunId) void this.stageService.fail(this.serverRunId).catch(() => {});

@@ -19,6 +19,11 @@ const context = vm.createContext({ server, handlers: {},
 vm.runInContext(source, context);
 const state = () => context.handlers.getPetState();
 const select = (petId) => context.handlers.selectPet({ petId });
+assert.deepEqual(Array.from(state().catalog, (pet) => [pet.id, pet.name, pet.price, pet.currencyID]), [
+  ["pet_gold_v1", "Donkey", 100, "GOLD"],
+  ["pet_gems_v1", "Pug", 20, "GEMS"],
+  ["pet_gh_v1", "Watchdog", 1, "Main"],
+]);
 assert.equal(state().ownedPetIds.length, 0);
 assert.equal(select("pet_gold_v1").reason, "pet_not_owned");
 assert.equal(select("forged").reason, "unknown_pet");

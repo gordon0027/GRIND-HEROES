@@ -12,6 +12,8 @@ import { HERO_VISUALS, heroAnimationKey, registerHeroAnimations } from "./heroVi
 import { ENEMY_VISUALS, enemyAnimationKey, registerEnemyAnimations,
   type EnemyVisualID } from "./enemyVisuals";
 import { drawHealthBar } from "./healthBars";
+import { PET_VISUALS, registerPetAnimations } from "./petVisuals";
+import { PetActor } from "./PetActor";
 
 const BACKGROUNDS = {
   forest: { key: "grind-stage-meadow-road", file: "meadow-road.png" },
@@ -67,6 +69,7 @@ export class GrindScene extends Phaser.Scene {
   private projectileActors = new Map<number, ProjectileActor>();
   private enemyProjectileActors = new Map<number, ProjectileActor>();
   private feedbackObjects = new Set<Phaser.GameObjects.GameObject>();
+  private petActor = new PetActor(this);
   private world = new WorldPresentation();
   private visualTime = 0;
   private lastRun: StageRun | null = null;
@@ -89,6 +92,9 @@ export class GrindScene extends Phaser.Scene {
     for (const visual of Object.values(ENEMY_VISUALS))
       this.load.spritesheet(visual.textureKey, visual.assetPath,
         { frameWidth: visual.frameWidth, frameHeight: visual.frameHeight });
+    for (const visual of Object.values(PET_VISUALS))
+      this.load.spritesheet(visual.textureKey, visual.assetPath,
+        { frameWidth: visual.frameWidth, frameHeight: visual.frameHeight });
     for (const art of Object.values(BACKGROUNDS))
       this.load.image(art.key, `${import.meta.env.BASE_URL}assets/backgrounds/stages/${art.file}`);
     this.load.spritesheet(ARROW_KEY, ARROW_PATH, { frameWidth: 128, frameHeight: 128 });
@@ -100,6 +106,7 @@ export class GrindScene extends Phaser.Scene {
     this.scale.on(Phaser.Scale.Events.RESIZE, this.syncCameraResolution, this);
     registerHeroAnimations(this);
     registerEnemyAnimations(this);
+    registerPetAnimations(this);
     const orb = this.add.graphics();
     orb.fillStyle(0xff3737, 0.18).fillCircle(12, 12, 12);
     orb.fillStyle(0xe22229, 0.85).fillCircle(12, 12, 7);
@@ -135,12 +142,14 @@ export class GrindScene extends Phaser.Scene {
     this.drawBackground(run, w, h, groundY);
     this.drawEnemies(this.world.visibleEnemies(run), events, beforeEnemies, w, groundY, h);
     this.syncHeroes(run.heroes, events, beforeHeroes, w, groundY, h);
+    this.petActor.update(this.session.battlePetId, run, this.world, w, groundY, h, deltaMs / 1000);
     this.syncProjectiles(run.projectiles, run.enemies, w, groundY, h);
     this.syncEnemyProjectiles(run.enemyProjectiles, w, groundY, h);
     this.showCombatFeedback(run.enemies, beforeEnemies, events, w, groundY);
   }
 
   private resetActors(): void {
+    this.petActor.destroy();
     for (const actor of this.actors.values()) actor.sprite.destroy();
     this.actors.clear();
     for (const actor of this.enemyActors.values()) actor.sprite.destroy();

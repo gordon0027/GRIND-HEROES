@@ -10,6 +10,7 @@ import { gearImage } from "./itemImage";
 import { EquipmentArt } from "../../../shared/ui/EquipmentArt";
 import { GearStatRows } from "./GearStatRows";
 import { PremiumChestPanel } from "./PremiumChestPanel";
+import { PetsSection } from "./PetsSection";
 import "./management-sections.css";
 
 const slotGroups: [GearSlot[], GearSlot[]] = [["Helmet", "Armor", "Gloves"], ["Weapon", "Offhand", "Boots"]];
@@ -347,12 +348,19 @@ export function InventorySection({ session }: { session: IdleSession }): ReactNo
 export function TeamSection({ session }: { session: IdleSession }): ReactNode {
   const [heroID, setHeroID] = useState(session.selectedID ?? "Knight");
   const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [tab, setTab] = useState<"heroes" | "pets">("heroes");
   return <SectionFrame title="TEAM" kicker="GRIND HEROES / FORMATION" className="gh-management--team">
+    <div className="gh-team-tabs" role="tablist" aria-label="Team management">
+      <button type="button" role="tab" aria-selected={tab === "heroes"} onClick={() => setTab("heroes")}>HEROES</button>
+      <button type="button" role="tab" aria-selected={tab === "pets"} onClick={() => setTab("pets")}>PETS</button>
+    </div>
+    {tab === "pets" ? <PetsSection session={session} /> : <>
     <div className="gh-team-power"><span>TEAM POWER</span><strong>{session.teamPower === null ? "…" : session.teamPower.toLocaleString("en-US")}</strong>
       <button type="button" onClick={() => { setShowLeaderboard((open) => !open); if (!showLeaderboard) void session.loadTeamLeaderboard(); }}>
         {showLeaderboard ? "Back to team" : "Power leaderboard"}</button></div>
     {session.teamPowerError && !showLeaderboard ? <p role="alert" className="gh-hero-window__error">{session.teamPowerError}</p> : null}
     {showLeaderboard ? <PowerLeaderboard session={session} /> : <FormationPanel session={session} heroID={heroID} selectHero={setHeroID} />}
+    </>}
   </SectionFrame>;
 }
 

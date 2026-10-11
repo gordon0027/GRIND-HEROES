@@ -6,7 +6,7 @@
 .gh-pet-card{display:flex;flex-direction:column;align-items:center;gap:11px;min-width:0;padding:15px;border:2px solid #84613d;border-radius:5px;background:linear-gradient(#3d3027,#241d19);box-shadow:inset 0 0 0 2px #1b1511,0 4px 9px #0007;text-align:center}
 .gh-pet-card.is-equipped{border-color:#e6bc70;box-shadow:inset 0 0 0 2px #6d4e2a,0 0 12px #c9955680}
 .gh-pet-card__art{display:grid;place-items:center;width:86px;height:86px;border:3px solid #b28b53;border-radius:7px;background:radial-gradient(#684b32,#2b211a);box-shadow:inset 0 0 0 3px #211911}
-.gh-pet-card__art img{width:72px;height:72px;object-fit:contain;image-rendering:pixelated}
+.gh-pet-card__art img{width:72px;height:72px;object-fit:contain}
 .gh-pet-card__art span{color:#aa8a5d;font:800 40px Georgia,serif}
 .gh-pet-card__body h3{margin:0 0 5px;color:#ffe3a4;font:700 18px Georgia,serif}
 .gh-pet-card__body p{margin:0 0 8px;color:#dac9aa;font:12px/1.4 system-ui,sans-serif}
@@ -19,4 +19,6 @@
 .gh-pet-card__action button:focus-visible,.gh-pets__error button:focus-visible{outline:2px solid #f3d49c;outline-offset:2px}
 .gh-pets__error{display:flex;align-items:center;gap:10px;color:#ffb5a4;font:12px system-ui,sans-serif}
 .gh-pets__queued{color:#e8ca8d;font:12px system-ui,sans-serif}
+.gh-management--team .gh-pets{max-width:none;margin:0;padding:12px;border-width:10px;border-image-width:10px}.gh-management--team .gh-pets header{display:none}
 @media(max-width:560px){.gh-pets{padding:8px;border-width:13px;border-image-width:13px}.gh-pets__grid{grid-template-columns:1fr}.gh-pet-card{display:grid;grid-template-columns:70px 1fr auto;gap:9px;padding:9px;text-align:left}.gh-pet-card__art{width:64px;height:64px}.gh-pet-card__art img{width:55px;height:55px}.gh-pet-card__action{min-height:0}.gh-pet-card__action button{min-width:78px;padding:5px}.gh-pet-card__body h3{font-size:15px}.gh-pet-card__body p{font-size:10px}}
+@media(max-width:560px){.gh-pet-card{grid-template-columns:70px minmax(0,1fr) 82px}.gh-pet-card__action{max-width:82px}.gh-pet-card__action button{box-sizing:border-box;width:82px;min-width:0;padding:5px 2px;font-size:9px;white-space:normal;overflow-wrap:anywhere}.gh-pet-card__action span{font-size:8px}.gh-pet-card__price{flex-wrap:wrap;justify-content:flex-start}}
