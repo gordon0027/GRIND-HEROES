@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { useIDosGamesClient, useUserState } from "@idosgames/react";
-import { Popup, useToast } from "@idosgames/react/ui";
+import { useToast } from "@idosgames/react/ui";
+import { ShopDialog } from "./ShopDialog";
 import { visibleProducts, type ShopCategory, type ShopProduct } from "./shopCatalog";
 import {
   createTokenPurchaseGate, formatWholeGh, purchaseTokenShopProduct, resolveTokenShopOffer,
@@ -191,7 +192,7 @@ function ProductDetails({ product, offer, marketQuote, artFailed, onClose, onPur
     toast(product.category === "gems" ? `${offer.rewardAmount.toLocaleString()} GEMS purchased.` : "Premium Chest purchased.", "success");
   };
 
-  return <Popup title={product.title} onClose={() => { if (!gate.current.isPending()) onClose(); }}>
+  return <ShopDialog title={product.title} onClose={() => { if (!gate.current.isPending()) onClose(); }}>
     <div className="gh-shop__details">
       <div className="gh-shop__detail-art">{artFailed ? <span aria-hidden="true">✦</span> : <img src={`${import.meta.env.BASE_URL}${product.art}`} alt="" />}</div>
       {product.category === "chests" ? <span className="gh-shop__kind gh-shop__kind--premium">Premium</span> : null}
@@ -210,5 +211,5 @@ function ProductDetails({ product, offer, marketQuote, artFailed, onClose, onPur
         {error && showDepositOnPurchaseError(error) ? <button type="button" className="gh-shop__deposit" onClick={onDeposit}>Deposit GH</button> : null}
       </>}
     </div>
-  </Popup>;
+  </ShopDialog>;
 }

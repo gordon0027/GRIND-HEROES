@@ -5,7 +5,6 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { createPortal } from "react-dom";
 import {
   OFFER_NOT_IN_ROTATION,
   type GetStorefrontResponse,
@@ -51,6 +50,7 @@ import {
 } from "./model";
 import { t } from "./i18n";
 import { TokenShop } from "./TokenShop";
+import { ShopDialog } from "./ShopDialog";
 
 // The shop, drawn from the storefront RESOLVED for this player (client.store.getStorefront — never
 // from the raw config): rotation, limits, badges and timers are computed by the server. Layout of the
@@ -346,24 +346,11 @@ function ConfirmPurchase({
   onClose: () => void;
 }): ReactNode {
   const catalog = useCatalog();
-  const kit = useUiKit();
-  const dialogRef = useRef<HTMLDialogElement>(null);
   const rewards = grantLines(picked.offer.Rewards);
   const name = catalog.localize(
     picked.offer.Identity?.DisplayName ?? picked.offer.OfferID,
   );
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (dialog && !dialog.open) dialog.showModal();
-    return () => { if (dialog?.open) dialog.close(); };
-  }, []);
-  return createPortal(
-    <dialog ref={dialogRef} className="gh-shop-confirm" aria-labelledby="gh-shop-confirm-title"
-      onCancel={(event) => { event.preventDefault(); onClose(); }}>
-      <header className="gh-shop-confirm__header">
-        <h2 id="gh-shop-confirm-title">{t("confirmTitle")}</h2>
-        <button type="button" onClick={onClose} aria-label={t("close")}>×</button>
-      </header>
+  return <ShopDialog title={t("confirmTitle")} onClose={onClose}>
       <div className="gh-shop-confirm__body">
         <div style={{ ...outlined, fontSize: 17, textAlign: "center" }}>
           {name}
@@ -395,8 +382,7 @@ function ConfirmPurchase({
         </div>
       </div>
       <BuyButton picked={picked} onReload={onReload} onClose={onClose} />
-    </dialog>, kit.layer ?? document.body,
-  );
+    </ShopDialog>;
 }
 
 function BuyButton({
