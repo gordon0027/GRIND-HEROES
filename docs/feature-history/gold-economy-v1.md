@@ -1,5 +1,8 @@
 # GOLD economy rebalance V1 — DEV and PROD
 
+Current DEV prices, rewards and publication state are superseded by
+[Combat Polish V1](combat-polish-v1.md), 2026-10-11. Values below describe historical V1.
+
 Scope: hero recruitment, party capacity, and `idle_gold` on Title `98JRCAKG` in DEV and PROD. Stage GOLD, XP, loot, chests, combat, and other currencies are unchanged.
 
 ## Audited authority and target

@@ -1,0 +1,40 @@
+{
+  "title": "98JRCAKG-DEV",
+  "revisionBefore": 33,
+  "revisionAfter": 34,
+  "codeMatchesReviewedOrdinaryPlan": true,
+  "handlersUnchanged": true,
+  "resourcePolicyUnchanged": true,
+  "tokenPetOfferUnchanged": true,
+  "ordinaryPrices": {
+    "slot2Gold": 3000,
+    "slot3Gold": 12000,
+    "ArcherGold": 8000,
+    "MageGold": 30000,
+    "gold5000Gems": 40,
+    "gold25000Gems": 150,
+    "afkGoldPerSecond": 0.4
+  },
+  "serverVerify": {
+    "passed": true,
+    "realCombatSeconds": 68,
+    "gold": 100,
+    "xp": 35,
+    "chests": 1,
+    "earlyRejected": true,
+    "duplicateRejected": true
+  },
+  "clientUpload": {
+    "version": 65,
+    "buildID": "bld8d67a3762f5142b0acae585290bcae8a",
+    "deploy": false,
+    "status": "Failed",
+    "reason": "Storage quota exceeded",
+    "finalClient": "local only"
+  },
+  "prod": {
+    "writes": 0,
+    "clientVersion": 64,
+    "cloudRevision": 13
+  }
+}

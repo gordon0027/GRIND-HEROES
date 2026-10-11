@@ -78,12 +78,12 @@ assert.equal(progress().bestSeconds["grind-stage-1-1"], 40);
 assert.equal(grants.length, 1);
 assert.equal(win.xpAwards.length, 1);
 assert.equal(win.xpAwards[0].heroID, "Knight");
-assert.equal(win.heroProgress.Knight.xp, 25);
-assert.deepEqual(Array.from(grants[0].Operation.Grant.Standard.Entries, (entry) => entry.Amount), [30, 1, 1],
+assert.equal(win.heroProgress.Knight.xp, 35);
+assert.deepEqual(Array.from(grants[0].Operation.Grant.Standard.Entries, (entry) => entry.Amount), [100, 1, 1],
   "client payload cannot select reward amounts or items");
 assert.equal(complete("grind-stage-1-1", first.runId, 42).reason, "run_not_active");
 assert.equal(grants.length, 1, "one run grants only once");
-assert.equal(JSON.parse(records.ReadOnly.grind_hero_xp_v1.Value).Knight.xp, 25,
+assert.equal(JSON.parse(records.ReadOnly.grind_hero_xp_v1.Value).Knight.xp, 35,
   "duplicate completion cannot award XP twice");
 
 const failed = start("grind-stage-1-2", 45);
@@ -137,26 +137,26 @@ assert.equal(milestoneClear.rewards.bossChestItemID, "boss_chest");
 assert.deepEqual(Array.from(grants.at(-1).Operation.Grant.Standard.Entries, (entry) => entry.ItemID ?? entry.CurrencyID),
   ["GOLD", "stage_chest", "boss_chest"], "milestone stage grants both unopened chest items");
 const prices = sandbox.handlers.getPartySlotPrices();
-assert.equal(prices.slot2, 50000);
-assert.equal(prices.slot3, 250000);
+assert.equal(prices.slot2, 3000);
+assert.equal(prices.slot3, 12000);
 assert.equal(sandbox.handlers.unlockPartySlot({ slot: 3 }).reason, "previous_slot_locked");
 assert.equal(sandbox.handlers.unlockPartySlot({ slot: 2 }).reason, "not_enough_gold");
-inventory.InventoryV2.VirtualCurrencies.GOLD.Amount = 49999;
+inventory.InventoryV2.VirtualCurrencies.GOLD.Amount = 2999;
 assert.equal(sandbox.handlers.unlockPartySlot({ slot: 2 }).reason, "not_enough_gold");
-inventory.InventoryV2.VirtualCurrencies.GOLD.Amount = 50000;
+inventory.InventoryV2.VirtualCurrencies.GOLD.Amount = 3000;
 const beforeSlot = start("grind-stage-1-1", 300);
 assert.equal(sandbox.handlers.unlockPartySlot({ slot: 2 }).unlocked, true);
 assert.equal(inventory.InventoryV2.VirtualCurrencies.GOLD.Amount, 0,
-  "slot 2 deducts exactly 50,000 GOLD");
+  "slot 2 deducts exactly 3,000 GOLD");
 assert.equal(sandbox.handlers.unlockPartySlot({ slot: 2 }).reason, "already_unlocked");
 assert.equal(records.ReadOnly.grind_party_capacity_v2.Value, "2");
 assert.equal(sandbox.handlers.unlockPartySlot({ slot: 2 }).reason, "already_unlocked");
 assert.equal(inventory.InventoryV2.VirtualCurrencies.GOLD.Amount, 0, "duplicate cannot charge");
 assert.equal(complete("grind-stage-1-1", beforeSlot.runId, 340).accepted, true,
   "buying a party slot must not invalidate an active run");
-inventory.InventoryV2.VirtualCurrencies.GOLD.Amount = 249999;
+inventory.InventoryV2.VirtualCurrencies.GOLD.Amount = 11999;
 assert.equal(sandbox.handlers.unlockPartySlot({ slot: 3 }).reason, "not_enough_gold");
-inventory.InventoryV2.VirtualCurrencies.GOLD.Amount = 250000;
+inventory.InventoryV2.VirtualCurrencies.GOLD.Amount = 12000;
 assert.equal(sandbox.handlers.unlockPartySlot({ slot: 3 }).unlocked, true);
 assert.equal(inventory.InventoryV2.VirtualCurrencies.GOLD.Amount, 0);
 assert.equal(records.ReadOnly.grind_party_capacity_v2.Value, "3");
@@ -179,8 +179,8 @@ const together = start("grind-stage-1-1", 500);
 const togetherClear = complete("grind-stage-1-1", together.runId, 540, { deadHeroID: "Archer" });
 assert.deepEqual(Array.from(togetherClear.xpAwards, (award) => award.heroID), ["Knight", "Archer"],
   "both active heroes get full XP; dead participants still qualify; benched Mage gets none");
-assert.equal(togetherClear.xpAwards[0].amount, 25);
-assert.equal(togetherClear.xpAwards[1].amount, 25);
+assert.equal(togetherClear.xpAwards[0].amount, 35);
+assert.equal(togetherClear.xpAwards[1].amount, 35);
 assert.equal(xpState().Mage, undefined);
 const archerBefore = xpState().Archer;
 
@@ -221,14 +221,14 @@ assert.equal(overflowClear.accepted, true);
 assert.equal(overflowClear.rewards.chestItemID, "stage_chest_act2");
 assert.equal(overflowClear.rewards.bossChestItemID, "boss_chest_act2");
 assert.equal(progress().highestUnlocked, 21, "server clear of 2-10 unlocks 3-1");
-assert.deepEqual(JSON.parse(JSON.stringify(xpState().Knight)), { level: 3, xp: 39 },
+assert.deepEqual(JSON.parse(JSON.stringify(xpState().Knight)), { level: 3, xp: 87 },
   "one reward may cross two thresholds while preserving overflow");
-assert.deepEqual(JSON.parse(JSON.stringify(xpState().Archer)), { level: 4, xp: 119 },
+assert.deepEqual(JSON.parse(JSON.stringify(xpState().Archer)), { level: 5, xp: 27 },
   "heroes use separate XP and Level records that survive a fresh read");
 assert.equal(complete("grind-stage-2-10", overflow.runId, 951).reason, "run_not_active");
-assert.equal(xpState().Knight.xp, 39, "duplicate completion does not grant Hero XP");
+assert.equal(xpState().Knight.xp, 87, "duplicate completion does not grant Hero XP");
 assert.deepEqual(parseHeroProgress(records.ReadOnly.grind_hero_xp_v1.Value).Knight,
-  { level: 3, xp: 39 }, "fresh client read restores each hero's progress");
+  { level: 3, xp: 87 }, "fresh client read restores each hero's progress");
 assert.equal(xpToNext(30), 0, "maximum level has no next XP threshold");
 const act3Run = start("grind-stage-3-1", 960);
 assert.equal(act3Run.accepted, true, "the server recognizes Act 3 after unlock");

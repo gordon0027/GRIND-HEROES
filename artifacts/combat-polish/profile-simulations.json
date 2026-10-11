@@ -1,0 +1,929 @@
+[
+  {
+    "profile": "starter",
+    "stage": "1-1",
+    "result": "clear",
+    "seconds": 68,
+    "combatPercent": 53,
+    "hp": [
+      44
+    ],
+    "deaths": 0,
+    "damageTaken": 76,
+    "bossSeconds": 8,
+    "normalSeconds": 6,
+    "enemies": 10,
+    "maxGroup": 2
+  },
+  {
+    "profile": "commonKnight",
+    "stage": "1-1",
+    "result": "clear",
+    "seconds": 53,
+    "combatPercent": 41,
+    "hp": [
+      184
+    ],
+    "deaths": 0,
+    "damageTaken": 21,
+    "bossSeconds": 5,
+    "normalSeconds": 3,
+    "enemies": 10,
+    "maxGroup": 2
+  },
+  {
+    "profile": "uncommonDuo",
+    "stage": "1-1",
+    "result": "clear",
+    "seconds": 39,
+    "combatPercent": 23,
+    "hp": [
+      321,
+      241
+    ],
+    "deaths": 0,
+    "damageTaken": 8,
+    "bossSeconds": 1,
+    "normalSeconds": 2,
+    "enemies": 10,
+    "maxGroup": 2
+  },
+  {
+    "profile": "rareTrio",
+    "stage": "1-1",
+    "result": "clear",
+    "seconds": 38,
+    "combatPercent": 15,
+    "hp": [
+      508,
+      374,
+      348
+    ],
+    "deaths": 0,
+    "damageTaken": 4,
+    "bossSeconds": 1,
+    "normalSeconds": 1,
+    "enemies": 10,
+    "maxGroup": 2
+  },
+  {
+    "profile": "rareTrioDonkey",
+    "stage": "1-1",
+    "result": "clear",
+    "seconds": 38,
+    "combatPercent": 15,
+    "hp": [
+      528,
+      394,
+      368
+    ],
+    "deaths": 0,
+    "damageTaken": 4,
+    "bossSeconds": 1,
+    "normalSeconds": 1,
+    "enemies": 10,
+    "maxGroup": 2
+  },
+  {
+    "profile": "epicTrio",
+    "stage": "1-1",
+    "result": "clear",
+    "seconds": 37,
+    "combatPercent": 15,
+    "hp": [
+      737,
+      542,
+      504
+    ],
+    "deaths": 0,
+    "damageTaken": 4,
+    "bossSeconds": 1,
+    "normalSeconds": 1,
+    "enemies": 10,
+    "maxGroup": 2
+  },
+  {
+    "profile": "starter",
+    "stage": "1-5",
+    "result": "failed",
+    "seconds": 96,
+    "combatPercent": 49,
+    "hp": [
+      0
+    ],
+    "deaths": 1,
+    "damageTaken": 120,
+    "bossSeconds": 8,
+    "normalSeconds": 7,
+    "enemies": 14,
+    "maxGroup": 3
+  },
+  {
+    "profile": "commonKnight",
+    "stage": "1-5",
+    "result": "clear",
+    "seconds": 81,
+    "combatPercent": 42,
+    "hp": [
+      168
+    ],
+    "deaths": 0,
+    "damageTaken": 37,
+    "bossSeconds": 8,
+    "normalSeconds": 5,
+    "enemies": 14,
+    "maxGroup": 3
+  },
+  {
+    "profile": "uncommonDuo",
+    "stage": "1-5",
+    "result": "clear",
+    "seconds": 57,
+    "combatPercent": 20,
+    "hp": [
+      317,
+      241
+    ],
+    "deaths": 0,
+    "damageTaken": 12,
+    "bossSeconds": 2,
+    "normalSeconds": 2,
+    "enemies": 14,
+    "maxGroup": 3
+  },
+  {
+    "profile": "rareTrio",
+    "stage": "1-5",
+    "result": "clear",
+    "seconds": 56,
+    "combatPercent": 15,
+    "hp": [
+      503,
+      374,
+      348
+    ],
+    "deaths": 0,
+    "damageTaken": 9,
+    "bossSeconds": 1,
+    "normalSeconds": 1,
+    "enemies": 14,
+    "maxGroup": 3
+  },
+  {
+    "profile": "rareTrioDonkey",
+    "stage": "1-5",
+    "result": "clear",
+    "seconds": 56,
+    "combatPercent": 15,
+    "hp": [
+      523,
+      394,
+      368
+    ],
+    "deaths": 0,
+    "damageTaken": 9,
+    "bossSeconds": 1,
+    "normalSeconds": 1,
+    "enemies": 14,
+    "maxGroup": 3
+  },
+  {
+    "profile": "epicTrio",
+    "stage": "1-5",
+    "result": "clear",
+    "seconds": 55,
+    "combatPercent": 14,
+    "hp": [
+      733,
+      542,
+      504
+    ],
+    "deaths": 0,
+    "damageTaken": 8,
+    "bossSeconds": 1,
+    "normalSeconds": 1,
+    "enemies": 14,
+    "maxGroup": 3
+  },
+  {
+    "profile": "starter",
+    "stage": "1-10",
+    "result": "failed",
+    "seconds": 49,
+    "combatPercent": 55,
+    "hp": [
+      0
+    ],
+    "deaths": 1,
+    "damageTaken": 120,
+    "bossSeconds": null,
+    "normalSeconds": 10,
+    "enemies": 22,
+    "maxGroup": 4
+  },
+  {
+    "profile": "commonKnight",
+    "stage": "1-10",
+    "result": "clear",
+    "seconds": 117,
+    "combatPercent": 57,
+    "hp": [
+      123
+    ],
+    "deaths": 0,
+    "damageTaken": 82,
+    "bossSeconds": 14,
+    "normalSeconds": 9,
+    "enemies": 22,
+    "maxGroup": 4
+  },
+  {
+    "profile": "uncommonDuo",
+    "stage": "1-10",
+    "result": "clear",
+    "seconds": 73,
+    "combatPercent": 31,
+    "hp": [
+      299,
+      241
+    ],
+    "deaths": 0,
+    "damageTaken": 30,
+    "bossSeconds": 3,
+    "normalSeconds": 3,
+    "enemies": 22,
+    "maxGroup": 4
+  },
+  {
+    "profile": "rareTrio",
+    "stage": "1-10",
+    "result": "clear",
+    "seconds": 67,
+    "combatPercent": 21,
+    "hp": [
+      495,
+      374,
+      348
+    ],
+    "deaths": 0,
+    "damageTaken": 17,
+    "bossSeconds": 2,
+    "normalSeconds": 2,
+    "enemies": 22,
+    "maxGroup": 4
+  },
+  {
+    "profile": "rareTrioDonkey",
+    "stage": "1-10",
+    "result": "clear",
+    "seconds": 67,
+    "combatPercent": 21,
+    "hp": [
+      515,
+      394,
+      368
+    ],
+    "deaths": 0,
+    "damageTaken": 17,
+    "bossSeconds": 2,
+    "normalSeconds": 2,
+    "enemies": 22,
+    "maxGroup": 4
+  },
+  {
+    "profile": "epicTrio",
+    "stage": "1-10",
+    "result": "clear",
+    "seconds": 64,
+    "combatPercent": 20,
+    "hp": [
+      725,
+      542,
+      504
+    ],
+    "deaths": 0,
+    "damageTaken": 16,
+    "bossSeconds": 1,
+    "normalSeconds": 2,
+    "enemies": 22,
+    "maxGroup": 4
+  },
+  {
+    "profile": "starter",
+    "stage": "2-1",
+    "result": "failed",
+    "seconds": 43,
+    "combatPercent": 48,
+    "hp": [
+      0
+    ],
+    "deaths": 1,
+    "damageTaken": 120,
+    "bossSeconds": null,
+    "normalSeconds": 9,
+    "enemies": 25,
+    "maxGroup": 5
+  },
+  {
+    "profile": "commonKnight",
+    "stage": "2-1",
+    "result": "clear",
+    "seconds": 134,
+    "combatPercent": 61,
+    "hp": [
+      16
+    ],
+    "deaths": 0,
+    "damageTaken": 189,
+    "bossSeconds": 18,
+    "normalSeconds": 11,
+    "enemies": 25,
+    "maxGroup": 5
+  },
+  {
+    "profile": "uncommonDuo",
+    "stage": "2-1",
+    "result": "clear",
+    "seconds": 79,
+    "combatPercent": 35,
+    "hp": [
+      284,
+      241
+    ],
+    "deaths": 0,
+    "damageTaken": 45,
+    "bossSeconds": 4,
+    "normalSeconds": 4,
+    "enemies": 25,
+    "maxGroup": 5
+  },
+  {
+    "profile": "rareTrio",
+    "stage": "2-1",
+    "result": "clear",
+    "seconds": 73,
+    "combatPercent": 28,
+    "hp": [
+      484,
+      374,
+      348
+    ],
+    "deaths": 0,
+    "damageTaken": 28,
+    "bossSeconds": 2,
+    "normalSeconds": 3,
+    "enemies": 25,
+    "maxGroup": 5
+  },
+  {
+    "profile": "rareTrioDonkey",
+    "stage": "2-1",
+    "result": "clear",
+    "seconds": 73,
+    "combatPercent": 28,
+    "hp": [
+      504,
+      394,
+      368
+    ],
+    "deaths": 0,
+    "damageTaken": 28,
+    "bossSeconds": 2,
+    "normalSeconds": 3,
+    "enemies": 25,
+    "maxGroup": 5
+  },
+  {
+    "profile": "epicTrio",
+    "stage": "2-1",
+    "result": "clear",
+    "seconds": 69,
+    "combatPercent": 24,
+    "hp": [
+      713,
+      542,
+      504
+    ],
+    "deaths": 0,
+    "damageTaken": 28,
+    "bossSeconds": 1,
+    "normalSeconds": 3,
+    "enemies": 25,
+    "maxGroup": 5
+  },
+  {
+    "profile": "starter",
+    "stage": "2-5",
+    "result": "failed",
+    "seconds": 30,
+    "combatPercent": 48,
+    "hp": [
+      0
+    ],
+    "deaths": 1,
+    "damageTaken": 120,
+    "bossSeconds": null,
+    "normalSeconds": 0,
+    "enemies": 26,
+    "maxGroup": 5
+  },
+  {
+    "profile": "commonKnight",
+    "stage": "2-5",
+    "result": "failed",
+    "seconds": 139,
+    "combatPercent": 60,
+    "hp": [
+      0
+    ],
+    "deaths": 1,
+    "damageTaken": 205,
+    "bossSeconds": 3,
+    "normalSeconds": 13,
+    "enemies": 26,
+    "maxGroup": 5
+  },
+  {
+    "profile": "uncommonDuo",
+    "stage": "2-5",
+    "result": "clear",
+    "seconds": 89,
+    "combatPercent": 39,
+    "hp": [
+      272,
+      241
+    ],
+    "deaths": 0,
+    "damageTaken": 57,
+    "bossSeconds": 6,
+    "normalSeconds": 5,
+    "enemies": 26,
+    "maxGroup": 5
+  },
+  {
+    "profile": "rareTrio",
+    "stage": "2-5",
+    "result": "clear",
+    "seconds": 80,
+    "combatPercent": 28,
+    "hp": [
+      477,
+      374,
+      348
+    ],
+    "deaths": 0,
+    "damageTaken": 35,
+    "bossSeconds": 3,
+    "normalSeconds": 3,
+    "enemies": 26,
+    "maxGroup": 5
+  },
+  {
+    "profile": "rareTrioDonkey",
+    "stage": "2-5",
+    "result": "clear",
+    "seconds": 80,
+    "combatPercent": 28,
+    "hp": [
+      497,
+      394,
+      368
+    ],
+    "deaths": 0,
+    "damageTaken": 35,
+    "bossSeconds": 3,
+    "normalSeconds": 3,
+    "enemies": 26,
+    "maxGroup": 5
+  },
+  {
+    "profile": "epicTrio",
+    "stage": "2-5",
+    "result": "clear",
+    "seconds": 75,
+    "combatPercent": 25,
+    "hp": [
+      714,
+      542,
+      504
+    ],
+    "deaths": 0,
+    "damageTaken": 27,
+    "bossSeconds": 2,
+    "normalSeconds": 3,
+    "enemies": 26,
+    "maxGroup": 5
+  },
+  {
+    "profile": "starter",
+    "stage": "2-10",
+    "result": "failed",
+    "seconds": 15,
+    "combatPercent": 49,
+    "hp": [
+      0
+    ],
+    "deaths": 1,
+    "damageTaken": 120,
+    "bossSeconds": null,
+    "normalSeconds": null,
+    "enemies": 29,
+    "maxGroup": 5
+  },
+  {
+    "profile": "commonKnight",
+    "stage": "2-10",
+    "result": "failed",
+    "seconds": 85,
+    "combatPercent": 59,
+    "hp": [
+      0
+    ],
+    "deaths": 1,
+    "damageTaken": 205,
+    "bossSeconds": null,
+    "normalSeconds": 14,
+    "enemies": 29,
+    "maxGroup": 5
+  },
+  {
+    "profile": "uncommonDuo",
+    "stage": "2-10",
+    "result": "clear",
+    "seconds": 100,
+    "combatPercent": 41,
+    "hp": [
+      240,
+      241
+    ],
+    "deaths": 0,
+    "damageTaken": 89,
+    "bossSeconds": 8,
+    "normalSeconds": 5,
+    "enemies": 29,
+    "maxGroup": 5
+  },
+  {
+    "profile": "rareTrio",
+    "stage": "2-10",
+    "result": "clear",
+    "seconds": 92,
+    "combatPercent": 33,
+    "hp": [
+      462,
+      374,
+      348
+    ],
+    "deaths": 0,
+    "damageTaken": 50,
+    "bossSeconds": 4,
+    "normalSeconds": 4,
+    "enemies": 29,
+    "maxGroup": 5
+  },
+  {
+    "profile": "rareTrioDonkey",
+    "stage": "2-10",
+    "result": "clear",
+    "seconds": 92,
+    "combatPercent": 33,
+    "hp": [
+      482,
+      394,
+      368
+    ],
+    "deaths": 0,
+    "damageTaken": 50,
+    "bossSeconds": 4,
+    "normalSeconds": 4,
+    "enemies": 29,
+    "maxGroup": 5
+  },
+  {
+    "profile": "epicTrio",
+    "stage": "2-10",
+    "result": "clear",
+    "seconds": 82,
+    "combatPercent": 26,
+    "hp": [
+      707,
+      542,
+      504
+    ],
+    "deaths": 0,
+    "damageTaken": 34,
+    "bossSeconds": 2,
+    "normalSeconds": 3,
+    "enemies": 29,
+    "maxGroup": 5
+  },
+  {
+    "profile": "starter",
+    "stage": "3-1",
+    "result": "failed",
+    "seconds": 13,
+    "combatPercent": 41,
+    "hp": [
+      0
+    ],
+    "deaths": 1,
+    "damageTaken": 120,
+    "bossSeconds": null,
+    "normalSeconds": null,
+    "enemies": 36,
+    "maxGroup": 6
+  },
+  {
+    "profile": "commonKnight",
+    "stage": "3-1",
+    "result": "failed",
+    "seconds": 41,
+    "combatPercent": 63,
+    "hp": [
+      0
+    ],
+    "deaths": 1,
+    "damageTaken": 205,
+    "bossSeconds": null,
+    "normalSeconds": 0,
+    "enemies": 36,
+    "maxGroup": 6
+  },
+  {
+    "profile": "uncommonDuo",
+    "stage": "3-1",
+    "result": "clear",
+    "seconds": 113,
+    "combatPercent": 47,
+    "hp": [
+      148,
+      241
+    ],
+    "deaths": 0,
+    "damageTaken": 181,
+    "bossSeconds": 8,
+    "normalSeconds": 6,
+    "enemies": 36,
+    "maxGroup": 6
+  },
+  {
+    "profile": "rareTrio",
+    "stage": "3-1",
+    "result": "clear",
+    "seconds": 100,
+    "combatPercent": 37,
+    "hp": [
+      442,
+      374,
+      348
+    ],
+    "deaths": 0,
+    "damageTaken": 70,
+    "bossSeconds": 3,
+    "normalSeconds": 5,
+    "enemies": 36,
+    "maxGroup": 6
+  },
+  {
+    "profile": "rareTrioDonkey",
+    "stage": "3-1",
+    "result": "clear",
+    "seconds": 100,
+    "combatPercent": 37,
+    "hp": [
+      462,
+      394,
+      368
+    ],
+    "deaths": 0,
+    "damageTaken": 70,
+    "bossSeconds": 3,
+    "normalSeconds": 5,
+    "enemies": 36,
+    "maxGroup": 6
+  },
+  {
+    "profile": "epicTrio",
+    "stage": "3-1",
+    "result": "clear",
+    "seconds": 90,
+    "combatPercent": 31,
+    "hp": [
+      696,
+      542,
+      504
+    ],
+    "deaths": 0,
+    "damageTaken": 45,
+    "bossSeconds": 2,
+    "normalSeconds": 4,
+    "enemies": 36,
+    "maxGroup": 6
+  },
+  {
+    "profile": "starter",
+    "stage": "3-5",
+    "result": "failed",
+    "seconds": 12,
+    "combatPercent": 33,
+    "hp": [
+      0
+    ],
+    "deaths": 1,
+    "damageTaken": 120,
+    "bossSeconds": null,
+    "normalSeconds": null,
+    "enemies": 37,
+    "maxGroup": 6
+  },
+  {
+    "profile": "commonKnight",
+    "stage": "3-5",
+    "result": "failed",
+    "seconds": 34,
+    "combatPercent": 54,
+    "hp": [
+      0
+    ],
+    "deaths": 1,
+    "damageTaken": 205,
+    "bossSeconds": null,
+    "normalSeconds": 0,
+    "enemies": 37,
+    "maxGroup": 6
+  },
+  {
+    "profile": "uncommonDuo",
+    "stage": "3-5",
+    "result": "clear",
+    "seconds": 133,
+    "combatPercent": 53,
+    "hp": [
+      0,
+      13
+    ],
+    "deaths": 1,
+    "damageTaken": 557,
+    "bossSeconds": 19,
+    "normalSeconds": 7,
+    "enemies": 37,
+    "maxGroup": 6
+  },
+  {
+    "profile": "rareTrio",
+    "stage": "3-5",
+    "result": "clear",
+    "seconds": 108,
+    "combatPercent": 38,
+    "hp": [
+      399,
+      374,
+      348
+    ],
+    "deaths": 0,
+    "damageTaken": 113,
+    "bossSeconds": 5,
+    "normalSeconds": 5,
+    "enemies": 37,
+    "maxGroup": 6
+  },
+  {
+    "profile": "rareTrioDonkey",
+    "stage": "3-5",
+    "result": "clear",
+    "seconds": 108,
+    "combatPercent": 38,
+    "hp": [
+      419,
+      394,
+      368
+    ],
+    "deaths": 0,
+    "damageTaken": 113,
+    "bossSeconds": 5,
+    "normalSeconds": 5,
+    "enemies": 37,
+    "maxGroup": 6
+  },
+  {
+    "profile": "epicTrio",
+    "stage": "3-5",
+    "result": "clear",
+    "seconds": 99,
+    "combatPercent": 33,
+    "hp": [
+      680,
+      542,
+      504
+    ],
+    "deaths": 0,
+    "damageTaken": 61,
+    "bossSeconds": 3,
+    "normalSeconds": 4,
+    "enemies": 37,
+    "maxGroup": 6
+  },
+  {
+    "profile": "starter",
+    "stage": "3-10",
+    "result": "failed",
+    "seconds": 11,
+    "combatPercent": 24,
+    "hp": [
+      0
+    ],
+    "deaths": 1,
+    "damageTaken": 120,
+    "bossSeconds": null,
+    "normalSeconds": null,
+    "enemies": 42,
+    "maxGroup": 6
+  },
+  {
+    "profile": "commonKnight",
+    "stage": "3-10",
+    "result": "failed",
+    "seconds": 15,
+    "combatPercent": 45,
+    "hp": [
+      0
+    ],
+    "deaths": 1,
+    "damageTaken": 205,
+    "bossSeconds": null,
+    "normalSeconds": null,
+    "enemies": 42,
+    "maxGroup": 6
+  },
+  {
+    "profile": "uncommonDuo",
+    "stage": "3-10",
+    "result": "failed",
+    "seconds": 73,
+    "combatPercent": 54,
+    "hp": [
+      0,
+      0
+    ],
+    "deaths": 2,
+    "damageTaken": 570,
+    "bossSeconds": null,
+    "normalSeconds": 9,
+    "enemies": 42,
+    "maxGroup": 6
+  },
+  {
+    "profile": "rareTrio",
+    "stage": "3-10",
+    "result": "clear",
+    "seconds": 123,
+    "combatPercent": 41,
+    "hp": [
+      134,
+      374,
+      348
+    ],
+    "deaths": 0,
+    "damageTaken": 378,
+    "bossSeconds": 6,
+    "normalSeconds": 6,
+    "enemies": 42,
+    "maxGroup": 6
+  },
+  {
+    "profile": "rareTrioDonkey",
+    "stage": "3-10",
+    "result": "clear",
+    "seconds": 123,
+    "combatPercent": 41,
+    "hp": [
+      154,
+      394,
+      368
+    ],
+    "deaths": 0,
+    "damageTaken": 378,
+    "bossSeconds": 6,
+    "normalSeconds": 6,
+    "enemies": 42,
+    "maxGroup": 6
+  },
+  {
+    "profile": "epicTrio",
+    "stage": "3-10",
+    "result": "clear",
+    "seconds": 113,
+    "combatPercent": 38,
+    "hp": [
+      630,
+      542,
+      504
+    ],
+    "deaths": 0,
+    "damageTaken": 111,
+    "bossSeconds": 5,
+    "normalSeconds": 5,
+    "enemies": 42,
+    "maxGroup": 6
+  }
+]

@@ -26,20 +26,20 @@ for (let i = 0; i < STAGE_CATALOG.length; i++) {
     stage.chapter === 1 ? "ogreboss" : stage.chapter === 2 ? "orangeOgre" : "zombieOgre");
   assert.equal(stage.environment, stage.chapter === 1 ? "forest" : `act${stage.chapter}`);
   const enemies = stage.encounters.flatMap((encounter) => encounter.enemies);
-  assert.equal(stage.encounters.length, 5, `${stage.id} has five readable normal waves`);
-  assert.ok(stage.encounters.every((encounter) => encounter.enemies.length <= 3), stage.id);
-  assert.ok(stage.boss.enemies.length <= 2, stage.id);
+  assert.equal(stage.encounters.length, stage.chapter === 3 ? 7 : stage.chapter === 2 || stage.stage >= 7 ? 6 : 5);
+  assert.ok(stage.encounters.every((encounter) => encounter.enemies.length <= 6), stage.id);
+  assert.ok(stage.boss.enemies.length <= 3, stage.id);
   assert.ok(stage.encounters.every((encounter) =>
-    encounter.enemies.filter((enemy) => enemy.combatType === "RANGED").length <= 1), stage.id);
+    encounter.enemies.filter((enemy) => enemy.combatType === "RANGED").length <= 2), stage.id);
   assert.ok(stage.encounters.every((encounter, index) =>
     encounter.distance < stage.length &&
     encounter.distance > (index ? stage.encounters[index - 1].distance : 0)), stage.id);
   const totalEnemies = enemies.length + stage.boss.enemies.length;
-  assert.ok(totalEnemies >= 10 && totalEnemies <= 13, stage.id);
+  assert.ok(totalEnemies >= 10 && totalEnemies <= 42, stage.id);
   if (stage.chapter > 1) {
     const prefix = stage.chapter === 2 ? "orange" : "undead";
     assert.ok(enemies.every((enemy) => enemy.visual.startsWith(prefix)), stage.id);
-    assert.ok(enemies.some((enemy) => enemy.combatType === "RANGED") === (stage.stage > 1), stage.id);
+    assert.ok(enemies.some((enemy) => enemy.combatType === "RANGED") === true, stage.id);
     assert.ok(stage.encounters.every((encounter) => encounter.enemies.length < 2 ||
       encounter.enemies[0].combatType !== "RANGED"), "mixed waves put a melee enemy first");
   }

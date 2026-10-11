@@ -36,6 +36,7 @@ export const idleRpgModule: Module = defineModule({
         formationStored: session.formationStored,
         devPreview: session.isDevPreview,
         goldPerSecond: session.ratePerSecond(),
+        rendering: session.renderDiagnostics,
       }),
       actions: {
         selectStage: (args) => session.selectStage(String(args?.stageID ?? "")),

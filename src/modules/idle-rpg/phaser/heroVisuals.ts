@@ -32,9 +32,9 @@ function config(hero: string, offsetY = 0): HeroVisualConfig {
     frameWidth: 256,
     frameHeight: 256,
     scale: 0.84,
-    // The standing feet are near source-frame y=188, hence 188/256.
+    // The standing feet are at source-frame y=183 (weapons extend below the boots).
     originX: 0.5,
-    originY: 188 / 256,
+    originY: 183 / 256,
     offsetY,
     // Source-frame offsets from the standing sprite origin, scaled with the hero.
     projectileOrigin: hero === "Archer" ? { x: 34, y: -40 }
@@ -45,8 +45,8 @@ function config(hero: string, offsetY = 0): HeroVisualConfig {
 
 export const HERO_VISUALS: Record<string, HeroVisualConfig> = {
   Knight: config("Knight"),
-  Archer: config("Archer", 5),
-  Mage: config("Mage", -6),
+  Archer: config("Archer"),
+  Mage: config("Mage"),
 };
 
 export function heroAnimationKey(heroID: string, motion: HeroMotion): string {

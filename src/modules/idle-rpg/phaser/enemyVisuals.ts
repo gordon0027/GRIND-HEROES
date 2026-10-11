@@ -42,18 +42,18 @@ function visual(id: EnemyVisualID, folder: string, filename: string, scale: numb
 
 export const ENEMY_VISUALS: Record<EnemyVisualID, EnemyVisualConfig> = {
   goblin1: visual("goblin1", "goblin1", "Goblin1.png", 0.9, 256, 256, 183, 7),
-  goblin2: visual("goblin2", "goblin2", "Goblin2.png", 0.95, 256, 256, 190, 7),
-  goblinboss: visual("goblinboss", "goblin3", "GoblinBoss.png", 1.0, 256, 256, 194, 10),
+  goblin2: visual("goblin2", "goblin2", "Goblin2.png", 0.95, 256, 256, 183, 7),
+  goblinboss: visual("goblinboss", "goblin3", "GoblinBoss.png", 1.0, 256, 256, 183, 10),
   ogreboss: visual("ogreboss", "ogreboss", "ogreboss.png", 1.0, 300, 260, 234, 20),
   orange1: visual("orange1", "act2", "GoblinOrange_1.png", 0.9, 256, 256, 183, 7),
-  orangeFat: visual("orangeFat", "act2", "GoblinOrange_2_Fat.png", 0.95, 256, 256, 190, 9),
-  orangeArcher: visual("orangeArcher", "act2", "GoblinOrange_Archer_4.png", 0.9, 256, 256, 185, 7),
-  orangeHeavy: visual("orangeHeavy", "act2", "GoblinOrange_Heavy_3.png", 1, 256, 256, 194, 10),
-  orangeOgre: visual("orangeOgre", "act2", "OrangeOgre.png", 1, 314, 261, 234, 20),
-  undead1: visual("undead1", "act3", "Undead_1_Simple.png", 0.9, 256, 256, 185, 7),
-  undeadArcher: visual("undeadArcher", "act3", "Undead_2_Archer.png", 0.9, 256, 256, 185, 7),
-  undeadHeavy: visual("undeadHeavy", "act3", "Undead_3_Heavy.png", 1, 256, 256, 195, 10),
-  zombieOgre: visual("zombieOgre", "act3", "ZombieOgre.png", 1, 314, 260, 234, 20),
+  orangeFat: visual("orangeFat", "act2", "GoblinOrange_2_Fat.png", 0.95, 256, 256, 183, 9),
+  orangeArcher: visual("orangeArcher", "act2", "GoblinOrange_Archer_4.png", 0.9, 256, 256, 183, 7),
+  orangeHeavy: visual("orangeHeavy", "act2", "GoblinOrange_Heavy_3.png", 1, 256, 256, 183, 10),
+  orangeOgre: visual("orangeOgre", "act2", "OrangeOgre.png", 1, 314, 261, 237, 20),
+  undead1: visual("undead1", "act3", "Undead_1_Simple.png", 0.9, 256, 256, 183, 7),
+  undeadArcher: visual("undeadArcher", "act3", "Undead_2_Archer.png", 0.9, 256, 256, 183, 7),
+  undeadHeavy: visual("undeadHeavy", "act3", "Undead_3_Heavy.png", 1, 256, 256, 183, 10),
+  zombieOgre: visual("zombieOgre", "act3", "ZombieOgre.png", 1, 314, 260, 237, 20),
 };
 
 export function enemyAnimationKey(id: EnemyVisualID, motion: EnemyMotion): string {
@@ -62,6 +62,7 @@ export function enemyAnimationKey(id: EnemyVisualID, motion: EnemyMotion): strin
 
 export function registerEnemyAnimations(scene: Phaser.Scene): void {
   for (const [id, config] of Object.entries(ENEMY_VISUALS) as [EnemyVisualID, EnemyVisualConfig][]) {
+    if (scene.textures && !scene.textures.exists(config.textureKey)) continue;
     for (const [motion, sequence] of Object.entries(config.frames) as
       [EnemyMotion, EnemyVisualConfig["frames"][EnemyMotion]][]) {
       const key = enemyAnimationKey(id, motion);

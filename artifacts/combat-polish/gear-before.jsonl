@@ -1,0 +1,14 @@
+{"tier":"Common","heroLevel":1,"stage":"1-1","power":114,"result":"clear","seconds":54,"deaths":0,"hp":[184]}
+{"tier":"Uncommon","heroLevel":5,"stage":"1-10","power":314,"result":"clear","seconds":64,"deaths":0,"hp":[317,241]}
+{"tier":"Rare","heroLevel":10,"stage":"2-10","power":749,"result":"clear","seconds":81,"deaths":0,"hp":[487,374,364]}
+{"tier":"Epic","heroLevel":15,"stage":"3-5","power":1035,"result":"clear","seconds":80,"deaths":0,"hp":[726,542,532]}
+{"tier":"Legendary","heroLevel":20,"stage":"3-10","power":1358,"result":"clear","seconds":83,"deaths":0,"hp":[982,730,720]}
+{"futureWith":"Common","stage":"1-10","result":"clear","seconds":101,"deaths":0}
+{"futureWith":"Uncommon","stage":"2-10","result":"clear","seconds":94,"deaths":0}
+{"futureWith":"Rare","stage":"3-10","result":"clear","seconds":96,"deaths":0}
+{"fixedBaseGear":"Common","stage":"3-5","result":"clear","seconds":93,"deaths":0,"survivingHp":854,"power":577}
+{"fixedBaseGear":"Uncommon","stage":"3-5","result":"clear","seconds":90,"deaths":0,"survivingHp":1054,"power":655}
+{"fixedBaseGear":"Rare","stage":"3-5","result":"clear","seconds":85,"deaths":0,"survivingHp":1223,"power":749}
+{"fixedBaseGear":"Epic","stage":"3-5","result":"clear","seconds":83,"deaths":0,"survivingHp":1435,"power":884}
+{"fixedBaseGear":"Legendary","stage":"3-5","result":"clear","seconds":78,"deaths":0,"survivingHp":1713,"power":1056}
+50-item matrix, chest dominance, and tier combat passed

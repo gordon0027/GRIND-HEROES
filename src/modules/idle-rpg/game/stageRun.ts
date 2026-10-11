@@ -1,6 +1,7 @@
 // Grind Heroes' transient, deterministic stage simulation. Distances are metres;
 // x positions are normalized screen-lane coordinates and never determine progress.
 
+import { enemySpawnX } from "./encounterLayout.ts";
 import { heroAttackTiming, enemyAttackTiming, scaledEventDelay } from "./combatTiming.ts";
 
 export const MAX_PARTY_SIZE = 3;
@@ -84,6 +85,7 @@ export interface RuntimeHero extends HeroSource {
 
 export interface RuntimeEnemy extends EnemyDefinition {
   id: number;
+  formationIndex: number;
   hp: number;
   alive: boolean;
   targetId: string | null;
@@ -161,7 +163,7 @@ export const FIRST_STAGE: StageDefinition = {
   unlockRequirement: null,
   recommendedPower: 80,
   minimumClearSeconds: 7,
-  rewards: { repeat: { gold: 30, heroXP: 25, chestItemID: "stage_chest" }, firstClear: { itemID: "traveler_boots" } },
+  rewards: { repeat: { gold: 100, heroXP: 35, chestItemID: "stage_chest" }, firstClear: { itemID: "traveler_boots" } },
   encounters: [
     { id: "meadow-1", distance: 675, enemies: [{ type: "Goblin Scout", maxHp: 15, attack: 1, defence: 0, attackSpeed: 0.8, moveSpeed: 0.40, attackRange: 0.10, visual: "goblin1" }] },
     { id: "meadow-2", distance: 1450, enemies: [
@@ -177,12 +179,12 @@ export const FIRST_STAGE: StageDefinition = {
       { type: "Goblin Raider", maxHp: 25, attack: 2, defence: 1, attackSpeed: 0.9, moveSpeed: 0.47, attackRange: 0.10, visual: "goblin2" },
     ] },
     { id: "meadow-5", distance: 3875, enemies: [
-      { type: "Goblin Scout", maxHp: 18, attack: 1, defence: 0, attackSpeed: 0.8, moveSpeed: 0.40, attackRange: 0.10, visual: "goblin1" },
-      { type: "Goblin Raider", maxHp: 20, attack: 2, defence: 1, attackSpeed: 0.9, moveSpeed: 0.47, attackRange: 0.10, visual: "goblin2" },
+      { type: "Goblin Brute", maxHp: 30, attack: 2, defence: 1, attackSpeed: 0.8, moveSpeed: 0.40, attackRange: 0.10, visual: "goblinboss" },
+      { type: "Goblin Raider", maxHp: 28, attack: 2, defence: 1, attackSpeed: 0.9, moveSpeed: 0.47, attackRange: 0.10, visual: "goblin2" },
     ] },
   ],
   boss: { id: "meadow-boss", distance: 4500, enemies: [
-    { type: "Ogre Boss", maxHp: 85, attack: 3, defence: 1, attackSpeed: 0.8, moveSpeed: 0.28, attackRange: 0.12, visual: "ogreboss" },
+    { type: "Ogre Boss", maxHp: 70, attack: 2, defence: 1, attackSpeed: 0.8, moveSpeed: 0.28, attackRange: 0.12, visual: "ogreboss" },
   ] },
 };
 
@@ -351,9 +353,8 @@ export class StageRun {
     this.state = encounter === this.stage.boss ? "boss" : "encounter";
     this.enemies = encounter.enemies.map((def, i) => ({
       ...def, id: this.nextEnemyId++, hp: def.maxHp, alive: true,
-      targetId: null, state: "idle", x: Math.min(0.90,
-        0.68 + i * 0.06 + (def.combatType === "RANGED" ? 0.09 : 0)),
-      cooldown: 0, boss: encounter === this.stage.boss, pendingImpact: null,
+      targetId: null, state: "idle", formationIndex: i, x: enemySpawnX(i, def.combatType === "RANGED"),
+      cooldown: 0, boss: encounter === this.stage.boss && i === 0, pendingImpact: null,
     }));
     for (const hero of this.heroes) {
       hero.targetId = null;

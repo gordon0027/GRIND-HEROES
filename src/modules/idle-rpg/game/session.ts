@@ -56,6 +56,8 @@ import { chestIDs, chestPool } from "./chestPools";
 import { TeamPowerService, type TeamPowerLeaderboard } from "./teamPower";
 import { PetService, petBonus, resolvePetOffer, visiblePetId, type PetDefinition, type PetState, type PetOffer } from "./pets";
 import type { GetStorefrontResponse } from "@idosgames/core";
+import { previewParty, type PreviewTier } from "./combatPreview";
+import type { HeroSource } from "./stageRun";
 
 /** The private custom-data key of the stage progress ("." and "$" are not allowed in keys). */
 export const PROGRESS_KEY = "idle_rpg_progress";
@@ -167,6 +169,14 @@ export class IdleSession {
   private previewCapacity: 1 | 2 | 3 | null = null;
   private previewReturnStageID: string | null = null;
   private previewFormation: Formation | null = null;
+  private previewHeroes: HeroSource[] | null = null;
+  private previewPet: string | null = null;
+  previewPaused = false;
+  previewRate = 1;
+  previewHoldCombat = false;
+  previewHoldKind: "next" | "dense" | "boss" = "next";
+  private previewPauseAt: number | null = null;
+  renderDiagnostics: Record<string, number | string> = {};
   income: Income | null = null;
   away: AwayReport | null = null;
   /** Gold the last collect brought (for the "+X" float), and when. */
@@ -181,6 +191,7 @@ export class IdleSession {
   private combatPetId: string | null = null;
 
   get visiblePetId(): string | null {
+    if (this.devPreviewAvailable && this.previewHeroes) return this.previewPet;
     return visiblePetId(this.petState, this.combatPetId, this.run.state === "ready");
   }
   petStorefront: GetStorefrontResponse | null = null;
@@ -386,7 +397,7 @@ export class IdleSession {
 
   get activeCapacity(): 1 | 2 | 3 { return this.previewCapacity ?? this.capacity; }
   get isDevPreview(): boolean { return this.previewCapacity !== null; }
-  get devPreviewAvailable(): boolean { return import.meta.env.DEV && this.client.titleID.endsWith("-DEV"); }
+  get devPreviewAvailable(): boolean { return import.meta.env.DEV && this.client.titleID?.endsWith("-DEV") === true; }
   get activeFormation(): Formation { return this.previewFormation ?? this.formation; }
   get partyPower(): number { return this.run.heroes.reduce((sum, hero) => sum + combatPower(hero), 0); }
 
@@ -616,6 +627,14 @@ export class IdleSession {
   /** A local-only battle preview; it never changes character or party unlock data. */
   setDevPreview(capacity: 1 | 2 | 3 | null): void {
     if (!this.devPreviewAvailable) return;
+    if (capacity === null) {
+      this.previewHeroes = null;
+      this.previewPet = null;
+      this.previewPaused = false;
+      this.previewRate = 1;
+      this.previewHoldCombat = false;
+      this.previewPauseAt = null;
+    }
     if (capacity !== null && this.previewCapacity === null)
       this.previewReturnStageID = this.run.stage.id;
     const returnStage = capacity === null && this.previewCapacity !== null
@@ -639,6 +658,17 @@ export class IdleSession {
     if (!this.devPreviewAvailable || !stageByID(stageID)) return;
     this.setDevPreview(3);
     this.selectStage(stageID);
+  }
+
+  previewCombat(stageID: string, tier: PreviewTier, count: number, pet: string | null): void {
+    if (!this.devPreviewAvailable || !stageByID(stageID)) return;
+    this.previewPaused = false;
+    this.previewRate = 1;
+    this.previewPauseAt = null;
+    this.setDevPreview(Math.max(1, Math.min(3, count)) as 1 | 2 | 3);
+    this.previewHeroes = previewParty(tier, count);
+    this.previewPet = ["pet_gold_v1", "pet_gems_v1", "pet_gh_v1"].includes(pet ?? "") ? pet : null;
+    this.selectStage(stageID, true);
   }
 
   async assignHero(slot: SlotIndex, heroID: string | null): Promise<void> {
@@ -684,6 +714,11 @@ export class IdleSession {
 
   /** Character ownership and slot capacity are checked independently. */
   private syncParty(): void {
+    if (this.devPreviewAvailable && this.previewHeroes) {
+      this.run.setSlots(([1, 2, 3] as const).map(index => ({ index,
+        unlocked: index <= this.previewHeroes!.length, hero: this.previewHeroes![index - 1] ?? null })));
+      return;
+    }
     const slots: PartySlot[] = ([1, 2, 3] as const).map((index) => {
       const heroID = this.activeFormation.slots[index - 1];
       const entry = this.roster.find((candidate) => candidate.id === heroID);
@@ -732,7 +767,22 @@ export class IdleSession {
 
   /** The new finite-stage loop, independent of the template's old wave simulation. */
   tickRun(dt: number): RunEvent[] {
-    const events = this.run.tick(dt);
+    if (this.isDevPreview && this.previewPaused) {
+      this.hudClock += dt;
+      if (this.hudClock >= 1 / HUD_HZ) { this.hudClock = 0; this.changed(); }
+      return [];
+    }
+    const events = this.run.tick(dt * (this.isDevPreview ? Math.max(1, Math.min(4, this.previewRate)) : 1));
+    if (this.isDevPreview && this.previewHoldCombat) {
+      if (events.some(e => e.type === "encounterStarted" &&
+        (this.previewHoldKind === "next" || (this.previewHoldKind === "boss" ? e.boss : this.run.enemies.length === 6))))
+        this.previewPauseAt = this.run.elapsedSeconds + 0.15;
+      if (this.previewPauseAt !== null && this.run.elapsedSeconds >= this.previewPauseAt) {
+        this.previewPaused = true;
+        this.previewHoldCombat = false;
+        this.previewPauseAt = null;
+      }
+    }
     if (this.terminalRun !== this.run && events.some((event) => event.type === "stageCleared")) {
       this.terminalRun = this.run;
       if (this.isDevPreview) {
@@ -943,6 +993,7 @@ export class IdleSession {
   }
 
   private scheduleAutoAdvance(): void {
+    if (this.devPreviewAvailable && this.previewHeroes) return;
     if (!this.autoFlowEnabled || !this.pendingContinuationID ||
       this.lootPending || this.lootBusy || this.failureClose && this.serverRunId) return;
     this.cancelAutoAdvance();

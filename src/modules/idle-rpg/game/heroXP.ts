@@ -10,7 +10,7 @@ export function xpToNext(level: number): number {
 }
 
 export function stageHeroXP(chapter: number, stage: number): number {
-  return 25 + 5 * ((chapter - 1) * 10 + stage - 1);
+  return 35 + 7 * ((chapter - 1) * 10 + stage - 1);
 }
 
 export function heroProgress(value: unknown): HeroProgress {

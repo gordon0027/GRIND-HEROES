@@ -64,7 +64,7 @@ function awarded(result) { return Array.from(result.xpAwards, (entry) => entry.h
   assert.equal(result.accepted, true);
   assert.equal(byHero(result, "Knight").activeMs, 60000);
   assert.equal(byHero(result, "Knight").ratio, 1);
-  assert.equal(byHero(result, "Knight").xpGranted, 25);
+  assert.equal(byHero(result, "Knight").xpGranted, 35);
   assert.equal(byHero(result, "Mage").xpGranted, 0);
   assert.deepEqual(awarded(result), ["Knight"]);
   assert.equal(h.xp().Mage, undefined, "benched ownership alone gives zero XP");
@@ -125,7 +125,7 @@ for (const [removeAt, expected] of [[20, true], [10, false]]) {
     "the server has formation time, but no validated death timestamp");
   assert.equal(h.complete(run.runId, 61).reason, "run_not_active");
   assert.equal(h.grants.length, 1);
-  assert.equal(h.xp().Knight.xp, 25);
+  assert.equal(h.xp().Knight.xp, 35);
 }
 
 {
@@ -154,7 +154,7 @@ for (const [removeAt, expected] of [[20, true], [10, false]]) {
   const next = h.start(30, "grind-stage-1-2"); // switching stages replaces the active marker
   assert.equal(h.complete(old.runId, 60).reason, "run_not_active");
   assert.equal(h.complete(next.runId, 90, "grind-stage-1-2").accepted, true);
-  assert.equal(h.xp().Archer.xp, 30, "only the new stage run grants XP");
+  assert.equal(h.xp().Archer.xp, 42, "only the new stage run grants XP");
   assert.equal(h.grants.length, 1);
 }
 
@@ -169,7 +169,7 @@ for (const [removeAt, expected] of [[20, true], [10, false]]) {
   assert.equal(byHero(secondResult, "Archer").activeMs, 0,
     "participation does not leak into the next farming iteration");
   assert.deepEqual(awarded(secondResult), ["Knight"]);
-  assert.equal(h.xp().Archer.xp, 25);
+  assert.equal(h.xp().Archer.xp, 35);
   assert.equal(h.xp().Knight.level, 2);
   assert.equal(h.grants.length, 2);
 }

@@ -29,7 +29,7 @@ for (const members of [[knight], [knight, archer, mage]]) {
   let sawVisibleBackline = false;
   let lastPreview = [];
   let lastState = run.state;
-  for (let frame = 0; frame < 6000 && run.state !== "clear" && run.state !== "failed"; frame++) {
+  for (let frame = 0; frame < 7200 && run.state !== "clear" && run.state !== "failed"; frame++) {
     const oldWorld = new Map(run.heroes.map((hero) => [hero.id, world.heroWorldX(hero.id)]));
     const oldEnemies = new Map(run.enemies.map((enemy) =>
       [enemy.id, world.enemyWorldX(enemy.id)]));
@@ -121,7 +121,7 @@ for (const members of [[knight], [knight, archer, mage]]) {
     let afterClear = null;
     const checkedClears = new Set();
     let maxDesktopOffset = 0;
-    for (let frame = 0; frame < 6000 && run.state !== "clear" && run.state !== "failed"; frame++) {
+    for (let frame = 0; frame < 7200 && run.state !== "clear" && run.state !== "failed"; frame++) {
       const oldCamera = world.cameraWorldX;
       const oldKnightWorld = world.heroWorldX("Knight");
       const oldKnightScreen = projectWorldX(oldKnightWorld, oldCamera, width);

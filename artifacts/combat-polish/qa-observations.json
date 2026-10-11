@@ -1,0 +1,440 @@
+[
+  {
+    "stage": "1-1",
+    "viewport": "desktop",
+    "pet": "Donkey",
+    "metrics": {
+      "fps": 278,
+      "objects": 18,
+      "actors": 4,
+      "corpses": 0,
+      "vfx": 0,
+      "projectiles": 0,
+      "textures": 18,
+      "textureMiB": 126,
+      "width": 1280
+    }
+  },
+  {
+    "stage": "1-5",
+    "viewport": "desktop",
+    "pet": "Pug",
+    "metrics": {
+      "fps": 277,
+      "objects": 20,
+      "actors": 5,
+      "corpses": 0,
+      "vfx": 0,
+      "projectiles": 0,
+      "textures": 18,
+      "textureMiB": 126,
+      "width": 1280
+    }
+  },
+  {
+    "stage": "1-10",
+    "viewport": "desktop",
+    "pet": "Watchdog",
+    "metrics": {
+      "fps": 279,
+      "objects": 22,
+      "actors": 6,
+      "corpses": 0,
+      "vfx": 0,
+      "projectiles": 0,
+      "textures": 18,
+      "textureMiB": 126,
+      "width": 1280
+    }
+  },
+  {
+    "stage": "2-5",
+    "viewport": "desktop",
+    "pet": "Donkey",
+    "metrics": {
+      "fps": 268,
+      "objects": 22,
+      "actors": 6,
+      "corpses": 0,
+      "vfx": 0,
+      "projectiles": 0,
+      "textures": 19,
+      "textureMiB": 139,
+      "width": 1280
+    }
+  },
+  {
+    "stage": "2-10",
+    "viewport": "desktop",
+    "pet": "Pug",
+    "metrics": {
+      "fps": 257,
+      "objects": 24,
+      "actors": 7,
+      "corpses": 0,
+      "vfx": 0,
+      "projectiles": 0,
+      "textures": 19,
+      "textureMiB": 139,
+      "width": 1280
+    }
+  },
+  {
+    "stage": "3-5",
+    "viewport": "desktop",
+    "pet": "Watchdog",
+    "metrics": {
+      "fps": 257,
+      "objects": 24,
+      "actors": 7,
+      "corpses": 0,
+      "vfx": 0,
+      "projectiles": 0,
+      "textures": 18,
+      "textureMiB": 127,
+      "width": 1280
+    }
+  },
+  {
+    "stage": "3-10",
+    "viewport": "desktop",
+    "pet": "Donkey",
+    "scene": "six enemies",
+    "metrics": {
+      "fps": 262,
+      "objects": 28,
+      "actors": 9,
+      "corpses": 0,
+      "vfx": 0,
+      "projectiles": 0,
+      "textures": 18,
+      "textureMiB": 127,
+      "width": 1280
+    }
+  },
+  {
+    "stage": "3-10",
+    "viewport": "desktop",
+    "pet": "Donkey",
+    "scene": "active full run",
+    "metrics": {
+      "fps": 235,
+      "objects": 28,
+      "actors": 9,
+      "corpses": 0,
+      "vfx": 0,
+      "projectiles": 0,
+      "textures": 18,
+      "textureMiB": 127,
+      "width": 1280
+    }
+  },
+  {
+    "stage": "3-10",
+    "viewport": "desktop",
+    "pet": "Donkey",
+    "scene": "boss and two guards",
+    "metrics": {
+      "fps": 254,
+      "objects": 22,
+      "actors": 6,
+      "corpses": 0,
+      "vfx": 0,
+      "projectiles": 0,
+      "textures": 18,
+      "textureMiB": 127,
+      "width": 1280
+    }
+  },
+  {
+    "stage": "3-10",
+    "viewport": "desktop",
+    "scene": "completion cleanup",
+    "metrics": {
+      "fps": 271,
+      "objects": 16,
+      "actors": 3,
+      "corpses": 0,
+      "vfx": 0,
+      "projectiles": 0,
+      "textures": 18,
+      "textureMiB": 127,
+      "width": 1280
+    }
+  },
+  {
+    "stage": "1-1",
+    "viewport": "390x844",
+    "pet": "Donkey",
+    "metrics": {
+      "fps": 280,
+      "objects": 18,
+      "actors": 4,
+      "corpses": 0,
+      "vfx": 0,
+      "projectiles": 0,
+      "textures": 18,
+      "textureMiB": 126,
+      "width": 390
+    }
+  },
+  {
+    "stage": "1-1",
+    "viewport": "390x844",
+    "scene": "clear",
+    "metrics": {
+      "fps": 278,
+      "objects": 16,
+      "actors": 3,
+      "corpses": 0,
+      "vfx": 0,
+      "projectiles": 0,
+      "textures": 18,
+      "textureMiB": 126,
+      "width": 390
+    }
+  },
+  {
+    "stage": "1-5",
+    "viewport": "390x844",
+    "pet": "Pug",
+    "metrics": {
+      "fps": 259,
+      "objects": 20,
+      "actors": 5,
+      "corpses": 0,
+      "vfx": 0,
+      "projectiles": 0,
+      "textures": 18,
+      "textureMiB": 126,
+      "width": 390
+    }
+  },
+  {
+    "stage": "1-5",
+    "viewport": "390x844",
+    "scene": "clear",
+    "metrics": {
+      "fps": 276,
+      "objects": 14,
+      "actors": 3,
+      "corpses": 0,
+      "vfx": 0,
+      "projectiles": 0,
+      "textures": 18,
+      "textureMiB": 126,
+      "width": 390
+    }
+  },
+  {
+    "stage": "1-10",
+    "viewport": "390x844",
+    "pet": "Watchdog",
+    "metrics": {
+      "fps": 276,
+      "objects": 20,
+      "actors": 6,
+      "corpses": 0,
+      "vfx": 0,
+      "projectiles": 0,
+      "textures": 18,
+      "textureMiB": 126,
+      "width": 390
+    }
+  },
+  {
+    "stage": "1-10",
+    "viewport": "390x844",
+    "scene": "clear",
+    "metrics": {
+      "fps": 281,
+      "objects": 14,
+      "actors": 3,
+      "corpses": 0,
+      "vfx": 0,
+      "projectiles": 0,
+      "textures": 18,
+      "textureMiB": 126,
+      "width": 390
+    }
+  },
+  {
+    "stage": "2-5",
+    "viewport": "390x844",
+    "pet": "Donkey",
+    "metrics": {
+      "fps": 281,
+      "objects": 20,
+      "actors": 6,
+      "corpses": 0,
+      "vfx": 0,
+      "projectiles": 0,
+      "textures": 19,
+      "textureMiB": 139,
+      "width": 390
+    }
+  },
+  {
+    "stage": "2-5",
+    "viewport": "390x844",
+    "scene": "clear",
+    "state": [
+      "clear · 0 enemies · playing · no rewards",
+      "{\"fps\":281,\"objects\":14,\"actors\":3,\"corpses\":0,\"vfx\":0,\"projectiles\":0,\"textures\":19,\"textureMiB\":139,\"width\":390}"
+    ],
+    "metrics": {
+      "fps": 281,
+      "objects": 14,
+      "actors": 3,
+      "corpses": 0,
+      "vfx": 0,
+      "projectiles": 0,
+      "textures": 19,
+      "textureMiB": 139,
+      "width": 390
+    }
+  },
+  {
+    "stage": "2-10",
+    "viewport": "390x844",
+    "pet": "Pug",
+    "metrics": {
+      "fps": 281,
+      "objects": 22,
+      "actors": 7,
+      "corpses": 0,
+      "vfx": 0,
+      "projectiles": 0,
+      "textures": 19,
+      "textureMiB": 139,
+      "width": 390
+    }
+  },
+  {
+    "stage": "2-10",
+    "viewport": "390x844",
+    "scene": "clear",
+    "state": [
+      "clear · 0 enemies · playing · no rewards",
+      "{\"fps\":268,\"objects\":14,\"actors\":3,\"corpses\":0,\"vfx\":0,\"projectiles\":0,\"textures\":19,\"textureMiB\":139,\"width\":390}"
+    ],
+    "metrics": {
+      "fps": 268,
+      "objects": 14,
+      "actors": 3,
+      "corpses": 0,
+      "vfx": 0,
+      "projectiles": 0,
+      "textures": 19,
+      "textureMiB": 139,
+      "width": 390
+    }
+  },
+  {
+    "stage": "3-5",
+    "viewport": "390x844",
+    "pet": "Watchdog",
+    "metrics": {
+      "fps": 259,
+      "objects": 22,
+      "actors": 7,
+      "corpses": 0,
+      "vfx": 0,
+      "projectiles": 0,
+      "textures": 18,
+      "textureMiB": 127,
+      "width": 390
+    }
+  },
+  {
+    "stage": "3-5",
+    "viewport": "390x844",
+    "scene": "clear",
+    "state": [
+      "clear · 0 enemies · playing · no rewards",
+      "{\"fps\":250,\"objects\":14,\"actors\":3,\"corpses\":0,\"vfx\":0,\"projectiles\":0,\"textures\":18,\"textureMiB\":127,\"width\":390}"
+    ],
+    "metrics": {
+      "fps": 250,
+      "objects": 14,
+      "actors": 3,
+      "corpses": 0,
+      "vfx": 0,
+      "projectiles": 0,
+      "textures": 18,
+      "textureMiB": 127,
+      "width": 390
+    }
+  },
+  {
+    "stage": "3-10",
+    "viewport": "390x844",
+    "pet": "Donkey",
+    "scene": "six enemies paused",
+    "metrics": {
+      "fps": 251,
+      "objects": 26,
+      "actors": 9,
+      "corpses": 0,
+      "vfx": 0,
+      "projectiles": 0,
+      "textures": 18,
+      "textureMiB": 127,
+      "width": 390
+    }
+  },
+  {
+    "stage": "3-10",
+    "viewport": "390x844",
+    "scene": "active combat 1x",
+    "state": [
+      "running · 0 enemies · playing · no rewards",
+      "{\"fps\":279,\"objects\":26,\"actors\":9,\"corpses\":0,\"vfx\":0,\"projectiles\":0,\"textures\":18,\"textureMiB\":127,\"width\":390}"
+    ],
+    "metrics": {
+      "fps": 279,
+      "objects": 26,
+      "actors": 9,
+      "corpses": 0,
+      "vfx": 0,
+      "projectiles": 0,
+      "textures": 18,
+      "textureMiB": 127,
+      "width": 390
+    }
+  },
+  {
+    "stage": "3-10",
+    "viewport": 390,
+    "pet": "Donkey",
+    "scene": "boss and two guards paused",
+    "metrics": {
+      "fps": 281,
+      "objects": 20,
+      "actors": 6,
+      "corpses": 0,
+      "vfx": 0,
+      "projectiles": 0,
+      "textures": 18,
+      "textureMiB": 127,
+      "width": 390
+    }
+  },
+  {
+    "stage": "3-10",
+    "viewport": 390,
+    "pet": "Donkey",
+    "scene": "final clear cleanup",
+    "metrics": {
+      "fps": 267,
+      "objects": 14,
+      "actors": 3,
+      "corpses": 0,
+      "vfx": 0,
+      "projectiles": 0,
+      "textures": 18,
+      "textureMiB": 127,
+      "width": 390
+    }
+  }
+]

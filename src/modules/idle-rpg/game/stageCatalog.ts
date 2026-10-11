@@ -1,4 +1,5 @@
 import { FIRST_STAGE, type EncounterDefinition, type EnemyDefinition, type StageDefinition } from "./stageRun.ts";
+import { enemyDensity } from "./encounterLayout.ts";
 import { stageHeroXP } from "./heroXP.ts";
 
 export const STAGES_PER_CHAPTER = 10;
@@ -15,24 +16,20 @@ export function stageLabel(chapter: number, stage: number): string {
 const chapterNames = ["Meadow Road", "Orange Bastion", "Undead Crypt"];
 const legacyLengths = [5000, 5500, 6000, 6500, 7500];
 const LENGTH_FACTOR = 0.9;
-const ACT_GOLD_START = [0, 80, 200] as const;
-const ACT_GOLD_PER_STAGE = [0, 10, 20] as const;
-const ACT_POWER_START = [80, 240, 450] as const;
-const ACT_POWER_END = [220, 420, 680] as const;
+const ACT_GOLD_START = [100, 420, 900] as const;
+const ACT_GOLD_PER_STAGE = [25, 40, 60] as const;
+const ACT_POWER_START = [80, 340, 740] as const;
+const ACT_POWER_END = [300, 680, 1100] as const;
 const stageLength = (index: number) => Math.round((legacyLengths[index] ?? 7500 + (index - 4) * 150) * LENGTH_FACTOR / 50) * 50;
 const stageGold = (index: number) => {
   const act = Math.floor(index / STAGES_PER_CHAPTER);
-  return 30 + 8 * index + ACT_GOLD_START[act]! + ACT_GOLD_PER_STAGE[act]! * (index % STAGES_PER_CHAPTER);
+  return ACT_GOLD_START[act]! + ACT_GOLD_PER_STAGE[act]! * (index % STAGES_PER_CHAPTER);
 };
 const stagePower = (chapter: number, stage: number) => {
   const act = chapter - 1;
   return Math.round(ACT_POWER_START[act]! + (ACT_POWER_END[act]! - ACT_POWER_START[act]!) *
     (stage - 1) / (STAGES_PER_CHAPTER - 1));
 };
-const act1Visuals = ["goblin1", "goblin2", "goblinboss"] as const;
-const act1Names = ["Goblin Scout", "Goblin Raider", "Goblin Brute"] as const;
-const act1HpWeight = [1, 1.15, 1.3] as const;
-
 type EnemyRole = "simple" | "fat" | "archer" | "heavy";
 
 const actEnemies: Record<2 | 3, Record<string, EnemyDefinition>> = {
@@ -62,55 +59,51 @@ const actEnemies: Record<2 | 3, Record<string, EnemyDefinition>> = {
   },
 };
 
-/** Ordered waves keep archers behind melee units and make each stage readable. */
-function encounterRoles(chapter: 2 | 3, stage: number): EnemyRole[][] {
-  const guard: EnemyRole = chapter === 2 ? "fat" : "heavy";
-  if (stage <= 2) return [["simple"], ["simple", "simple"], [guard, "simple"],
-    stage === 1 ? ["simple", guard] : ["simple", "archer"], [guard, "simple"]];
-  if (stage <= 5) return [["simple", "simple"], [guard, "simple"],
-    [guard, "archer"], ["simple", "archer"], [guard, "simple", "archer"]];
-  if (stage <= 8) return [["simple", "archer"], ["heavy", "simple"],
-    ["heavy", "archer"], [guard, "simple"], ["simple", "heavy", "archer"]];
-  return [["heavy", "simple"], [guard, "archer"],
-    ["heavy", "simple", "archer"], ["simple", "heavy"], ["simple", "heavy", "archer"]];
-}
-
-function act1Encounter(source: EncounterDefinition, index: number, number: number,
-  id: string, length: number, boss: boolean): EncounterDefinition {
-  return {
-    id: `${id}-${boss ? "boss" : `encounter-${number + 1}`}`,
-    distance: boss ? length : Math.round(length * source.distance / FIRST_STAGE.length),
-    enemies: source.enemies.map((enemy, enemyNumber) => {
-      const variant = (index + number + enemyNumber) % act1Visuals.length;
-      const sourceVariant = enemy.visual === "goblinboss" ? 2 : enemy.visual === "goblin2" ? 1 : 0;
-      return { ...enemy,
-        type: boss ? "Ogre Boss" : act1Names[variant]!,
-        visual: boss ? "ogreboss" : act1Visuals[variant]!,
-        maxHp: Math.round(enemy.maxHp * (boss ? 1 + index * 0.22 :
-          act1HpWeight[variant]! / act1HpWeight[sourceVariant]! * (1 + index * 0.10))),
-        attack: Math.max(1, enemy.attack + Math.floor(index / 3) + (boss ? 0 : Math.max(0, variant - sourceVariant))),
-        defence: enemy.defence + Math.floor(index / 5),
-      };
-    }),
-  };
-}
-
-function actEncounter(chapter: 2 | 3, stage: number, id: string, length: number,
-  roles: EnemyRole[], number: number): EncounterDefinition {
+/** Larger packs share the old encounter HP budget; threat grows through composition. */
+function regularEnemy(chapter: number, stage: number, wave: number, totalWaves: number,
+  member: number, count: number): EnemyDefinition {
   const progress = stage - 1;
-  const base = actEnemies[chapter];
-  return {
-    id: `${id}-encounter-${number + 1}`,
-    distance: Math.round(length * FIRST_STAGE.encounters[number]!.distance / FIRST_STAGE.length),
-    enemies: roles.map((role) => {
-      const source = base[role]!;
-      return { ...source,
-        maxHp: Math.round(source.maxHp * (1 + progress * 0.09)),
-        attack: source.attack + Math.floor(progress / 3),
-        defence: source.defence + Math.floor(progress / 5),
-      };
-    }),
+  const pressure = 0.88 + 0.24 * wave / (totalWaves - 1);
+  if (chapter === 1) {
+    const variant = wave === 0 ? member % 2 : (stage + wave + member) % 3;
+    return {
+      type: ["Goblin Scout", "Goblin Raider", "Goblin Brute"][variant]!,
+      visual: ["goblin1", "goblin2", "goblinboss"][variant]!,
+      maxHp: Math.round((14 + variant * 4 + progress * 1.6) * pressure),
+      attack: 1 + Math.floor(progress / 4) + (variant === 2 ? 1 : 0),
+      defence: variant === 0 ? 0 : 1,
+      attackSpeed: variant === 2 ? 0.60 : 0.72,
+      moveSpeed: variant === 2 ? 0.36 : 0.44, attackRange: 0.10 + variant * 0.01,
+    };
+  }
+  // One or two backline archers, at most two heavies. Fat frontliners vary Act 2 packs.
+  const archerCount = wave === 0 ? 0 : count >= 5 && wave % 3 === 2 ? 2 : 1;
+  const role: EnemyRole = member >= count - archerCount ? "archer" :
+    member === 1 && wave > 0 ? (chapter === 2 && wave % 2 === 1 ? "fat" : "heavy") :
+      member === 3 && wave >= totalWaves - 2 ? "heavy" : "simple";
+  const source = actEnemies[chapter as 2 | 3][role]!;
+  return { ...source,
+    maxHp: Math.round(source.maxHp * (chapter === 2 ? 0.63 : 0.60) *
+      (1 + progress * 0.075) * pressure),
+    attack: Math.max(2, source.attack - 1 + Math.floor(progress / 4)) +
+      (chapter === 3 ? 2 + Math.floor(progress / 3) : 0),
+    attackSpeed: source.attackSpeed * 0.88,
+    defence: source.defence + Math.floor(progress / 6),
   };
+}
+
+function stageEncounters(chapter: number, stage: number, id: string, length: number): EncounterDefinition[] {
+  const [low, high] = enemyDensity(chapter, stage);
+  const waveCount = chapter === 3 ? 7 : chapter === 2 || stage >= 7 ? 6 : 5;
+  return Array.from({ length: waveCount }, (_, wave) => {
+    const count = low + (low === 1 ? Number(wave > 0) :
+      Math.round((high - low) * wave / (waveCount - 1)));
+    return { id: `${id}-encounter-${wave + 1}`,
+      distance: Math.round(length * (0.12 + wave * 0.74 / (waveCount - 1))),
+      enemies: Array.from({ length: count }, (_, member) =>
+        regularEnemy(chapter, stage, wave, waveCount, member, count)),
+    };
+  });
 }
 
 /** Chapter count is content, not a condition in the runtime or progression controller. */
@@ -122,20 +115,17 @@ export function makeStage(chapter: number, stage: number): StageDefinition {
   const index = (chapter - 1) * STAGES_PER_CHAPTER + stage - 1;
   const id = stageID(chapter, stage);
   const length = stageLength(index);
-  const extraAct = chapter === 1 ? null : chapter as 2 | 3;
-  const encounters = extraAct ? encounterRoles(extraAct, stage).map((roles, number) =>
-    actEncounter(extraAct, stage, id, length, roles, number)) :
-    FIRST_STAGE.encounters.map((source, number) => {
-      const encounter = act1Encounter(source, index, number, id, length, false);
-      if (stage >= 5 && number === 0) encounter.enemies.push({ ...encounter.enemies[0]! });
-      return encounter;
-    });
-  const bossSource = extraAct ? actEnemies[extraAct].boss! : null;
-  const boss = extraAct ? { id: `${id}-boss`, distance: length, enemies: [{ ...bossSource!,
-    maxHp: Math.round(bossSource!.maxHp * (extraAct === 2 ? 1.2 : 1.15) * (1 + (stage - 1) * 0.10)),
-    attack: bossSource!.attack + Math.floor((stage - 1) / 3),
-    defence: bossSource!.defence + Math.floor((stage - 1) / 5),
-  }] } : act1Encounter(FIRST_STAGE.boss, index, FIRST_STAGE.encounters.length, id, length, true);
+  const encounters = stageEncounters(chapter, stage, id, length);
+  const source = chapter === 1 ? FIRST_STAGE.boss.enemies[0]! : actEnemies[chapter as 2 | 3].boss!;
+  const boss: EncounterDefinition = { id: `${id}-boss`, distance: length, enemies: [{ ...source,
+    maxHp: Math.round(source.maxHp * (1 + (stage - 1) * (chapter === 1 ? 0.18 : 0.08))),
+    attack: source.attack + Math.floor((stage - 1) / 4) +
+      (chapter === 3 ? 2 + Math.floor((stage - 1) / 3) : 0),
+    defence: source.defence + Math.floor((stage - 1) / 6),
+  }] };
+  const guardCount = chapter === 3 && stage >= 6 ? 2 : chapter >= 2 && stage >= 5 ? 1 : 0;
+  for (let guard = 0; guard < guardCount; guard++)
+    boss.enemies.push(regularEnemy(chapter, stage, 0, 2, guard, guardCount));
   return {
     id, chapter, stage,
     name: `${stageLabel(chapter, stage)} · ${chapterNames[chapter - 1]}`,

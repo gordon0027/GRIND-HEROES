@@ -7,9 +7,8 @@ for (var chapter = 1; chapter <= 3; chapter++) {
     GH_STAGES.push({
       id: "grind-stage-" + chapter + "-" + stageNumber,
       minSeconds: 7 + Math.floor(ordinal / 3),
-      gold: 30 + ordinal * 8 + (ordinal >= 20 ? 200 : ordinal >= 10 ? 80 : 0) +
-        Math.floor(ordinal / 10) * (ordinal % 10) * 10,
-      heroXP: 25 + ordinal * 5,
+      gold: [100, 420, 900][chapter - 1] + [25, 40, 60][chapter - 1] * (stageNumber - 1),
+      heroXP: 35 + ordinal * 7,
       bossChest: stageNumber % 5 === 0,
       firstItem: ordinal === 0 ? "traveler_boots" : null,
     });
@@ -23,7 +22,7 @@ var GH_MAX_SECONDS = 1200;
 var GH_MIN_HERO_XP_PARTICIPATION_MS = 5000;
 var GH_MIN_HERO_XP_PARTICIPATION_RATIO = 0.25;
 // Tunable DEV-only party prices. The client reads these through getPartySlotPrices.
-var GH_PARTY_SLOT_COSTS = { 2: 50000, 3: 250000 };
+var GH_PARTY_SLOT_COSTS = { 2: 3000, 3: 12000 };
 var GH_PARTY_CAPACITY_KEY = "grind_party_capacity_v2";
 
 function ghStage(stageId) {

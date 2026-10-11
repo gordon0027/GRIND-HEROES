@@ -1,0 +1,1175 @@
+{
+  "stages": [
+    {
+      "stage": "1-1",
+      "goldBefore": 30,
+      "goldAfter": 100,
+      "xpBefore": 25,
+      "xpAfter": 35,
+      "recommendedBefore": 80,
+      "recommendedAfter": 80,
+      "groups": [
+        1,
+        2,
+        2,
+        2,
+        2
+      ],
+      "bossGroup": 1,
+      "total": 10,
+      "hpRange": [
+        15,
+        30
+      ],
+      "attackRange": [
+        1,
+        2
+      ],
+      "boss": {
+        "hp": 70,
+        "attack": 2,
+        "defence": 1,
+        "attackSpeed": 0.8
+      }
+    },
+    {
+      "stage": "1-2",
+      "goldBefore": 38,
+      "goldAfter": 125,
+      "xpBefore": 30,
+      "xpAfter": 42,
+      "recommendedBefore": 96,
+      "recommendedAfter": 104,
+      "groups": [
+        1,
+        2,
+        2,
+        2,
+        2
+      ],
+      "bossGroup": 1,
+      "total": 10,
+      "hpRange": [
+        14,
+        25
+      ],
+      "attackRange": [
+        1,
+        2
+      ],
+      "boss": {
+        "hp": 83,
+        "attack": 2,
+        "defence": 1,
+        "attackSpeed": 0.8
+      }
+    },
+    {
+      "stage": "1-3",
+      "goldBefore": 46,
+      "goldAfter": 150,
+      "xpBefore": 35,
+      "xpAfter": 49,
+      "recommendedBefore": 111,
+      "recommendedAfter": 129,
+      "groups": [
+        1,
+        2,
+        2,
+        2,
+        2
+      ],
+      "bossGroup": 1,
+      "total": 10,
+      "hpRange": [
+        15,
+        28
+      ],
+      "attackRange": [
+        1,
+        2
+      ],
+      "boss": {
+        "hp": 95,
+        "attack": 2,
+        "defence": 1,
+        "attackSpeed": 0.8
+      }
+    },
+    {
+      "stage": "1-4",
+      "goldBefore": 54,
+      "goldAfter": 175,
+      "xpBefore": 40,
+      "xpAfter": 56,
+      "recommendedBefore": 127,
+      "recommendedAfter": 153,
+      "groups": [
+        2,
+        2,
+        3,
+        3,
+        3
+      ],
+      "bossGroup": 1,
+      "total": 14,
+      "hpRange": [
+        17,
+        30
+      ],
+      "attackRange": [
+        1,
+        2
+      ],
+      "boss": {
+        "hp": 108,
+        "attack": 2,
+        "defence": 1,
+        "attackSpeed": 0.8
+      }
+    },
+    {
+      "stage": "1-5",
+      "goldBefore": 62,
+      "goldAfter": 200,
+      "xpBefore": 45,
+      "xpAfter": 63,
+      "recommendedBefore": 142,
+      "recommendedAfter": 178,
+      "groups": [
+        2,
+        2,
+        3,
+        3,
+        3
+      ],
+      "bossGroup": 1,
+      "total": 14,
+      "hpRange": [
+        18,
+        32
+      ],
+      "attackRange": [
+        2,
+        3
+      ],
+      "boss": {
+        "hp": 120,
+        "attack": 3,
+        "defence": 1,
+        "attackSpeed": 0.8
+      }
+    },
+    {
+      "stage": "1-6",
+      "goldBefore": 70,
+      "goldAfter": 225,
+      "xpBefore": 50,
+      "xpAfter": 70,
+      "recommendedBefore": 158,
+      "recommendedAfter": 202,
+      "groups": [
+        2,
+        2,
+        3,
+        3,
+        3
+      ],
+      "bossGroup": 1,
+      "total": 14,
+      "hpRange": [
+        19,
+        34
+      ],
+      "attackRange": [
+        2,
+        3
+      ],
+      "boss": {
+        "hp": 133,
+        "attack": 3,
+        "defence": 1,
+        "attackSpeed": 0.8
+      }
+    },
+    {
+      "stage": "1-7",
+      "goldBefore": 78,
+      "goldAfter": 250,
+      "xpBefore": 55,
+      "xpAfter": 77,
+      "recommendedBefore": 173,
+      "recommendedAfter": 227,
+      "groups": [
+        3,
+        3,
+        3,
+        4,
+        4,
+        4
+      ],
+      "bossGroup": 1,
+      "total": 22,
+      "hpRange": [
+        21,
+        35
+      ],
+      "attackRange": [
+        2,
+        3
+      ],
+      "boss": {
+        "hp": 146,
+        "attack": 3,
+        "defence": 2,
+        "attackSpeed": 0.8
+      }
+    },
+    {
+      "stage": "1-8",
+      "goldBefore": 86,
+      "goldAfter": 275,
+      "xpBefore": 60,
+      "xpAfter": 84,
+      "recommendedBefore": 189,
+      "recommendedAfter": 251,
+      "groups": [
+        3,
+        3,
+        3,
+        4,
+        4,
+        4
+      ],
+      "bossGroup": 1,
+      "total": 22,
+      "hpRange": [
+        22,
+        37
+      ],
+      "attackRange": [
+        2,
+        3
+      ],
+      "boss": {
+        "hp": 158,
+        "attack": 3,
+        "defence": 2,
+        "attackSpeed": 0.8
+      }
+    },
+    {
+      "stage": "1-9",
+      "goldBefore": 94,
+      "goldAfter": 300,
+      "xpBefore": 65,
+      "xpAfter": 91,
+      "recommendedBefore": 204,
+      "recommendedAfter": 276,
+      "groups": [
+        3,
+        3,
+        3,
+        4,
+        4,
+        4
+      ],
+      "bossGroup": 1,
+      "total": 22,
+      "hpRange": [
+        24,
+        39
+      ],
+      "attackRange": [
+        3,
+        4
+      ],
+      "boss": {
+        "hp": 171,
+        "attack": 4,
+        "defence": 2,
+        "attackSpeed": 0.8
+      }
+    },
+    {
+      "stage": "1-10",
+      "goldBefore": 102,
+      "goldAfter": 325,
+      "xpBefore": 70,
+      "xpAfter": 98,
+      "recommendedBefore": 220,
+      "recommendedAfter": 300,
+      "groups": [
+        3,
+        3,
+        3,
+        4,
+        4,
+        4
+      ],
+      "bossGroup": 1,
+      "total": 22,
+      "hpRange": [
+        25,
+        41
+      ],
+      "attackRange": [
+        3,
+        4
+      ],
+      "boss": {
+        "hp": 183,
+        "attack": 4,
+        "defence": 2,
+        "attackSpeed": 0.8
+      }
+    },
+    {
+      "stage": "2-1",
+      "goldBefore": 190,
+      "goldAfter": 420,
+      "xpBefore": 75,
+      "xpAfter": 105,
+      "recommendedBefore": 240,
+      "recommendedAfter": 340,
+      "groups": [
+        3,
+        3,
+        4,
+        4,
+        5,
+        5
+      ],
+      "bossGroup": 1,
+      "total": 25,
+      "hpRange": [
+        20,
+        59
+      ],
+      "attackRange": [
+        4,
+        7
+      ],
+      "boss": {
+        "hp": 230,
+        "attack": 9,
+        "defence": 3,
+        "attackSpeed": 0.65
+      }
+    },
+    {
+      "stage": "2-2",
+      "goldBefore": 208,
+      "goldAfter": 460,
+      "xpBefore": 80,
+      "xpAfter": 112,
+      "recommendedBefore": 260,
+      "recommendedAfter": 378,
+      "groups": [
+        3,
+        3,
+        4,
+        4,
+        5,
+        5
+      ],
+      "bossGroup": 1,
+      "total": 25,
+      "hpRange": [
+        21,
+        64
+      ],
+      "attackRange": [
+        4,
+        7
+      ],
+      "boss": {
+        "hp": 248,
+        "attack": 9,
+        "defence": 3,
+        "attackSpeed": 0.65
+      }
+    },
+    {
+      "stage": "2-3",
+      "goldBefore": 226,
+      "goldAfter": 500,
+      "xpBefore": 85,
+      "xpAfter": 119,
+      "recommendedBefore": 280,
+      "recommendedAfter": 416,
+      "groups": [
+        3,
+        3,
+        4,
+        4,
+        5,
+        5
+      ],
+      "bossGroup": 1,
+      "total": 25,
+      "hpRange": [
+        23,
+        68
+      ],
+      "attackRange": [
+        4,
+        7
+      ],
+      "boss": {
+        "hp": 267,
+        "attack": 9,
+        "defence": 3,
+        "attackSpeed": 0.65
+      }
+    },
+    {
+      "stage": "2-4",
+      "goldBefore": 244,
+      "goldAfter": 540,
+      "xpBefore": 90,
+      "xpAfter": 126,
+      "recommendedBefore": 300,
+      "recommendedAfter": 453,
+      "groups": [
+        3,
+        3,
+        4,
+        4,
+        5,
+        5
+      ],
+      "bossGroup": 1,
+      "total": 25,
+      "hpRange": [
+        24,
+        73
+      ],
+      "attackRange": [
+        4,
+        7
+      ],
+      "boss": {
+        "hp": 285,
+        "attack": 9,
+        "defence": 3,
+        "attackSpeed": 0.65
+      }
+    },
+    {
+      "stage": "2-5",
+      "goldBefore": 262,
+      "goldAfter": 580,
+      "xpBefore": 95,
+      "xpAfter": 133,
+      "recommendedBefore": 320,
+      "recommendedAfter": 491,
+      "groups": [
+        3,
+        3,
+        4,
+        4,
+        5,
+        5
+      ],
+      "bossGroup": 2,
+      "total": 26,
+      "hpRange": [
+        26,
+        77
+      ],
+      "attackRange": [
+        5,
+        8
+      ],
+      "boss": {
+        "hp": 304,
+        "attack": 10,
+        "defence": 3,
+        "attackSpeed": 0.65
+      }
+    },
+    {
+      "stage": "2-6",
+      "goldBefore": 280,
+      "goldAfter": 620,
+      "xpBefore": 100,
+      "xpAfter": 140,
+      "recommendedBefore": 340,
+      "recommendedAfter": 529,
+      "groups": [
+        4,
+        4,
+        4,
+        5,
+        5,
+        5
+      ],
+      "bossGroup": 2,
+      "total": 29,
+      "hpRange": [
+        27,
+        82
+      ],
+      "attackRange": [
+        5,
+        8
+      ],
+      "boss": {
+        "hp": 322,
+        "attack": 10,
+        "defence": 3,
+        "attackSpeed": 0.65
+      }
+    },
+    {
+      "stage": "2-7",
+      "goldBefore": 298,
+      "goldAfter": 660,
+      "xpBefore": 105,
+      "xpAfter": 147,
+      "recommendedBefore": 360,
+      "recommendedAfter": 567,
+      "groups": [
+        4,
+        4,
+        4,
+        5,
+        5,
+        5
+      ],
+      "bossGroup": 2,
+      "total": 29,
+      "hpRange": [
+        29,
+        86
+      ],
+      "attackRange": [
+        5,
+        8
+      ],
+      "boss": {
+        "hp": 340,
+        "attack": 10,
+        "defence": 4,
+        "attackSpeed": 0.65
+      }
+    },
+    {
+      "stage": "2-8",
+      "goldBefore": 316,
+      "goldAfter": 700,
+      "xpBefore": 110,
+      "xpAfter": 154,
+      "recommendedBefore": 380,
+      "recommendedAfter": 604,
+      "groups": [
+        4,
+        4,
+        4,
+        5,
+        5,
+        5
+      ],
+      "bossGroup": 2,
+      "total": 29,
+      "hpRange": [
+        30,
+        91
+      ],
+      "attackRange": [
+        5,
+        8
+      ],
+      "boss": {
+        "hp": 359,
+        "attack": 10,
+        "defence": 4,
+        "attackSpeed": 0.65
+      }
+    },
+    {
+      "stage": "2-9",
+      "goldBefore": 334,
+      "goldAfter": 740,
+      "xpBefore": 115,
+      "xpAfter": 161,
+      "recommendedBefore": 400,
+      "recommendedAfter": 642,
+      "groups": [
+        4,
+        4,
+        4,
+        5,
+        5,
+        5
+      ],
+      "bossGroup": 2,
+      "total": 29,
+      "hpRange": [
+        32,
+        95
+      ],
+      "attackRange": [
+        6,
+        9
+      ],
+      "boss": {
+        "hp": 377,
+        "attack": 11,
+        "defence": 4,
+        "attackSpeed": 0.65
+      }
+    },
+    {
+      "stage": "2-10",
+      "goldBefore": 352,
+      "goldAfter": 780,
+      "xpBefore": 120,
+      "xpAfter": 168,
+      "recommendedBefore": 420,
+      "recommendedAfter": 680,
+      "groups": [
+        4,
+        4,
+        4,
+        5,
+        5,
+        5
+      ],
+      "bossGroup": 2,
+      "total": 29,
+      "hpRange": [
+        33,
+        100
+      ],
+      "attackRange": [
+        6,
+        9
+      ],
+      "boss": {
+        "hp": 396,
+        "attack": 11,
+        "defence": 4,
+        "attackSpeed": 0.65
+      }
+    },
+    {
+      "stage": "3-1",
+      "goldBefore": 390,
+      "goldAfter": 900,
+      "xpBefore": 125,
+      "xpAfter": 175,
+      "recommendedBefore": 450,
+      "recommendedAfter": 740,
+      "groups": [
+        4,
+        4,
+        5,
+        5,
+        5,
+        6,
+        6
+      ],
+      "bossGroup": 1,
+      "total": 36,
+      "hpRange": [
+        32,
+        87
+      ],
+      "attackRange": [
+        8,
+        11
+      ],
+      "boss": {
+        "hp": 465,
+        "attack": 14,
+        "defence": 5,
+        "attackSpeed": 0.58
+      }
+    },
+    {
+      "stage": "3-2",
+      "goldBefore": 418,
+      "goldAfter": 960,
+      "xpBefore": 130,
+      "xpAfter": 182,
+      "recommendedBefore": 476,
+      "recommendedAfter": 780,
+      "groups": [
+        4,
+        4,
+        5,
+        5,
+        5,
+        6,
+        6
+      ],
+      "bossGroup": 1,
+      "total": 36,
+      "hpRange": [
+        34,
+        94
+      ],
+      "attackRange": [
+        8,
+        11
+      ],
+      "boss": {
+        "hp": 502,
+        "attack": 14,
+        "defence": 5,
+        "attackSpeed": 0.58
+      }
+    },
+    {
+      "stage": "3-3",
+      "goldBefore": 446,
+      "goldAfter": 1020,
+      "xpBefore": 135,
+      "xpAfter": 189,
+      "recommendedBefore": 501,
+      "recommendedAfter": 820,
+      "groups": [
+        4,
+        4,
+        5,
+        5,
+        5,
+        6,
+        6
+      ],
+      "bossGroup": 1,
+      "total": 36,
+      "hpRange": [
+        37,
+        100
+      ],
+      "attackRange": [
+        8,
+        11
+      ],
+      "boss": {
+        "hp": 539,
+        "attack": 14,
+        "defence": 5,
+        "attackSpeed": 0.58
+      }
+    },
+    {
+      "stage": "3-4",
+      "goldBefore": 474,
+      "goldAfter": 1080,
+      "xpBefore": 140,
+      "xpAfter": 196,
+      "recommendedBefore": 527,
+      "recommendedAfter": 860,
+      "groups": [
+        4,
+        4,
+        5,
+        5,
+        5,
+        6,
+        6
+      ],
+      "bossGroup": 1,
+      "total": 36,
+      "hpRange": [
+        39,
+        107
+      ],
+      "attackRange": [
+        9,
+        12
+      ],
+      "boss": {
+        "hp": 577,
+        "attack": 15,
+        "defence": 5,
+        "attackSpeed": 0.58
+      }
+    },
+    {
+      "stage": "3-5",
+      "goldBefore": 502,
+      "goldAfter": 1140,
+      "xpBefore": 145,
+      "xpAfter": 203,
+      "recommendedBefore": 552,
+      "recommendedAfter": 900,
+      "groups": [
+        4,
+        4,
+        5,
+        5,
+        5,
+        6,
+        6
+      ],
+      "bossGroup": 2,
+      "total": 37,
+      "hpRange": [
+        42,
+        114
+      ],
+      "attackRange": [
+        10,
+        13
+      ],
+      "boss": {
+        "hp": 614,
+        "attack": 16,
+        "defence": 5,
+        "attackSpeed": 0.58
+      }
+    },
+    {
+      "stage": "3-6",
+      "goldBefore": 530,
+      "goldAfter": 1200,
+      "xpBefore": 150,
+      "xpAfter": 210,
+      "recommendedBefore": 578,
+      "recommendedAfter": 940,
+      "groups": [
+        5,
+        5,
+        5,
+        6,
+        6,
+        6,
+        6
+      ],
+      "bossGroup": 3,
+      "total": 42,
+      "hpRange": [
+        44,
+        120
+      ],
+      "attackRange": [
+        10,
+        13
+      ],
+      "boss": {
+        "hp": 651,
+        "attack": 16,
+        "defence": 5,
+        "attackSpeed": 0.58
+      }
+    },
+    {
+      "stage": "3-7",
+      "goldBefore": 558,
+      "goldAfter": 1260,
+      "xpBefore": 155,
+      "xpAfter": 217,
+      "recommendedBefore": 603,
+      "recommendedAfter": 980,
+      "groups": [
+        5,
+        5,
+        5,
+        6,
+        6,
+        6,
+        6
+      ],
+      "bossGroup": 3,
+      "total": 42,
+      "hpRange": [
+        46,
+        127
+      ],
+      "attackRange": [
+        11,
+        14
+      ],
+      "boss": {
+        "hp": 688,
+        "attack": 17,
+        "defence": 6,
+        "attackSpeed": 0.58
+      }
+    },
+    {
+      "stage": "3-8",
+      "goldBefore": 586,
+      "goldAfter": 1320,
+      "xpBefore": 160,
+      "xpAfter": 224,
+      "recommendedBefore": 629,
+      "recommendedAfter": 1020,
+      "groups": [
+        5,
+        5,
+        5,
+        6,
+        6,
+        6,
+        6
+      ],
+      "bossGroup": 3,
+      "total": 42,
+      "hpRange": [
+        49,
+        133
+      ],
+      "attackRange": [
+        11,
+        14
+      ],
+      "boss": {
+        "hp": 725,
+        "attack": 17,
+        "defence": 6,
+        "attackSpeed": 0.58
+      }
+    },
+    {
+      "stage": "3-9",
+      "goldBefore": 614,
+      "goldAfter": 1380,
+      "xpBefore": 165,
+      "xpAfter": 231,
+      "recommendedBefore": 654,
+      "recommendedAfter": 1060,
+      "groups": [
+        5,
+        5,
+        5,
+        6,
+        6,
+        6,
+        6
+      ],
+      "bossGroup": 3,
+      "total": 42,
+      "hpRange": [
+        51,
+        140
+      ],
+      "attackRange": [
+        12,
+        15
+      ],
+      "boss": {
+        "hp": 763,
+        "attack": 18,
+        "defence": 6,
+        "attackSpeed": 0.58
+      }
+    },
+    {
+      "stage": "3-10",
+      "goldBefore": 642,
+      "goldAfter": 1440,
+      "xpBefore": 170,
+      "xpAfter": 238,
+      "recommendedBefore": 680,
+      "recommendedAfter": 1100,
+      "groups": [
+        5,
+        5,
+        5,
+        6,
+        6,
+        6,
+        6
+      ],
+      "bossGroup": 3,
+      "total": 42,
+      "hpRange": [
+        54,
+        146
+      ],
+      "attackRange": [
+        13,
+        16
+      ],
+      "boss": {
+        "hp": 800,
+        "attack": 19,
+        "defence": 6,
+        "attackSpeed": 0.58
+      }
+    }
+  ],
+  "profiles": {
+    "starter": {
+      "power": 80,
+      "party": [
+        {
+          "id": "Knight",
+          "classId": "Knight",
+          "level": 1,
+          "maxHp": 120,
+          "attack": 10,
+          "defence": 0,
+          "attackSpeed": 1,
+          "moveSpeed": 140,
+          "attackRange": 0.13,
+          "combatType": "MELEE",
+          "projectile": null
+        }
+      ]
+    },
+    "commonKnight": {
+      "power": 114,
+      "party": [
+        {
+          "id": "Knight",
+          "classId": "Knight",
+          "level": 1,
+          "maxHp": 205,
+          "attack": 16,
+          "defence": 4,
+          "attackSpeed": 1.03,
+          "moveSpeed": 145,
+          "attackRange": 0.13,
+          "combatType": "MELEE",
+          "projectile": null
+        }
+      ]
+    },
+    "uncommonDuo": {
+      "power": 314,
+      "party": [
+        {
+          "id": "Knight",
+          "classId": "Knight",
+          "level": 5,
+          "maxHp": 329,
+          "attack": 27,
+          "defence": 7,
+          "attackSpeed": 1.05,
+          "moveSpeed": 148,
+          "attackRange": 0.13,
+          "combatType": "MELEE",
+          "projectile": null
+        },
+        {
+          "id": "Archer",
+          "classId": "Archer",
+          "level": 5,
+          "maxHp": 241,
+          "attack": 24.66,
+          "defence": 4,
+          "attackSpeed": 1.7999999999999998,
+          "moveSpeed": 170,
+          "attackRange": 0.58,
+          "combatType": "RANGED",
+          "projectile": {
+            "type": "ARROW",
+            "speed": 1.5,
+            "releaseDelay": 0.2777777777777778
+          }
+        }
+      ]
+    },
+    "rareTrio": {
+      "power": 748,
+      "party": [
+        {
+          "id": "Knight",
+          "classId": "Knight",
+          "level": 10,
+          "maxHp": 512,
+          "attack": 44,
+          "defence": 10,
+          "attackSpeed": 1.07,
+          "moveSpeed": 151,
+          "attackRange": 0.13,
+          "combatType": "MELEE",
+          "projectile": null
+        },
+        {
+          "id": "Archer",
+          "classId": "Archer",
+          "level": 10,
+          "maxHp": 374,
+          "attack": 39.96,
+          "defence": 6,
+          "attackSpeed": 1.8479999999999999,
+          "moveSpeed": 173,
+          "attackRange": 0.58,
+          "combatType": "RANGED",
+          "projectile": {
+            "type": "ARROW",
+            "speed": 1.5,
+            "releaseDelay": 0.2777777777777778
+          }
+        },
+        {
+          "id": "Mage",
+          "classId": "Mage",
+          "level": 10,
+          "maxHp": 348,
+          "attack": 112.32000000000001,
+          "defence": 6,
+          "attackSpeed": 0.6960000000000002,
+          "moveSpeed": 141,
+          "attackRange": 0.47,
+          "combatType": "RANGED",
+          "projectile": {
+            "type": "MAGIC_ORB",
+            "speed": 1.1,
+            "releaseDelay": 0.3888888888888889
+          }
+        }
+      ]
+    },
+    "epicTrio": {
+      "power": 1032,
+      "party": [
+        {
+          "id": "Knight",
+          "classId": "Knight",
+          "level": 15,
+          "maxHp": 741,
+          "attack": 67,
+          "defence": 14,
+          "attackSpeed": 1.1,
+          "moveSpeed": 154,
+          "attackRange": 0.13,
+          "combatType": "MELEE",
+          "projectile": null
+        },
+        {
+          "id": "Archer",
+          "classId": "Archer",
+          "level": 15,
+          "maxHp": 542,
+          "attack": 61.38,
+          "defence": 8,
+          "attackSpeed": 1.9199999999999997,
+          "moveSpeed": 176,
+          "attackRange": 0.58,
+          "combatType": "RANGED",
+          "projectile": {
+            "type": "ARROW",
+            "speed": 1.5,
+            "releaseDelay": 0.2777777777777778
+          }
+        },
+        {
+          "id": "Mage",
+          "classId": "Mage",
+          "level": 15,
+          "maxHp": 504,
+          "attack": 168.21000000000004,
+          "defence": 8,
+          "attackSpeed": 0.7200000000000001,
+          "moveSpeed": 144,
+          "attackRange": 0.47,
+          "combatType": "RANGED",
+          "projectile": {
+            "type": "MAGIC_ORB",
+            "speed": 1.1,
+            "releaseDelay": 0.3888888888888889
+          }
+        }
+      ]
+    }
+  }
+}

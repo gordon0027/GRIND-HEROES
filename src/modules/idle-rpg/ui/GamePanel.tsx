@@ -14,6 +14,7 @@ import { StagePresentation } from "./StagePresentation";
 import { emptySlotIcon, rarityColors } from "./inventoryPresentation";
 import { gearImage } from "./itemImage";
 import "./away-popup.css";
+import { DevCombatPanel } from "./DevCombatPanel";
 
 /** The Phaser scene stays mounted while the footer sections change. */
 export function makeGamePanel(session: IdleSession, features: FeatureRegistry): ComponentType {
@@ -43,6 +44,7 @@ export function makeGamePanel(session: IdleSession, features: FeatureRegistry): 
     const location = run.stage.name.split(" · ")[1] ?? run.stage.name;
     const percent = Math.min(100, run.distance / run.stage.length * 100);
     return <div style={{ position: "absolute", inset: 0, pointerEvents: "none", fontFamily: v.font, color: v.text }}>
+      {import.meta.env.DEV && session.devPreviewAvailable ? <DevCombatPanel session={session} /> : null}
       {section === "play" ? <div className="gh-stage-hud" style={{ top: 8 }}>
           <div className="gh-stage-hud__frame">
             <div role="progressbar" aria-label="Stage progress" aria-valuenow={Math.floor(run.distance)} aria-valuemax={run.stage.length}

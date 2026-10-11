@@ -198,7 +198,7 @@ for (const members of [[knight], [knight, archer], [knight, archer, mage]]) {
   let entrances = 0;
   let exits = 0;
   let bossEntrances = 0;
-  for (let frame = 0; frame < 6000 && continuous.state !== "clear" &&
+  for (let frame = 0; frame < 7200 && continuous.state !== "clear" &&
       continuous.state !== "failed"; frame++) {
     const previous = new Map(continuous.heroes.map((hero) => [hero.id,
       { x: hero.x, distance: hero.travelDistance, alive: hero.alive }]));

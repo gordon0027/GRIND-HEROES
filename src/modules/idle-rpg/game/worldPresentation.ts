@@ -1,4 +1,5 @@
 import type { RunState, StageRun } from "./stageRun";
+import { enemySpawnX } from "./encounterLayout.ts";
 
 // Presentation metres are independent of viewport width and of StageRun's
 // normalized combat lane. Combat keeps its existing timings and attack ranges.
@@ -26,6 +27,7 @@ interface EnemyPosition {
 
 export interface PresentedEnemy {
   id: number;
+  formationIndex: number;
   worldX: number;
   hp: number;
   maxHp: number;
@@ -106,7 +108,7 @@ export class WorldPresentation {
         if (!position) {
           position = {
             worldX: this.upcoming?.enemies[index]?.worldX ??
-              frontBefore + ENEMY_LEAD_METRES + index * 0.09 * COMBAT_METRES_PER_LANE,
+              frontBefore + ENEMY_LEAD_METRES + (enemy.x - 0.68) * COMBAT_METRES_PER_LANE,
             combatX: enemy.x,
           };
           this.enemies.set(enemy.id, position);
@@ -129,8 +131,9 @@ export class WorldPresentation {
           this.upcoming = {
             id: next.id,
             enemies: next.enemies.map((enemy, index) => ({
-              id: -(index + 1), worldX: first + index * 0.09 * COMBAT_METRES_PER_LANE,
-              hp: enemy.maxHp, maxHp: enemy.maxHp, boss: next === run.stage.boss,
+              id: -(index + 1), formationIndex: index,
+              worldX: first + (enemySpawnX(index, enemy.combatType === "RANGED") - 0.68) * COMBAT_METRES_PER_LANE,
+              hp: enemy.maxHp, maxHp: enemy.maxHp, boss: next === run.stage.boss && index === 0,
               visual: enemy.visual ?? "goblin1", state: "idle",
             })),
           };
@@ -182,7 +185,8 @@ export class WorldPresentation {
   visibleEnemies(run: StageRun): PresentedEnemy[] {
     if (run.state === "encounter" || run.state === "boss")
       return run.enemies.map((enemy) => ({
-        id: enemy.id, worldX: this.enemyWorldX(enemy.id), hp: enemy.hp,
+        id: enemy.id, formationIndex: enemy.formationIndex,
+        worldX: this.enemyWorldX(enemy.id), hp: enemy.hp,
         maxHp: enemy.maxHp, boss: enemy.boss,
         visual: enemy.visual ?? "goblin1", state: enemy.state,
       }));

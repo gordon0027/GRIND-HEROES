@@ -11,6 +11,7 @@ export interface PetVisualConfig {
   scale: number;
   originX: number;
   originY: number;
+  feetByFrame: readonly number[];
   offsetY: number;
   formationOffsetMetres: number;
   attackDistanceMetres: number;
@@ -23,10 +24,11 @@ function config(name: string, width: number, height: number, scale: number,
   feetY: number, attackDistanceMetres: number): PetVisualConfig {
   return {
     textureKey: `grind-pet-${name}`,
-    assetPath: `${import.meta.env.BASE_URL}assets/pets/${name}/spritesheet.png`,
-    portraitPath: `${import.meta.env.BASE_URL}assets/pets/${name}/portrait.png`,
+    assetPath: `${(import.meta.env?.BASE_URL ?? "/")}assets/pets/${name}/spritesheet.png`,
+    portraitPath: `${(import.meta.env?.BASE_URL ?? "/")}assets/pets/${name}/portrait.png`,
     frameWidth: width, frameHeight: height, scale,
-    originX: 0.5, originY: feetY / height, offsetY: 18,
+    originX: 0.5, originY: feetY / height, offsetY: 12,
+    feetByFrame: PET_FEET[name]!,
     formationOffsetMetres: 40, attackDistanceMetres,
     frames: {
       idle: { start: 0, end: 11, fps: 8, repeat: -1 },
@@ -37,10 +39,27 @@ function config(name: string, width: number, height: number, scale: number,
   };
 }
 
+// Alpha-audited foot/body contact, not frame center. The rolling Pug death row
+// needs its own anchors; weapon pixels are absent from these quadruped sheets.
+const PET_FEET: Record<string, readonly number[]> = {
+  donkey: [125,125,125,125,125,125,125,125,125,125,125,125,
+    125,125,125,125,125,125,126,125,125,125,125,125,
+    125,125,125,125,125,124,125,126,126,124,125,126,
+    125,125,126,126,127,128,128,128,127,126,126,126],
+  pug: [75,75,75,75,75,75,75,75,75,75,75,75,
+    75,75,75,75,75,75,75,75,75,75,75,75,
+    75,75,75,75,75,75,75,76,77,76,76,75,
+    75,71,62,55,54,60,70,75,74,68,72,76],
+  watchdog: [107,107,107,107,107,107,107,107,107,107,107,107,
+    107,107,107,107,107,107,107,107,107,107,107,107,
+    107,107,108,109,112,108,109,109,109,109,108,108,
+    107,107,107,108,108,108,108,108,111,111,111,118],
+};
+
 export const PET_VISUALS: Record<string, PetVisualConfig> = {
-  pet_gold_v1: config("donkey", 157, 128, 0.57, 121, 36),
-  pet_gems_v1: config("pug", 91, 77, 0.86, 73, 34),
-  pet_gh_v1: config("watchdog", 142, 118, 0.62, 108, 38),
+  pet_gold_v1: config("donkey", 157, 128, 0.52, 125, 36),
+  pet_gems_v1: config("pug", 91, 77, 0.65, 75, 34),
+  pet_gh_v1: config("watchdog", 142, 118, 0.58, 107, 38),
 };
 
 export function petAnimationKey(id: string, motion: PetMotion): string {

@@ -14,12 +14,10 @@ import { ENEMY_VISUALS, enemyAnimationKey, registerEnemyAnimations,
 import { drawHealthBar } from "./healthBars";
 import { PET_VISUALS, registerPetAnimations } from "./petVisuals";
 import { PetActor } from "./PetActor";
+import { ContactShadow } from "./ContactShadow";
+import { enemyGroundSlot } from "../game/encounterLayout";
+import { BattleAssets, BACKGROUNDS } from "./BattleAssets";
 
-const BACKGROUNDS = {
-  forest: { key: "grind-stage-meadow-road", file: "meadow-road.png" },
-  act2: { key: "grind-stage-orange-bastion", file: "act2.png" },
-  act3: { key: "grind-stage-undead-crypt", file: "act3.png" },
-} as const;
 const BACKGROUND_ASPECT = 3840 / 2160;
 const FOREST_TILE_WORLD_METRES = 600;
 const ARROW_KEY = "grind-short-willow-arrow";
@@ -32,6 +30,7 @@ const MAX_FEEDBACK_OBJECTS = 24;
 
 interface HeroActor {
   sprite: Phaser.GameObjects.Sprite;
+  shadow: ContactShadow;
   attackUntil: number;
   hitUntil: number;
   hitStarted: number;
@@ -40,12 +39,14 @@ interface HeroActor {
 
 interface EnemyActor {
   sprite: Phaser.GameObjects.Sprite;
+  shadow: ContactShadow;
   hitUntil: number;
   hitStarted: number;
 }
 
 interface EnemyCorpse {
   sprite: Phaser.GameObjects.Sprite;
+  shadow: ContactShadow;
   readonly deathWorldX: number;
   readonly offsetX: number;
   readonly offsetY: number;
@@ -56,10 +57,12 @@ interface ProjectileActor {
   sprite: Phaser.GameObjects.Sprite;
   fromWorldX: number;
   toWorldX: number;
+  fromOffsetY?: number;
 }
 
 /** Phaser paints the run; StageRun still owns distance, positions, damage and outcomes. */
 export class GrindScene extends Phaser.Scene {
+  private enemyBars?: Phaser.GameObjects.Graphics;
   private enemyPaint?: Phaser.GameObjects.Graphics;
   private heroBars?: Phaser.GameObjects.Graphics;
   private backgroundTiles: Phaser.GameObjects.Image[] = [];
@@ -70,12 +73,14 @@ export class GrindScene extends Phaser.Scene {
   private enemyProjectileActors = new Map<number, ProjectileActor>();
   private feedbackObjects = new Set<Phaser.GameObjects.GameObject>();
   private petActor = new PetActor(this);
+  private battleAssets = new BattleAssets(this);
   private world = new WorldPresentation();
   private visualTime = 0;
   private lastRun: StageRun | null = null;
   private lastElapsed = 0;
   private reducedMotion = false;
   private numberLane = 0;
+  private lastDiagnosticsAt = 0;
 
   constructor(private readonly session: IdleSession,
     private readonly getRenderSize: () => BattleRenderSize) { super("grind-stage"); }
@@ -89,14 +94,10 @@ export class GrindScene extends Phaser.Scene {
     for (const visual of Object.values(HERO_VISUALS))
       this.load.spritesheet(visual.textureKey, visual.assetPath,
         { frameWidth: visual.frameWidth, frameHeight: visual.frameHeight });
-    for (const visual of Object.values(ENEMY_VISUALS))
-      this.load.spritesheet(visual.textureKey, visual.assetPath,
-        { frameWidth: visual.frameWidth, frameHeight: visual.frameHeight });
     for (const visual of Object.values(PET_VISUALS))
       this.load.spritesheet(visual.textureKey, visual.assetPath,
         { frameWidth: visual.frameWidth, frameHeight: visual.frameHeight });
-    for (const art of Object.values(BACKGROUNDS))
-      this.load.image(art.key, `${import.meta.env.BASE_URL}assets/backgrounds/stages/${art.file}`);
+    this.battleAssets.queue(this.session.run.stage.chapter);
     this.load.spritesheet(ARROW_KEY, ARROW_PATH, { frameWidth: 128, frameHeight: 128 });
   }
 
@@ -115,6 +116,7 @@ export class GrindScene extends Phaser.Scene {
     orb.destroy();
     this.enemyPaint = this.add.graphics().setDepth(3);
     this.heroBars = this.add.graphics().setDepth(7);
+    this.enemyBars = this.add.graphics().setDepth(7);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.scale.off(Phaser.Scale.Events.RESIZE, this.syncCameraResolution, this);
       this.resetActors();
@@ -123,6 +125,7 @@ export class GrindScene extends Phaser.Scene {
 
   override update(_time: number, deltaMs: number): void {
     const run = this.session.run;
+    this.battleAssets.ensure(run.stage.chapter);
     if (run !== this.lastRun || run.elapsedSeconds < this.lastElapsed - 0.1) {
       this.resetActors();
       this.world.reset();
@@ -130,32 +133,47 @@ export class GrindScene extends Phaser.Scene {
     this.lastRun = run;
     const beforeEnemies = new Map(run.enemies.map((e) => [e.id,
       { hp: e.hp, worldX: this.world.enemyWorldX(e.id), boss: e.boss,
-        visual: e.visual ?? "goblin1" }] as const));
+        visual: e.visual ?? "goblin1", formationIndex: e.formationIndex }] as const));
     const beforeHeroes = new Map(run.heroes.map((h) => [h.id, h.hp] as const));
     const events = this.session.tickRun(deltaMs / 1000);
     const { cssWidth: w, cssHeight } = this.getRenderSize();
-    this.world.update(run, deltaMs / 1000, w);
+    this.world.update(run, deltaMs / 1000 * (this.session.isDevPreview ? this.session.previewRate : 1), w);
     this.visualTime += Math.max(0, deltaMs);
     this.lastElapsed = run.elapsedSeconds;
     const h = battleHeight(cssHeight);
     const groundY = h * 0.82;
     this.drawBackground(run, w, h, groundY);
+    this.battleAssets.releaseOthers(run.stage.chapter);
     this.drawEnemies(this.world.visibleEnemies(run), events, beforeEnemies, w, groundY, h);
     this.syncHeroes(run.heroes, events, beforeHeroes, w, groundY, h);
-    this.petActor.update(this.session.visiblePetId, run, this.world, w, groundY, h, deltaMs / 1000);
+    this.petActor.update(this.session.visiblePetId, run, this.world, w, groundY, h,
+      deltaMs / 1000 * (this.session.isDevPreview ? this.session.previewRate : 1));
     this.syncProjectiles(run.projectiles, run.enemies, w, groundY, h);
     this.syncEnemyProjectiles(run.enemyProjectiles, w, groundY, h);
     this.showCombatFeedback(run.enemies, beforeEnemies, events, w, groundY);
+    if (this.visualTime - this.lastDiagnosticsAt >= 1000) {
+      this.lastDiagnosticsAt = this.visualTime;
+      const textures = Object.values(this.textures.list);
+      this.session.renderDiagnostics = { fps: Math.round(this.game.loop.actualFps),
+        objects: this.children.list.length, actors: this.actors.size + this.enemyActors.size,
+        corpses: this.corpses.size, vfx: this.feedbackObjects.size,
+        projectiles: this.projectileActors.size + this.enemyProjectileActors.size,
+        textures: textures.length,
+        textureMiB: Math.round(textures.reduce((sum, t) => sum + t.source.reduce((n: number, s: { width: number; height: number }) =>
+          n + s.width * s.height * 4, 0), 0) / 1048576), width: w,
+      };
+    }
   }
 
   private resetActors(): void {
     this.petActor.destroy();
-    for (const actor of this.actors.values()) actor.sprite.destroy();
+    for (const actor of this.actors.values()) { actor.shadow.destroy(); actor.sprite.destroy(); }
     this.actors.clear();
-    for (const actor of this.enemyActors.values()) actor.sprite.destroy();
+    for (const actor of this.enemyActors.values()) { actor.shadow.destroy(); actor.sprite.destroy(); }
     this.enemyActors.clear();
     for (const corpse of this.corpses.values()) {
       this.tweens.killTweensOf(corpse.sprite);
+      corpse.shadow.destroy();
       corpse.sprite.destroy();
     }
     this.corpses.clear();
@@ -191,7 +209,8 @@ export class GrindScene extends Phaser.Scene {
         const enemyVisual = enemy?.visual && enemy.visual in ENEMY_VISUALS
           ? ENEMY_VISUALS[enemy.visual as EnemyVisualID] : ENEMY_VISUALS.goblin1;
         const toWorldX = this.world.enemyWorldX(shot.targetId) +
-          enemyVisual.contactOffsetPx * battleScale / PIXELS_PER_WORLD_METRE;
+          (enemyVisual.contactOffsetPx + enemyGroundSlot(enemy?.formationIndex ?? 0).x) *
+          battleScale / PIXELS_PER_WORLD_METRE;
         const texture = shot.type === "ARROW" ? ARROW_KEY : ORB_KEY;
         if (!this.textures.exists(texture)) continue;
         const sprite = this.add.sprite(0, 0, texture, shot.type === "ARROW" ? ARROW_FRAME : undefined)
@@ -205,7 +224,8 @@ export class GrindScene extends Phaser.Scene {
       const toX = projectWorldX(actor.toWorldX, this.world.cameraWorldX, width);
       const fromY = groundY + (visual?.offsetY ?? 0) +
         (origin?.y ?? -40) * (visual?.scale ?? 1) * battleScale;
-      const toY = groundY + (enemy?.boss ? PROJECTILE_TARGET_Y.boss : PROJECTILE_TARGET_Y.normal) * battleScale;
+      const toY = groundY + ((enemy?.boss ? PROJECTILE_TARGET_Y.boss : PROJECTILE_TARGET_Y.normal) +
+        enemyGroundSlot(enemy?.formationIndex ?? 0).y) * battleScale;
       const x = fromX + (toX - fromX) * progress;
       const y = fromY + (toY - fromY) * progress;
       actor.sprite.setDisplaySize(PROJECTILE_SIZE[shot.type] * battleScale,
@@ -227,12 +247,15 @@ export class GrindScene extends Phaser.Scene {
     for (const shot of projectiles) {
       let actor = this.enemyProjectileActors.get(shot.id);
       if (!actor) {
+        const shooter = this.session.run.enemies.find(enemy => enemy.id === shot.attackerId);
+        const slot = enemyGroundSlot(shooter?.formationIndex ?? 0);
         const sprite = this.add.sprite(0, 0, ARROW_KEY, ARROW_FRAME)
           .setDisplaySize(25 * scale, 25 * scale).setDepth(6)
           .setTint(this.session.run.stage.chapter === 3 ? 0xb4d8d8 : 0xffba7b);
         actor = { sprite,
-          fromWorldX: this.world.enemyWorldX(shot.attackerId) - 12 * scale / PIXELS_PER_WORLD_METRE,
+          fromWorldX: this.world.enemyWorldX(shot.attackerId) + (slot.x - 12) * scale / PIXELS_PER_WORLD_METRE,
           toWorldX: this.world.heroWorldX(shot.targetId),
+          fromOffsetY: slot.y,
         };
         this.enemyProjectileActors.set(shot.id, actor);
       }
@@ -241,7 +264,7 @@ export class GrindScene extends Phaser.Scene {
       const progress = Math.min(1, Math.max(0, shot.elapsed / shot.travelDuration));
       const fromX = projectWorldX(actor.fromWorldX, this.world.cameraWorldX, width);
       const toX = projectWorldX(actor.toWorldX, this.world.cameraWorldX, width);
-      const fromY = groundY - 60 * scale;
+      const fromY = groundY + ((actor.fromOffsetY ?? 0) - 60) * scale;
       const toY = groundY - 62 * scale;
       actor.sprite.setPosition(fromX + (toX - fromX) * progress,
         fromY + (toY - fromY) * progress)
@@ -286,12 +309,14 @@ export class GrindScene extends Phaser.Scene {
   }
 
   private drawEnemies(enemies: readonly PresentedEnemy[], events: readonly RunEvent[],
-    before: ReadonlyMap<number, { hp: number; worldX: number; boss: boolean; visual: string }>,
+    before: ReadonlyMap<number, { hp: number; worldX: number; boss: boolean; visual: string; formationIndex: number }>,
     w: number, groundY: number, battleH: number): void {
-    const g = this.enemyPaint!;
+    const g = this.enemyBars!;
+    g.clear();
     for (const corpse of this.corpses.values()) {
       corpse.sprite.setPosition(projectWorldX(corpse.deathWorldX, this.world.cameraWorldX, w) +
         corpse.offsetX, groundY + corpse.offsetY);
+      corpse.shadow.follow(corpse.sprite.x, groundY + corpse.offsetY, corpse.sprite.getData("shadowWidth"));
       if (this.visualTime < corpse.flashUntil) corpse.sprite.setTint(0xffb4b4);
       else corpse.sprite.clearTint();
     }
@@ -303,25 +328,21 @@ export class GrindScene extends Phaser.Scene {
       if (defeated.has(id)) {
         const old = before.get(id);
         const visual = actor.sprite.getData("visual") as EnemyVisualID;
-        if (!old) { actor.sprite.destroy(); continue; }
+        if (!old) { actor.shadow.destroy(); actor.sprite.destroy(); continue; }
         const scale = Math.min(1, Math.max(0.7, battleH / 320));
         const offsetX = ENEMY_VISUALS[visual].contactOffsetPx * scale +
-          (id % 2 ? 2 : -2);
-        const offsetY = ENEMY_VISUALS[visual].offsetY + (id % 2 ? 2 : -2);
-        this.corpses.set(id, { sprite: actor.sprite, deathWorldX: old.worldX,
+          (actor.sprite.getData("slotX") ?? 0);
+        const offsetY = actor.sprite.getData("slotY") ?? 0;
+        actor.shadow.fade();
+        this.corpses.set(id, { sprite: actor.sprite, shadow: actor.shadow, deathWorldX: old.worldX,
           offsetX, offsetY, flashUntil: this.visualTime + (old.boss ? 120 : 90) });
         actor.sprite.setPosition(projectWorldX(old.worldX, this.world.cameraWorldX, w) +
           offsetX, groundY + offsetY).setTint(0xffb4b4);
-        this.spawnDeathBurst(actor.sprite.x, groundY - (old.boss ? 88 : 52), old.boss);
-        this.fadeCorpse(actor.sprite);
+        this.spawnDeathBurst(actor.sprite.x, groundY + offsetY - (old.boss ? 88 : 52), old.boss);
+        this.fadeCorpse(actor.sprite, () => { actor.shadow.destroy(); this.corpses.delete(id); });
         actor.sprite.anims.timeScale = 1;
         actor.sprite.play(enemyAnimationKey(visual, "death"));
-        actor.sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-          this.tweens.killTweensOf(actor.sprite);
-          actor.sprite.destroy();
-          this.corpses.delete(id);
-        });
-      } else actor.sprite.destroy();
+      } else { actor.shadow.destroy(); actor.sprite.destroy(); }
     }
     // A very fast kill can occur on the same frame that the enemy first enters view.
     for (const id of defeated) {
@@ -332,23 +353,23 @@ export class GrindScene extends Phaser.Scene {
       const visual = ENEMY_VISUALS[visualID];
       if (!this.textures.exists(visual.textureKey)) continue;
       const scale = Math.min(1, Math.max(0.7, battleH / 320));
-      const offsetX = visual.contactOffsetPx * scale + (id % 2 ? 2 : -2);
-      const offsetY = visual.offsetY + (id % 2 ? 2 : -2);
+      const offsetX = (visual.contactOffsetPx + enemyGroundSlot(old.formationIndex).x) * scale;
+      const offsetY = visual.offsetY + enemyGroundSlot(old.formationIndex).y * scale;
       const sprite = this.add.sprite(
         projectWorldX(old.worldX, this.world.cameraWorldX, w) + offsetX,
         groundY + offsetY, visual.textureKey, visual.frames.death.start,
-      ).setOrigin(visual.originX, visual.originY).setScale(visual.scale * scale).setDepth(4);
-      this.corpses.set(id, { sprite, deathWorldX: old.worldX, offsetX, offsetY,
+      ).setOrigin(visual.originX, visual.originY).setScale(visual.scale * scale)
+        .setDepth(4 + (groundY + offsetY) / 1000);
+      const shadow = new ContactShadow(this);
+      shadow.follow(sprite.x, groundY + offsetY, (old.boss ? 100 : 36) * scale);
+      sprite.setData("shadowWidth", (old.boss ? 100 : 36) * scale);
+      shadow.fade();
+      this.corpses.set(id, { sprite, shadow, deathWorldX: old.worldX, offsetX, offsetY,
         flashUntil: this.visualTime + (old.boss ? 120 : 90) });
       sprite.setTint(0xffb4b4);
-      this.spawnDeathBurst(sprite.x, groundY - (old.boss ? 88 : 52), old.boss);
-      this.fadeCorpse(sprite);
+      this.spawnDeathBurst(sprite.x, groundY + offsetY - (old.boss ? 88 : 52), old.boss);
+      this.fadeCorpse(sprite, () => { shadow.destroy(); this.corpses.delete(id); });
       sprite.play(enemyAnimationKey(visualID, "death"));
-      sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-        this.tweens.killTweensOf(sprite);
-        sprite.destroy();
-        this.corpses.delete(id);
-      });
     }
     const attacks = new Set(events.filter((e) => e.type === "enemyAttackStarted").map((e) => e.id));
     for (const enemy of enemies) {
@@ -357,12 +378,13 @@ export class GrindScene extends Phaser.Scene {
       if (!visual || !this.textures.exists(visual.textureKey)) continue;
       const battleScale = Math.min(1, Math.max(0.7, battleH / 320));
       const x = projectWorldX(enemy.worldX, this.world.cameraWorldX, w) +
-        visual.contactOffsetPx * battleScale + (enemy.id % 2 ? 2 : -2);
+        visual.contactOffsetPx * battleScale + enemyGroundSlot(enemy.formationIndex).x * battleScale;
+      const slotY = enemyGroundSlot(enemy.formationIndex).y * battleScale;
       let actor = this.enemyActors.get(enemy.id);
       if (!actor) {
         const sprite = this.add.sprite(x, groundY, visual.textureKey, visual.frames.run.start)
           .setOrigin(visual.originX, visual.originY).setDepth(4).setData("visual", visualID);
-        actor = { sprite, hitUntil: 0, hitStarted: 0 };
+        actor = { sprite, shadow: new ContactShadow(this), hitUntil: 0, hitStarted: 0 };
         this.enemyActors.set(enemy.id, actor);
       }
       const scale = visual.scale * battleScale;
@@ -372,8 +394,11 @@ export class GrindScene extends Phaser.Scene {
       }
       const recoil = Math.max(0, 1 - (this.visualTime - actor.hitStarted) / 100) *
         (enemy.boss ? 5 : 3);
-      actor.sprite.setScale(scale).setPosition(x + recoil, groundY + visual.offsetY +
-        (enemy.id % 2 ? 2 : -2)).setFlipX(false);
+      actor.sprite.setScale(scale).setPosition(x + recoil, groundY + visual.offsetY + slotY).setFlipX(false)
+        .setDepth(4 + (groundY + slotY) / 1000)
+        .setData("slotX", enemyGroundSlot(enemy.formationIndex).x * battleScale)
+        .setData("slotY", slotY).setData("shadowWidth", (enemy.boss ? 100 : 36) * scale);
+      actor.shadow.follow(x, groundY + slotY, (enemy.boss ? 100 : 36) * scale);
       if (attacks.has(enemy.id)) {
         const speed = this.lastRun?.enemies.find((entry) => entry.id === enemy.id)?.attackSpeed ?? 1;
         actor.sprite.anims.timeScale = attackPlaybackScale(enemyAttackTiming(enemy.boss).fps, speed);
@@ -390,11 +415,11 @@ export class GrindScene extends Phaser.Scene {
           }
         }
       }
-      if (this.visualTime < actor.hitUntil) actor.sprite.setTint(0xffa1a1);
+      if (this.visualTime < actor.hitUntil) actor.sprite.setTint(0xffe2da).setTintMode(Phaser.TintModes.FILL);
       else actor.sprite.clearTint();
       const width = enemy.boss ? 110 : 48;
       // The top HUD covers a tall boss's head; put its wider bar below the feet.
-      const barY = enemy.boss ? groundY + 6 : groundY - 110 * scale;
+      const barY = enemy.boss ? groundY + slotY + 7 : groundY + slotY - 108 * scale;
       drawHealthBar(g, x, barY, width, enemy.hp / enemy.maxHp, enemy.boss ? "boss" : "enemy");
     }
   }
@@ -405,6 +430,7 @@ export class GrindScene extends Phaser.Scene {
     const active = new Set(heroes.map((hero) => hero.id));
     for (const [id, actor] of this.actors) {
       if (active.has(id)) continue;
+      actor.shadow.destroy();
       actor.sprite.destroy();
       this.actors.delete(id);
     }
@@ -414,7 +440,7 @@ export class GrindScene extends Phaser.Scene {
     for (const hero of heroes) {
       const visual = HERO_VISUALS[hero.id];
       const x = projectWorldX(this.world.heroWorldX(hero.id), this.world.cameraWorldX, w);
-      const y = groundY + (visual?.offsetY ?? 0);
+      const y = groundY + (visual?.offsetY ?? 0) + (hero.slot === 2 ? -8 : hero.slot === 3 ? 6 : 0);
       if (!visual || !this.textures.exists(visual.textureKey)) {
         this.enemyPaint!.fillStyle(hero.alive ? heroArchetype(hero.id).color : 0x65718a)
           .fillRoundedRect(x - 18, y - 58, 36, 58, 5);
@@ -424,7 +450,7 @@ export class GrindScene extends Phaser.Scene {
       if (!actor) {
         const sprite = this.add.sprite(x, y, visual.textureKey, visual.frames.idle.start)
           .setOrigin(visual.originX, visual.originY).setDepth(5);
-        actor = { sprite, attackUntil: 0, hitUntil: 0, hitStarted: 0, deathPlayed: false };
+        actor = { sprite, shadow: new ContactShadow(this), attackUntil: 0, hitUntil: 0, hitStarted: 0, deathPlayed: false };
         this.actors.set(hero.id, actor);
       }
       const scale = visual.scale * Math.min(1, Math.max(0.7, battleH / 320));
@@ -434,9 +460,12 @@ export class GrindScene extends Phaser.Scene {
         this.floatNumber(x, y - 80 * scale, beforeHeroes.get(hero.id)! - hero.hp, 0xff8e8e);
       }
       const recoil = Math.max(0, 1 - (this.visualTime - actor.hitStarted) / 100) * 3;
-      actor.sprite.setScale(scale).setPosition(x - recoil, y);
+      actor.sprite.setScale(scale).setPosition(x - recoil, y).setFlipX(false).setDepth(4 + y / 1000);
+      actor.shadow.follow(x, y, 36 * scale);
       if (!hero.alive || actor.deathPlayed) {
         if (!actor.deathPlayed) {
+          actor.shadow.fade();
+          this.fadeCorpse(actor.sprite);
           actor.attackUntil = 0;
           actor.sprite.anims.timeScale = 1;
           actor.sprite.play(heroAnimationKey(hero.id, "death"));
@@ -460,7 +489,7 @@ export class GrindScene extends Phaser.Scene {
           }
         }
       }
-      if (this.visualTime < actor.hitUntil) actor.sprite.setTint(0xff9b9b);
+      if (this.visualTime < actor.hitUntil) actor.sprite.setTint(0xffe2da).setTintMode(Phaser.TintModes.FILL);
       else actor.sprite.clearTint();
       const barY = y - 135 * scale;
       drawHealthBar(bars, x, barY, 46, hero.hp / hero.maxHp, "hero");
@@ -468,14 +497,15 @@ export class GrindScene extends Phaser.Scene {
   }
 
   private showCombatFeedback(enemies: readonly RuntimeEnemy[],
-    before: ReadonlyMap<number, { hp: number; worldX: number; boss: boolean; visual: string }>,
+    before: ReadonlyMap<number, { hp: number; worldX: number; boss: boolean; visual: string; formationIndex: number }>,
     events: readonly RunEvent[], w: number, groundY: number): void {
     const current = new Map(enemies.map((enemy) => [enemy.id, enemy]));
+    const scale = Math.min(1, Math.max(0.7, battleHeight(this.getRenderSize().cssHeight) / 320));
     for (const [id, old] of before) {
       const remaining = current.get(id)?.hp ?? 0;
       if (remaining >= old.hp) continue;
       this.floatNumber(projectWorldX(old.worldX, this.world.cameraWorldX, w),
-        groundY - (old.boss ? 90 : 65),
+        groundY + enemyGroundSlot(old.formationIndex).y * scale - (old.boss ? 90 : 65),
         old.hp - remaining, 0xffebae);
     }
     for (const event of events) {
@@ -486,8 +516,9 @@ export class GrindScene extends Phaser.Scene {
         const visual = ENEMY_VISUALS[(enemy?.visual ?? old.visual) as EnemyVisualID] ??
           ENEMY_VISUALS.goblin1;
         const x = projectWorldX(old.worldX, this.world.cameraWorldX, w) +
-          visual.contactOffsetPx;
-        this.spawnImpact(x, groundY - (old.boss ? 90 : 54), event.source, old.boss);
+          (visual.contactOffsetPx + enemyGroundSlot(old.formationIndex).x) * scale;
+        this.spawnImpact(x, groundY + enemyGroundSlot(old.formationIndex).y * scale -
+          (old.boss ? 90 : 54) * scale, event.source, old.boss);
       } else if (event.type === "encounterStarted" && event.boss) {
         this.spawnBossWarning(w / 2, groundY - 130);
       } else if (event.type === "enemyAttacked") {
@@ -531,10 +562,12 @@ export class GrindScene extends Phaser.Scene {
     this.animateFeedback(effect, this.reducedMotion ? 90 : 190, boss ? 1.6 : 1.35);
   }
 
-  private fadeCorpse(sprite: Phaser.GameObjects.Sprite): void {
-    if (this.reducedMotion) return;
-    this.tweens.add({ targets: sprite, alpha: 0, delay: 360, duration: 310,
-      ease: "Sine.easeIn" });
+  private fadeCorpse(sprite: Phaser.GameObjects.Sprite, after?: () => void): void {
+    // All twelve death frames remain visible before fading the final pose.
+    sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+      this.tweens.add({ targets: sprite, alpha: 0, duration: this.reducedMotion ? 80 : 240,
+        onComplete: () => { if (after) { sprite.destroy(); after(); } } });
+    });
   }
 
   private spawnDeathBurst(x: number, y: number, boss: boolean): void {
