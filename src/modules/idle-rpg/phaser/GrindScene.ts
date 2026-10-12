@@ -11,14 +11,14 @@ import { WorldPresentation, projectWorldX, PIXELS_PER_WORLD_METRE,
 import { HERO_VISUALS, heroAnimationKey, registerHeroAnimations } from "./heroVisuals";
 import { ENEMY_VISUALS, enemyAnimationKey, registerEnemyAnimations,
   type EnemyVisualID } from "./enemyVisuals";
-import { drawHealthBar } from "./healthBars";
+import { drawHealthBar, drawSkillCooldownBar } from "./healthBars";
 import { PET_VISUALS, registerPetAnimations } from "./petVisuals";
 import { PetActor } from "./PetActor";
 import { ContactShadow } from "./ContactShadow";
 import { enemyGroundSlot } from "../game/encounterLayout";
 import { BattleAssets, BACKGROUNDS } from "./BattleAssets";
-import { effectiveAttackSpeed, COMBAT_SKILLS } from "../game/combatSkills";
-import { drawSkillStatus, meteorGroundFire, skillBurst } from "./SkillEffects";
+import { effectiveAttackSpeed, COMBAT_SKILLS, skillFor } from "../game/combatSkills";
+import { drawRapidFireAura, meteorGroundFire, skillBurst } from "./SkillEffects";
 
 const BACKGROUND_ASPECT = 3840 / 2160;
 const FOREST_TILE_WORLD_METRES = 600;
@@ -27,7 +27,7 @@ const ARROW_PATH = `${import.meta.env.BASE_URL}assets/projectiles/ShortWillowBow
 const ARROW_FRAME = 3; // 3 columns x 2 rows: bottom-left is (0, 128, 128, 128).
 const ORB_KEY = "grind-mage-red-orb";
 const METEOR_KEY = "grind-meteor-fireball";
-const PROJECTILE_SIZE = { ARROW: 32, MAGIC_ORB: 18, METEOR_FIREBALL: 42 } as const;
+const PROJECTILE_SIZE = { ARROW: 32, MAGIC_ORB: 18, METEOR_FIREBALL: 56 } as const;
 const PROJECTILE_TARGET_Y = { normal: -55, boss: -85 } as const;
 const MAX_FEEDBACK_OBJECTS = 24;
 
@@ -66,12 +66,17 @@ interface ProjectileActor {
   fromOffsetY?: number;
 }
 
+interface AnchoredEffect {
+  worldX: number;
+  groundOffset: number;
+}
+
 /** Phaser paints the run; StageRun still owns distance, positions, damage and outcomes. */
 export class GrindScene extends Phaser.Scene {
   private enemyBars?: Phaser.GameObjects.Graphics;
   private enemyPaint?: Phaser.GameObjects.Graphics;
   private heroBars?: Phaser.GameObjects.Graphics;
-  private skillPaint?: Phaser.GameObjects.Graphics;
+  private auraPaint?: Phaser.GameObjects.Graphics;
   private backgroundTiles: Phaser.GameObjects.Image[] = [];
   private actors = new Map<string, HeroActor>();
   private enemyActors = new Map<number, EnemyActor>();
@@ -79,6 +84,8 @@ export class GrindScene extends Phaser.Scene {
   private projectileActors = new Map<number, ProjectileActor>();
   private enemyProjectileActors = new Map<number, ProjectileActor>();
   private feedbackObjects = new Set<Phaser.GameObjects.GameObject>();
+  private anchoredEffects = new Map<Phaser.GameObjects.GameObject, AnchoredEffect>();
+  private skillCasts = { Knight: 0, Archer: 0, Mage: 0 };
   private petActor = new PetActor(this);
   private battleAssets = new BattleAssets(this);
   private world = new WorldPresentation();
@@ -131,7 +138,7 @@ export class GrindScene extends Phaser.Scene {
     meteor.destroy();
     this.enemyPaint = this.add.graphics().setDepth(3);
     this.heroBars = this.add.graphics().setDepth(7);
-    this.skillPaint = this.add.graphics().setDepth(7);
+    this.auraPaint = this.add.graphics().setDepth(5.8).setBlendMode(Phaser.BlendModes.ADD);
     this.enemyBars = this.add.graphics().setDepth(7);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.scale.off(Phaser.Scale.Events.RESIZE, this.syncCameraResolution, this);
@@ -152,6 +159,12 @@ export class GrindScene extends Phaser.Scene {
         visual: e.visual ?? "goblin1", formationIndex: e.formationIndex }] as const));
     const beforeHeroes = new Map(run.heroes.map((h) => [h.id, h.hp] as const));
     const events = this.session.tickRun(deltaMs / 1000);
+    for (const event of events) {
+      if (event.type !== "skillActivated") continue;
+      if (event.skillId === COMBAT_SKILLS.Knight.id) this.skillCasts.Knight++;
+      else if (event.skillId === COMBAT_SKILLS.Archer.id) this.skillCasts.Archer++;
+      else if (event.skillId === COMBAT_SKILLS.Mage.id) this.skillCasts.Mage++;
+    }
     const { cssWidth: w, cssHeight } = this.getRenderSize();
     this.world.update(run, deltaMs / 1000 * (this.session.isDevPreview ? this.session.previewRate : 1), w);
     this.visualTime += Math.max(0, deltaMs);
@@ -165,6 +178,7 @@ export class GrindScene extends Phaser.Scene {
     this.petActor.update(this.session.visiblePetId, run, this.world, w, groundY, h,
       deltaMs / 1000 * (this.session.isDevPreview ? this.session.previewRate : 1));
     this.showCombatFeedback(run.enemies, beforeEnemies, events, w, groundY);
+    this.reprojectAnchoredEffects(w, groundY, h);
     this.syncProjectiles(run.projectiles, run.enemies, w, groundY, h);
     this.syncEnemyProjectiles(run.enemyProjectiles, w, groundY, h);
     if (this.visualTime - this.lastDiagnosticsAt >= 1000) {
@@ -173,6 +187,8 @@ export class GrindScene extends Phaser.Scene {
       this.session.renderDiagnostics = { fps: Math.round(this.game.loop.actualFps),
         objects: this.children.list.length, actors: this.actors.size + this.enemyActors.size,
         corpses: this.corpses.size, vfx: this.feedbackObjects.size,
+        casts: `K:${this.skillCasts.Knight} A:${this.skillCasts.Archer} M:${this.skillCasts.Mage}`,
+        cooldowns: run.heroes.map((hero) => `${hero.classId[0]}:${hero.skillCooldown.toFixed(1)}`).join(" "),
         projectiles: this.projectileActors.size + this.enemyProjectileActors.size,
         textures: textures.length,
         textureMiB: Math.round(textures.reduce((sum, t) => sum + t.source.reduce((n: number, s: { width: number; height: number }) =>
@@ -204,6 +220,8 @@ export class GrindScene extends Phaser.Scene {
       effect.destroy();
     }
     this.feedbackObjects.clear();
+    this.anchoredEffects.clear();
+    this.skillCasts = { Knight: 0, Archer: 0, Mage: 0 };
   }
 
   private syncProjectiles(projectiles: readonly PendingProjectile[], enemies: readonly RuntimeEnemy[],
@@ -260,15 +278,22 @@ export class GrindScene extends Phaser.Scene {
         PROJECTILE_SIZE[shot.type] * battleScale).setPosition(x, y);
       if (actor.trail) {
         actor.trail.clear();
-        const length = shot.type === "METEOR_FIREBALL" ? 29 : 17;
+        const length = shot.type === "METEOR_FIREBALL" ? 43 : 27;
         const endX = x - Math.sign(toX - fromX || 1) * length * battleScale;
-        actor.trail.lineStyle(shot.type === "METEOR_FIREBALL" ? 8 : 3,
-          shot.type === "METEOR_FIREBALL" ? 0xff7827 : 0x84ef6c, 0.48)
+        actor.trail.lineStyle(shot.type === "METEOR_FIREBALL" ? 12 : 5,
+          shot.type === "METEOR_FIREBALL" ? 0xff7827 : 0x84ef6c, 0.62)
           .lineBetween(endX, y + 3, x, y);
         if (shot.type === "METEOR_FIREBALL") {
-          actor.trail.lineStyle(2, 0xffd473, 0.75).lineBetween(endX - 10, y + 6, x - 4, y);
-          actor.trail.fillStyle(0xffa947, 0.65)
-            .fillCircle(endX - (this.visualTime % 11), y + Math.sin(this.visualTime / 80) * 5, 2);
+          actor.trail.lineStyle(4, 0xffd473, 0.88).lineBetween(endX - 8, y + 5, x - 4, y);
+          for (let i = 0; i < 3; i++) {
+            const drift = (this.visualTime / 30 + i * 15) % 40;
+            actor.trail.fillStyle(i === 0 ? 0xfff1a3 : 0xffa947, 0.8 - i * 0.12)
+              .fillCircle(x - Math.sign(toX - fromX || 1) * (12 + drift) * battleScale,
+                y + Math.sin(this.visualTime / 80 + i * 2) * (5 + i * 3) * battleScale,
+                (2.5 - i * 0.4) * battleScale);
+          }
+        } else {
+          actor.trail.lineStyle(2, 0xd5ffc0, 0.88).lineBetween(endX, y + 3, x, y);
         }
       }
       if (shot.type === "ARROW")
@@ -480,12 +505,19 @@ export class GrindScene extends Phaser.Scene {
     const attacks = new Set(events.filter((e) => e.type === "heroAttacked").map((e) => e.id));
     const bars = this.heroBars!;
     bars.clear();
-    const skills = this.skillPaint!;
-    skills.clear();
+    const aura = this.auraPaint!;
+    aura.clear();
     for (const hero of heroes) {
       const visual = HERO_VISUALS[hero.id];
       const x = projectWorldX(this.world.heroWorldX(hero.id), this.world.cameraWorldX, w);
       const y = groundY + (visual?.offsetY ?? 0) + (hero.slot === 2 ? -8 : hero.slot === 3 ? 6 : 0);
+      const scale = (visual?.scale ?? 1) * Math.min(1, Math.max(0.7, battleH / 320));
+      const barY = y - 135 * scale;
+      const skill = skillFor(hero.classId);
+      if (skill) drawSkillCooldownBar(bars, x, barY, 46,
+        hero.alive ? 1 - hero.skillCooldown / skill.cooldown : 0);
+      drawHealthBar(bars, x, barY, 46, hero.hp / hero.maxHp, "hero");
+      drawRapidFireAura(aura, hero, x, y, scale, this.visualTime);
       if (!visual || !this.textures.exists(visual.textureKey)) {
         this.enemyPaint!.fillStyle(hero.alive ? heroArchetype(hero.id).color : 0x65718a)
           .fillRoundedRect(x - 18, y - 58, 36, 58, 5);
@@ -498,7 +530,6 @@ export class GrindScene extends Phaser.Scene {
         actor = { sprite, shadow: new ContactShadow(this), attackUntil: 0, hitUntil: 0, hitStarted: 0, deathPlayed: false };
         this.actors.set(hero.id, actor);
       }
-      const scale = visual.scale * Math.min(1, Math.max(0.7, battleH / 320));
       if ((beforeHeroes.get(hero.id) ?? hero.hp) > hero.hp) {
         actor.hitStarted = this.visualTime;
         actor.hitUntil = this.visualTime + 95;
@@ -537,9 +568,6 @@ export class GrindScene extends Phaser.Scene {
       }
       if (this.visualTime < actor.hitUntil) actor.sprite.setTint(0xffe2da).setTintMode(Phaser.TintModes.FILL);
       else actor.sprite.clearTint();
-      const barY = y - 135 * scale;
-      drawHealthBar(bars, x, barY, 46, hero.hp / hero.maxHp, "hero");
-      drawSkillStatus(skills, hero, x, barY, scale, this.visualTime);
     }
   }
 
@@ -566,7 +594,7 @@ export class GrindScene extends Phaser.Scene {
         const x = projectWorldX(this.world.heroWorldX(hero.id), this.world.cameraWorldX, w);
         const y = groundY - 61 * scale;
         const burst = skillBurst(this, event.skillId, x, y, false, this.reducedMotion);
-        this.trackSkillBurst(burst);
+        this.trackSkillBurst(burst, this.world.heroWorldX(hero.id), -61);
       } else if (event.type === "skillImpact") {
         const old = before.get(event.targetId);
         const meteorActor = [...this.projectileActors.values()].find((actor) =>
@@ -577,13 +605,17 @@ export class GrindScene extends Phaser.Scene {
         const y = groundY + enemyGroundSlot(old?.formationIndex ?? 0).y * scale -
           (old?.boss ? 86 : 54) * scale;
         const burst = skillBurst(this, event.skillId, x, y, true, this.reducedMotion);
-        this.trackSkillBurst(burst);
+        this.trackSkillBurst(burst, worldX,
+          enemyGroundSlot(old?.formationIndex ?? 0).y - (old?.boss ? 86 : 54));
         if (event.skillId === COMBAT_SKILLS.Mage.id) {
           const groundFire = meteorGroundFire(this, x, groundY +
             enemyGroundSlot(old?.formationIndex ?? 0).y * scale);
-          if (this.feedbackObjects.size < MAX_FEEDBACK_OBJECTS)
+          if (this.feedbackObjects.size < MAX_FEEDBACK_OBJECTS) {
+            this.anchoredEffects.set(groundFire, {
+              worldX, groundOffset: enemyGroundSlot(old?.formationIndex ?? 0).y,
+            });
             this.animateFeedback(groundFire, this.reducedMotion ? 120 : 650, 1.2);
-          else groundFire.destroy();
+          } else groundFire.destroy();
         }
         if (!this.reducedMotion) this.cameras.main.shake(65, 0.00065);
       } else if (event.type === "enemyHit") {
@@ -606,9 +638,20 @@ export class GrindScene extends Phaser.Scene {
     }
   }
 
-  private trackSkillBurst(burst: { effect: Phaser.GameObjects.Graphics; duration: number; scale: number }): void {
+  private trackSkillBurst(burst: { effect: Phaser.GameObjects.Graphics; duration: number; scale: number },
+    worldX: number, groundOffset: number): void {
     if (this.feedbackObjects.size >= MAX_FEEDBACK_OBJECTS) { burst.effect.destroy(); return; }
+    this.anchoredEffects.set(burst.effect, { worldX, groundOffset });
     this.animateFeedback(burst.effect, burst.duration, burst.scale);
+  }
+
+  private reprojectAnchoredEffects(width: number, groundY: number, battleH: number): void {
+    const scale = Math.min(1, Math.max(0.7, battleH / 320));
+    for (const [effect, anchor] of this.anchoredEffects) {
+      (effect as Phaser.GameObjects.Graphics).setPosition(
+        projectWorldX(anchor.worldX, this.world.cameraWorldX, width),
+        groundY + anchor.groundOffset * scale);
+    }
   }
 
   private spawnImpact(x: number, y: number,
@@ -684,6 +727,7 @@ export class GrindScene extends Phaser.Scene {
       onComplete: () => {
         effect.destroy();
         this.feedbackObjects.delete(effect);
+        this.anchoredEffects.delete(effect);
       } });
   }
 

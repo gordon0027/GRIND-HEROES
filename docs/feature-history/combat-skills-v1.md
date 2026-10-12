@@ -29,3 +29,19 @@ No Title configuration, economy, pet stats, rewards or backend contract changed.
 The simulation tests cover damage, cadence, AoE, target death in flight,
 simultaneous casts, transitions and retry. Browser QA preview is DEV only and
 does not grant progression or rewards.
+
+## V1.1 visual feedback
+
+The hero skill cooldown now uses the same 46 px metal-framed Graphics layer as
+the HP bar, directly above it. Its 4 px gray fill is calculated from the live
+`skillCooldown` and class cooldown, so an empty bar matches activation and a
+full bar waits for a valid target. The Archer aura reads the live buff state.
+Regular enemy HP uses one shared red fill; boss and hero styles are unchanged.
+
+Crushing Blow has a larger golden impact arc, flash and ground ring. Rapid Fire
+has a brighter green activation burst and a persistent aura while the buff is
+active, plus a longer empowered-arrow trail. Meteor has a larger fireball,
+brighter trail embers and a layered impact with ground fire. Short skill effects
+retain world anchors while the camera scrolls. Feedback objects remain capped
+and are cleaned up on scene reset. DEV render diagnostics expose cast counts and
+cooldown seconds for runtime QA, with no new timers or simulation changes.

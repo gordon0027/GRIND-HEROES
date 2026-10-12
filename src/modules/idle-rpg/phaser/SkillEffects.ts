@@ -1,26 +1,22 @@
 import Phaser from "phaser";
-import { COMBAT_SKILLS, skillById, skillFor, type SkillId } from "../game/combatSkills";
+import { COMBAT_SKILLS, skillById, type SkillId } from "../game/combatSkills";
 import type { RuntimeHero } from "../game/stageRun";
 
-/** Persistent indicators are drawn into one shared Graphics each frame. */
-export function drawSkillStatus(g: Phaser.GameObjects.Graphics, hero: RuntimeHero,
-  x: number, hpBarY: number, scale: number, time: number): void {
-  const skill = skillFor(hero.classId);
-  if (!skill || !hero.alive) return;
-  const y = hpBarY + 12 * scale;
-  const width = 24 * scale;
-  const progress = Math.max(0, 1 - hero.skillCooldown / skill.cooldown);
-  const ready = hero.skillCooldown <= 0;
-  g.fillStyle(0x121928, 0.82).fillRoundedRect(x - width / 2 - 3, y - 4, width + 6, 8, 4);
-  g.lineStyle(1, ready ? skill.vfx.color : 0x81919b, ready ? 0.9 : 0.55)
-    .strokeRoundedRect(x - width / 2 - 3, y - 4, width + 6, 8, 4);
-  g.fillStyle(skill.vfx.color, ready ? 0.85 + 0.15 * Math.sin(time / 180) : 0.65)
-    .fillRoundedRect(x - width / 2, y - 2, Math.max(1, width * progress), 4, 2);
-  if (hero.skillBuffRemaining > 0) {
-    const pulse = 0.55 + 0.18 * Math.sin(time / 120);
-    g.lineStyle(2 * scale, COMBAT_SKILLS.Archer.vfx.color, pulse)
-      .strokeEllipse(x, hpBarY + 89 * scale, 48 * scale, 13 * scale);
-    g.lineStyle(1, 0xcaff9a, pulse).strokeEllipse(x, hpBarY + 62 * scale, 30 * scale, 62 * scale);
+/** Repainted in one Graphics object; no timers or per-frame particle objects. */
+export function drawRapidFireAura(g: Phaser.GameObjects.Graphics, hero: RuntimeHero,
+  x: number, groundY: number, scale: number, time: number): void {
+  if (!hero.alive || hero.classId !== "Archer" || hero.skillBuffRemaining <= 0) return;
+  const pulse = 0.72 + 0.15 * Math.sin(time / 125);
+  g.fillStyle(0x51ee4a, 0.15 * pulse).fillEllipse(x, groundY - 52 * scale, 56 * scale, 92 * scale);
+  g.lineStyle(3 * scale, 0x83ff6d, 0.9 * pulse)
+    .strokeEllipse(x, groundY - 52 * scale, 53 * scale, 93 * scale);
+  g.lineStyle(2 * scale, 0xc1ffae, 0.95 * pulse)
+    .strokeEllipse(x, groundY - 5 * scale, 62 * scale, 14 * scale);
+  for (let i = 0; i < 4; i++) {
+    const rise = (time / 8 + i * 24) % 76;
+    const side = i % 2 ? 22 : -22;
+    g.fillStyle(0xb6ff92, 0.65 * pulse).fillCircle(x + side * scale,
+      groundY - (13 + rise) * scale, 2 * scale);
   }
 }
 
@@ -31,28 +27,28 @@ export function skillBurst(scene: Phaser.Scene, skillId: SkillId, x: number, y: 
   const config = skillById(skillId);
   if (skillId === COMBAT_SKILLS.Knight.id) {
     if (impact) {
-      g.fillStyle(0xffedac, 0.28).fillCircle(0, 0, 31);
-      g.lineStyle(7, 0xffd367, 0.95).beginPath().arc(0, 0, 35, -1.2, 1.35).strokePath();
-      g.lineStyle(2, 0xffffff, 0.92).beginPath().arc(0, 0, 28, -1.3, 1.3).strokePath();
-      g.lineStyle(3, 0xffd367, 0.85).strokeEllipse(0, 42, 55, 12);
-      g.fillStyle(0xffffff, 0.9).fillCircle(0, 0, 10);
+      g.fillStyle(0xffedac, 0.38).fillCircle(0, 0, 40);
+      g.lineStyle(9, 0xffd367, 1).beginPath().arc(0, 0, 48, -1.3, 1.4).strokePath();
+      g.lineStyle(3, 0xffffff, 1).beginPath().arc(0, 0, 39, -1.4, 1.35).strokePath();
+      g.lineStyle(4, 0xffd367, 0.9).strokeEllipse(0, 44, 72, 15);
+      g.fillStyle(0xffffff, 0.95).fillCircle(0, 0, 15);
       for (let i = 0; i < 5; i++) {
         const a = -1.1 + i * 0.62;
-        g.lineStyle(2, 0xffefa1, 0.9).lineBetween(Math.cos(a) * 18, Math.sin(a) * 18,
-          Math.cos(a) * 47, Math.sin(a) * 47);
+        g.lineStyle(3, 0xffefa1, 0.9).lineBetween(Math.cos(a) * 23, Math.sin(a) * 23,
+          Math.cos(a) * 60, Math.sin(a) * 60);
       }
     } else {
-      g.lineStyle(3, 0xffd367, 0.8).beginPath().arc(0, 0, 22, -1.5, 0.8).strokePath();
-      g.fillStyle(0xffecaa, 0.5).fillCircle(10, -25, 5);
+      g.lineStyle(4, 0xffd367, 0.9).beginPath().arc(0, 0, 30, -1.5, 0.8).strokePath();
+      g.fillStyle(0xffecaa, 0.65).fillCircle(11, -31, 7);
     }
   } else if (skillId === COMBAT_SKILLS.Archer.id) {
-    g.fillStyle(0x75ff6f, 0.18).fillCircle(0, 0, 31);
-    g.lineStyle(3, 0xa9ff85, 0.9).strokeEllipse(0, 24, 56, 15);
+    g.fillStyle(0x75ff6f, 0.25).fillCircle(0, 0, 42);
+    g.lineStyle(4, 0xa9ff85, 1).strokeEllipse(0, 26, 67, 19);
     for (let i = 0; i < 8; i++) {
       const a = i * Math.PI / 4;
-      g.lineStyle(2, i % 2 ? 0xd9ffc0 : 0x79ee72, 0.85)
-        .lineBetween(Math.cos(a) * 12, Math.sin(a) * 12,
-          Math.cos(a) * 35, Math.sin(a) * 35);
+      g.lineStyle(3, i % 2 ? 0xd9ffc0 : 0x79ee72, 0.95)
+        .lineBetween(Math.cos(a) * 15, Math.sin(a) * 15,
+          Math.cos(a) * 46, Math.sin(a) * 46);
     }
   } else if (impact) {
     g.fillStyle(0xff4a1c, 0.25).fillCircle(0, 0, 54);
@@ -68,9 +64,9 @@ export function skillBurst(scene: Phaser.Scene, skillId: SkillId, x: number, y: 
         .fillCircle(Math.cos(a) * r, Math.sin(a) * r, i % 2 ? 2 : 3);
     }
   } else {
-    g.fillStyle(0xff5b2c, 0.25).fillCircle(0, 0, 25);
-    g.lineStyle(3, 0xffb658, 0.85).strokeCircle(0, 0, 19);
-    g.fillStyle(0xfff5ae, 0.9).fillCircle(0, 0, 7);
+    g.fillStyle(0xff5b2c, 0.35).fillCircle(0, 0, 30);
+    g.lineStyle(4, 0xffb658, 0.95).strokeCircle(0, 0, 24);
+    g.fillStyle(0xfff5ae, 1).fillCircle(0, 0, 10);
   }
   if (impact) g.lineStyle(1, config.vfx.color, 0.55)
     .strokeCircle(0, 0, config.vfx.impactRadius);
