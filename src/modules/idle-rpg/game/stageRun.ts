@@ -130,11 +130,12 @@ export type RunEvent =
   | { type: "encounterStarted"; id: string; boss: boolean }
   | { type: "enemyDefeated"; id: number }
   | { type: "heroAttacked"; id: string; targetId: number }
-  | { type: "enemyHit"; id: number; source: "MELEE" | ProjectileType; damage: number }
+  | { type: "enemyHit"; id: number; source: "MELEE" | ProjectileType; damage: number;
+      attackerId: string; skillId?: SkillId }
   | { type: "skillActivated"; id: string; skillId: SkillId; targetId: number }
   | { type: "skillImpact"; id: string; skillId: SkillId; targetId: number; x: number }
   | { type: "enemyAttackStarted"; id: number; targetId: string }
-  | { type: "enemyAttacked"; id: number; targetId: string }
+  | { type: "enemyAttacked"; id: number; targetId: string; damage: number }
   | { type: "heroDied"; id: string }
   | { type: "encounterCleared"; id: string }
   | { type: "stageCleared"; seconds: number }
@@ -469,7 +470,7 @@ export class StageRun {
       hero.pendingImpact = null;
       const target = this.enemies.find((enemy) => enemy.id === impact.targetId && enemy.alive);
       if (!target || Math.abs(target.x - hero.x) > hero.attackRange + 0.015) continue;
-      this.hitEnemy(target, impact.damage, "MELEE", events);
+      this.hitEnemy(target, impact.damage, "MELEE", events, hero.id, impact.skillId);
       if (impact.skillId) events.push({ type: "skillImpact", id: hero.id,
         skillId: impact.skillId, targetId: target.id, x: target.x });
     }
@@ -493,9 +494,9 @@ export class StageRun {
   }
 
   private hitEnemy(target: RuntimeEnemy, amount: number,
-    source: "MELEE" | ProjectileType, events: RunEvent[]): void {
+    source: "MELEE" | ProjectileType, events: RunEvent[], attackerId: string, skillId?: SkillId): void {
     target.hp = Math.max(0, target.hp - amount);
-    events.push({ type: "enemyHit", id: target.id, source, damage: amount });
+    events.push({ type: "enemyHit", id: target.id, source, damage: amount, attackerId, skillId });
     if (target.hp === 0) this.defeatEnemy(target, events);
   }
 
@@ -513,12 +514,12 @@ export class StageRun {
         for (const enemy of [...this.enemies]) {
           if (Math.abs(enemy.x - center) > COMBAT_SKILLS.Mage.aoeRadius) continue;
           this.hitEnemy(enemy, Math.round(damage(shot.attackSnapshot ?? 1, enemy.defence) *
-            COMBAT_SKILLS.Mage.damageMultiplier), shot.type, events);
+            COMBAT_SKILLS.Mage.damageMultiplier), shot.type, events, shot.attackerId, shot.skillId);
         }
         continue;
       }
       if (!target) continue;
-      this.hitEnemy(target, shot.damageSnapshot, shot.type, events);
+      this.hitEnemy(target, shot.damageSnapshot, shot.type, events, shot.attackerId, shot.skillId);
     }
     this.projectiles = remaining.filter((shot) => shot.type === "METEOR_FIREBALL" ||
       this.enemies.some((enemy) => enemy.id === shot.targetId));
@@ -542,7 +543,7 @@ export class StageRun {
 
   private hitHero(target: RuntimeHero, amount: number, attackerId: number, events: RunEvent[]): void {
     target.hp = Math.max(0, target.hp - amount);
-    events.push({ type: "enemyAttacked", id: attackerId, targetId: target.id });
+    events.push({ type: "enemyAttacked", id: attackerId, targetId: target.id, damage: amount });
     if (target.hp > 0) return;
     target.alive = false;
     target.state = "dead";

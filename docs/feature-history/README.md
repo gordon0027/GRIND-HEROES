@@ -6,6 +6,7 @@ gets a new file here plus ONE line below; an existing one gets its file updated.
 instead.
 
 <!-- One line per entry: - [Title](slug.md) — one-line gist -->
+- [Combat Juice V2](combat-juice-v2.md) — shared hit feedback, visual hit-stop, boss stability and bounded death effects.
 - [Combat Polish V1](combat-polish-v1.md) — ground anchors, shared shadows, dense encounters and DEV GOLD/XP rebalance.
 - [Combat Skills V1](combat-skills-v1.md) — automatic class skills, cooldowns and battle VFX in the active stage simulation.
 - [Grind Heroes stage and formation](grind-stage.md) — thirty-stage farming, CloudCode rewards and three-slot party.

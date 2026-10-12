@@ -3,6 +3,7 @@ import { ContactShadow } from "./ContactShadow";
 import type { StageRun } from "../game/stageRun";
 import { PIXELS_PER_WORLD_METRE, projectWorldX, type WorldPresentation } from "../game/worldPresentation";
 import { PET_VISUALS, petAnimationKey, type PetMotion } from "./petVisuals";
+import { petAttackLunge } from "../game/hitFeedback";
 
 /** A presentation-only companion. It never enters StageRun or camera tracking. */
 export class PetActor {
@@ -25,7 +26,7 @@ export class PetActor {
   }
 
   update(petID: string | null, run: StageRun, world: WorldPresentation,
-    width: number, groundY: number, battleH: number, deltaSeconds: number): void {
+    width: number, groundY: number, battleH: number, deltaSeconds: number, reducedMotion = false): void {
     const visual = petID ? PET_VISUALS[petID] : null;
     const front = run.heroes.find((hero) => hero.alive) ?? run.heroes[0];
     if (!visual || !front || !this.scene.textures.exists(visual.textureKey)) {
@@ -62,8 +63,12 @@ export class PetActor {
     if (!this.defeated && run.state !== "failed")
       this.worldX += Math.sign(gap) * Math.min(Math.abs(gap), maxStep);
     const scale = visual.scale * Math.min(1, Math.max(0.7, battleH / 320));
+    const lunging = !reducedMotion && targetX !== null && !this.defeated &&
+      this.sprite.anims.currentAnim?.key === petAnimationKey(petID!, "attack");
+    const lunge = lunging ? petAttackLunge(Number(this.sprite.frame.name)) * scale *
+      (targetX! >= this.worldX ? 1 : -1) : 0;
     this.sprite.setScale(scale).setPosition(
-      projectWorldX(this.worldX, world.cameraWorldX, width), groundY + visual.offsetY).setDepth(4 + (groundY + visual.offsetY) / 1000);
+      projectWorldX(this.worldX, world.cameraWorldX, width) + lunge, groundY + visual.offsetY).setDepth(4 + (groundY + visual.offsetY) / 1000);
     this.shadow?.follow(this.sprite.x, groundY + visual.offsetY, visual.frameWidth * scale * 0.64);
     if (!this.defeated) this.sprite.setFlipX(targetX === null || targetX >= this.worldX);
 
