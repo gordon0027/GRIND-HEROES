@@ -28,7 +28,15 @@ export class BattleAssets {
 
   ensure(chapter: number): void {
     const key = chapter === 1 ? BACKGROUNDS.forest.key : chapter === 2 ? BACKGROUNDS.act2.key : BACKGROUNDS.act3.key;
-    if (this.loading || this.scene.textures.exists(key)) return;
+    if (this.loading) return;
+    const activeVisuals = Object.entries(ENEMY_VISUALS).filter(([id]) => chapterFor(id) === chapter);
+    const needsLoad = !this.scene.textures.exists(key) ||
+      activeVisuals.some(([, visual]) => !this.scene.textures.exists(visual.textureKey));
+    if (!needsLoad) {
+      if (activeVisuals.some(([id]) => !this.scene.anims.exists(enemyAnimationKey(id as EnemyVisualID, "run"))))
+        registerEnemyAnimations(this.scene);
+      return;
+    }
     this.loading = true;
     this.queue(chapter);
     this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {

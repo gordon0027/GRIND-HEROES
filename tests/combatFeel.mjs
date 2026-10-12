@@ -25,6 +25,8 @@ const start = (members, definition = stage()) => {
   run.start();
   for (let i = 0; i < 120 && run.state === "running"; i++) run.tick(1 / 60);
   assert.equal(run.state, "encounter");
+  // This suite checks baseline wind-up and projectile timing independently of active skills.
+  for (const fighter of run.heroes) fighter.skillCooldown = 999;
   return run;
 };
 const until = (run, predicate, limit = 180) => {

@@ -3,13 +3,14 @@
 
 import { enemySpawnX } from "./encounterLayout.ts";
 import { heroAttackTiming, enemyAttackTiming, scaledEventDelay } from "./combatTiming.ts";
+import { COMBAT_SKILLS, effectiveAttackSpeed, skillFor, type SkillId } from "./combatSkills.ts";
 
 export const MAX_PARTY_SIZE = 3;
 export type SlotIndex = 1 | 2 | 3;
 export type RunState = "ready" | "running" | "encounter" | "boss" | "clear" | "failed";
 export type FighterState = "idle" | "running" | "chasing" | "attacking" | "dead";
 export type CombatType = "MELEE" | "RANGED";
-export type ProjectileType = "ARROW" | "MAGIC_ORB";
+export type ProjectileType = "ARROW" | "MAGIC_ORB" | "METEOR_FIREBALL";
 export interface ProjectileSpec { type: ProjectileType; speed: number; releaseDelay: number }
 
 export interface HeroSource {
@@ -80,7 +81,9 @@ export interface RuntimeHero extends HeroSource {
   x: number;
   travelDistance: number;
   cooldown: number;
-  pendingImpact: { targetId: number; damage: number; remaining: number } | null;
+  skillCooldown: number;
+  skillBuffRemaining: number;
+  pendingImpact: { targetId: number; damage: number; remaining: number; skillId?: SkillId } | null;
 }
 
 export interface RuntimeEnemy extends EnemyDefinition {
@@ -102,6 +105,10 @@ export interface PendingProjectile {
   targetId: number;
   type: ProjectileType;
   damageSnapshot: number;
+  attackSnapshot?: number;
+  skillId?: SkillId;
+  impactX?: number;
+  empowered?: boolean;
   originX: number;
   targetX: number;
   elapsed: number;
@@ -123,7 +130,9 @@ export type RunEvent =
   | { type: "encounterStarted"; id: string; boss: boolean }
   | { type: "enemyDefeated"; id: number }
   | { type: "heroAttacked"; id: string; targetId: number }
-  | { type: "enemyHit"; id: number; source: "MELEE" | ProjectileType }
+  | { type: "enemyHit"; id: number; source: "MELEE" | ProjectileType; damage: number }
+  | { type: "skillActivated"; id: string; skillId: SkillId; targetId: number }
+  | { type: "skillImpact"; id: string; skillId: SkillId; targetId: number; x: number }
   | { type: "enemyAttackStarted"; id: number; targetId: string }
   | { type: "enemyAttacked"; id: number; targetId: string }
   | { type: "heroDied"; id: string }
@@ -210,6 +219,7 @@ export class StageRun {
   activeEncounter: EncounterDefinition | null = null;
   private nextEnemyId = 1;
   private nextProjectileId = 1;
+  private inheritedSkills = new Map<string, { cooldown: number; buffRemaining: number }>();
 
   constructor(stage: StageDefinition = FIRST_STAGE) {
     this.stage = stage;
@@ -246,8 +256,8 @@ export class StageRun {
       const old = this.runHeroStates.get(source.id);
       const maxHp = Math.max(1, source.maxHp);
       if (old) {
-        const oldInterval = 1 / Math.max(0.1, old.attackSpeed);
-        const newInterval = 1 / Math.max(0.1, source.attackSpeed);
+        const oldInterval = 1 / effectiveAttackSpeed(old.attackSpeed, old.classId, old.skillBuffRemaining);
+        const newInterval = 1 / effectiveAttackSpeed(source.attackSpeed, source.classId, old.skillBuffRemaining);
         old.cooldown = Math.max(0, old.cooldown * newInterval / oldInterval);
         Object.assign(old, source, { slot: slot.index, maxHp, active: true });
         old.hp = Math.min(old.hp, maxHp);
@@ -261,12 +271,14 @@ export class StageRun {
         return [old];
       }
       const rear = active.filter((hero) => hero.alive);
+      const inherited = this.inheritedSkills.get(source.id);
       const hero: RuntimeHero = {
         ...source, slot: slot.index, maxHp, hp: maxHp, alive: true,
         initialized: true, active: true, targetId: null, state: "idle",
         x: rear.length ? Math.max(0.08, Math.min(...rear.map((member) => member.x)) - 0.06) : FORMATION_X,
         travelDistance: rear.length ? Math.min(...rear.map((member) => member.travelDistance)) : this.distance,
-        cooldown: 0, pendingImpact: null,
+        cooldown: 0, skillCooldown: inherited?.cooldown ?? 0,
+        skillBuffRemaining: inherited?.buffRemaining ?? 0, pendingImpact: null,
       };
       this.runHeroStates.set(source.id, hero);
       return [hero];
@@ -275,6 +287,7 @@ export class StageRun {
 
   start(): boolean {
     if (this.slots.every((slot) => !slot.unlocked || !slot.hero)) return false;
+    if (this.state !== "ready") this.inheritedSkills.clear();
     this.state = "running";
     this.distance = 0;
     this.elapsedSeconds = 0;
@@ -292,7 +305,20 @@ export class StageRun {
     return true;
   }
 
-  retry(): boolean { return this.start(); }
+  retry(): boolean { this.inheritedSkills.clear(); return this.start(); }
+
+  /** A validated clear carries only combat skill timing into uninterrupted farming. */
+  inheritSkillStateFrom(previous: StageRun): void {
+    if (this.state !== "ready" || previous.state !== "clear") return;
+    this.inheritedSkills.clear();
+    for (const hero of previous.runHeroStates.values()) {
+      if (!hero.alive) continue;
+      this.inheritedSkills.set(hero.id, {
+        cooldown: Math.max(0, hero.skillCooldown),
+        buffRemaining: Math.max(0, hero.skillBuffRemaining),
+      });
+    }
+  }
 
   tick(dt: number): RunEvent[] {
     const events: RunEvent[] = [];
@@ -308,6 +334,11 @@ export class StageRun {
 
   private step(dt: number, events: RunEvent[]): void {
     this.elapsedSeconds += dt;
+    for (const hero of this.runHeroStates.values()) {
+      if (!hero.alive) continue;
+      hero.skillCooldown = Math.max(0, hero.skillCooldown - dt);
+      hero.skillBuffRemaining = Math.max(0, hero.skillBuffRemaining - dt);
+    }
     if (this.state === "running") {
       const living = this.heroes.filter((hero) => hero.alive);
       if (living.length === 0) return this.fail(events);
@@ -394,22 +425,39 @@ export class StageRun {
     }
     hero.state = "attacking";
     if (hero.cooldown > 0) return;
-    hero.cooldown = 1 / Math.max(0.1, hero.attackSpeed);
+    const skill = skillFor(hero.classId);
+    const cast = skill && hero.skillCooldown <= 0 && hero.skillBuffRemaining <= 0 ? skill : null;
+    if (cast) {
+      hero.skillCooldown = cast.cooldown;
+      if (cast.id === COMBAT_SKILLS.Archer.id) hero.skillBuffRemaining = cast.buffDuration;
+      events.push({ type: "skillActivated", id: hero.id, skillId: cast.id, targetId: target.id });
+    }
+    const speed = effectiveAttackSpeed(hero.attackSpeed, hero.classId, hero.skillBuffRemaining);
+    hero.cooldown = 1 / speed;
     events.push({ type: "heroAttacked", id: hero.id, targetId: target.id });
-    const strike = damage(hero.attack, target.defence);
+    const strike = Math.round(damage(hero.attack, target.defence) *
+      (cast?.id === COMBAT_SKILLS.Knight.id ? cast.damageMultiplier : 1));
     if (hero.combatType === "RANGED" && hero.projectile) {
+      const meteor = cast?.id === COMBAT_SKILLS.Mage.id;
       this.projectiles.push({
         id: this.nextProjectileId++, attackerId: hero.id, targetId: target.id,
-        type: hero.projectile.type, damageSnapshot: strike,
+        type: meteor ? "METEOR_FIREBALL" : hero.projectile.type, damageSnapshot: strike,
+        attackSnapshot: meteor ? hero.attack : undefined,
+        skillId: meteor ? cast.id : undefined, impactX: meteor ? target.x : undefined,
+        empowered: hero.classId === "Archer" && hero.skillBuffRemaining > 0,
         originX: hero.x, targetX: target.x,
         elapsed: -Math.max(0, scaledEventDelay(heroAttackTiming(hero.id),
-          hero.attackSpeed, hero.projectile.releaseDelay)),
-        travelDuration: Math.max(0.05, Math.abs(target.x - hero.x) / Math.max(0.01, hero.projectile.speed)),
+          speed, hero.projectile.releaseDelay)),
+        travelDuration: Math.max(0.05, Math.abs(target.x - hero.x) /
+          Math.max(0.01, hero.projectile.speed * (meteor ? COMBAT_SKILLS.Mage.projectileSpeedMultiplier :
+            hero.classId === "Archer" && hero.skillBuffRemaining > 0
+              ? COMBAT_SKILLS.Archer.projectileSpeedMultiplier : 1))),
       });
       return;
     }
     hero.pendingImpact = { targetId: target.id, damage: strike,
-      remaining: scaledEventDelay(heroAttackTiming(hero.id), hero.attackSpeed) };
+      remaining: scaledEventDelay(heroAttackTiming(hero.id), speed),
+      skillId: cast?.id === COMBAT_SKILLS.Knight.id ? cast.id : undefined };
   }
 
   private advanceImpacts(dt: number, events: RunEvent[]): void {
@@ -422,6 +470,8 @@ export class StageRun {
       const target = this.enemies.find((enemy) => enemy.id === impact.targetId && enemy.alive);
       if (!target || Math.abs(target.x - hero.x) > hero.attackRange + 0.015) continue;
       this.hitEnemy(target, impact.damage, "MELEE", events);
+      if (impact.skillId) events.push({ type: "skillImpact", id: hero.id,
+        skillId: impact.skillId, targetId: target.id, x: target.x });
     }
     for (const enemy of [...this.enemies]) {
       const impact = enemy.pendingImpact;
@@ -445,7 +495,7 @@ export class StageRun {
   private hitEnemy(target: RuntimeEnemy, amount: number,
     source: "MELEE" | ProjectileType, events: RunEvent[]): void {
     target.hp = Math.max(0, target.hp - amount);
-    events.push({ type: "enemyHit", id: target.id, source });
+    events.push({ type: "enemyHit", id: target.id, source, damage: amount });
     if (target.hp === 0) this.defeatEnemy(target, events);
   }
 
@@ -453,12 +503,25 @@ export class StageRun {
     const remaining: PendingProjectile[] = [];
     for (const shot of this.projectiles) {
       const target = this.enemies.find((enemy) => enemy.id === shot.targetId && enemy.alive);
-      if (!target) continue; // A shot never retargets a later enemy.
+      if (!target && shot.type !== "METEOR_FIREBALL") continue; // Normal shots never retarget.
       shot.elapsed += dt;
       if (shot.elapsed < shot.travelDuration) { remaining.push(shot); continue; }
+      if (shot.type === "METEOR_FIREBALL") {
+        const center = shot.impactX ?? shot.targetX;
+        events.push({ type: "skillImpact", id: shot.attackerId,
+          skillId: COMBAT_SKILLS.Mage.id, targetId: shot.targetId, x: center });
+        for (const enemy of [...this.enemies]) {
+          if (Math.abs(enemy.x - center) > COMBAT_SKILLS.Mage.aoeRadius) continue;
+          this.hitEnemy(enemy, Math.round(damage(shot.attackSnapshot ?? 1, enemy.defence) *
+            COMBAT_SKILLS.Mage.damageMultiplier), shot.type, events);
+        }
+        continue;
+      }
+      if (!target) continue;
       this.hitEnemy(target, shot.damageSnapshot, shot.type, events);
     }
-    this.projectiles = remaining.filter((shot) => this.enemies.some((enemy) => enemy.id === shot.targetId));
+    this.projectiles = remaining.filter((shot) => shot.type === "METEOR_FIREBALL" ||
+      this.enemies.some((enemy) => enemy.id === shot.targetId));
   }
 
   private advanceEnemyProjectiles(dt: number, events: RunEvent[]): void {
@@ -485,6 +548,7 @@ export class StageRun {
     target.state = "dead";
     target.targetId = null;
     target.pendingImpact = null;
+    target.skillBuffRemaining = 0;
     events.push({ type: "heroDied", id: target.id });
   }
 
@@ -593,6 +657,7 @@ export class StageRun {
     this.projectiles = [];
     this.enemyProjectiles = [];
     for (const hero of this.heroes) hero.pendingImpact = null;
+    for (const hero of this.runHeroStates.values()) hero.skillBuffRemaining = 0;
     events.push({ type: "stageFailed", seconds: this.elapsedSeconds });
   }
 

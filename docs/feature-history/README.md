@@ -7,6 +7,7 @@ instead.
 
 <!-- One line per entry: - [Title](slug.md) — one-line gist -->
 - [Combat Polish V1](combat-polish-v1.md) — ground anchors, shared shadows, dense encounters and DEV GOLD/XP rebalance.
+- [Combat Skills V1](combat-skills-v1.md) — automatic class skills, cooldowns and battle VFX in the active stage simulation.
 - [Grind Heroes stage and formation](grind-stage.md) — thirty-stage farming, CloudCode rewards and three-slot party.
 - [Hero ownership and party slots V1](hero-progression.md) — DEV GOLD recruitment, separate party capacity purchases and owned-only UI.
 - [Loot and equipment V1](loot-equipment.md) — six server-backed slots, equipped stats and DEV stage rewards.

@@ -16,6 +16,7 @@ try {
     const session = Object.create(IdleSession.prototype);
     const counters = { completions: 0, failures: 0, starts: 0, inventoryReads: 0 };
     session.run = { stage: STAGE_CATALOG[stageIndex], state, bestClearSeconds: null,
+      runHeroStates: new Map(),
       tick: () => [{ type: state === "clear" ? "stageCleared" : "stageFailed" }] };
     session.stageProgress = progress;
     session.serverRunId = `run-${stageIndex}`;

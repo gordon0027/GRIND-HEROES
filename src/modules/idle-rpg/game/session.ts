@@ -981,10 +981,12 @@ export class IdleSession {
   private prepareContinuation(targetID: string): boolean {
     const next = stageByID(targetID);
     if (!next || !(this.isDevPreview || stageUnlocked(this.stageProgress, targetID))) return false;
-    const previousID = this.run.stage.id;
+    const previousRun = this.run;
+    const previousID = previousRun.stage.id;
     this.runGeneration++;
     this.pendingContinuationID = null;
     this.run = new StageRun(next);
+    this.run.inheritSkillStateFrom(previousRun);
     this.run.bestClearSeconds = this.stageProgress.bestSeconds[targetID] ?? null;
     this.syncParty();
     if (!this.isDevPreview && targetID !== previousID) this.saveStagePreferences();
