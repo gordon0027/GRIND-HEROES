@@ -31,10 +31,12 @@ test for hold expiry, boss stability, effect limits and cleanup, and skill tests
 that require landed-hit metadata. DEV browser QA uses the real Phaser/StageRun
 pipeline with three heroes, six enemies and a boss, without granting rewards.
 
-The quota-compatible release package reuses retained v68 art. Its reproducible
-packager is `scripts/package-shared-art.py`; art URLs are rooted at `/v/<art-build>/`
-on the current host so DEV and PROD both load canvas textures without CORS.
-The retained art build must not be deleted while a release references it.
+Releases v74–77 reused v68 art to fit the storage quota. This approach is retired:
+some archived-art routes returned 404 despite the build still existing, while
+cached desktop images masked the failure. v78 restores all 115 art files inside
+the release itself. Use `scripts/package-web-build.py`, which verifies the public
+asset mirror and refuses cross-build dependencies. The old shared-art packager
+now refuses to create releases. Do not use a warm browser cache as the only art check.
 
 ## Runtime verification (2026-10-12)
 

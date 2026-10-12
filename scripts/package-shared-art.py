@@ -14,6 +14,7 @@ parser.add_argument('--art-build', required=True)
 parser.add_argument('--output', type=Path, required=True)
 parser.add_argument('--dist', type=Path, default=Path('dist'))
 args = parser.parse_args()
+parser.error('Shared-art releases are retired: archived art routes can return 404. Use scripts/package-web-build.py.')
 if not re.fullmatch(r'bld[0-9a-f]+', args.art_build):
     parser.error('art-build must be an iDos BuildId')
 base = f'/v/{args.art_build}/assets/'
