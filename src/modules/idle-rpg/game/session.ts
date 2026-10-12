@@ -45,6 +45,7 @@ import { HERO_XP_KEY, heroProgress, parseHeroProgress, type HeroProgressMap } fr
 import { FORMATION_KEY, PARTY_CAPACITY_KEY, assignFormation, defaultFormation, partyCapacity,
   restoreFormation, validateFormation, type Formation } from "./formation";
 import { heroArchetype } from "./heroArchetypes";
+import { combatClassForHero } from "./combatSkills";
 import { GOLD_CURRENCY_ID, RECRUITABLE_HERO_IDS, heroRecruitCost, isPlayableHeroID } from "./progression";
 import type { SlotIndex } from "./stageRun";
 import { combatPower, equipProblems, equippedIn, grindFighterStats, ownedGear, stageHeroStats, totalBonuses,
@@ -727,7 +728,7 @@ export class IdleSession {
       const final = usable && archetype ? stageHeroStats(usable.baseFighter, archetype,
         totalBonuses(this.gearItems, usable.id), petBonus(this.petState)) : null;
       return { index, unlocked: index <= this.activeCapacity, hero: usable && archetype ? {
-        id: usable.id, classId: usable.classID, level: Math.max(1, usable.rank),
+        id: usable.id, classId: combatClassForHero(usable.id, usable.classID), level: Math.max(1, usable.rank),
         ...final!, combatType: archetype.combatType, projectile: archetype.projectile,
       } : null };
     });

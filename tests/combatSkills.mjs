@@ -1,14 +1,17 @@
 import assert from "node:assert/strict";
-import { COMBAT_SKILLS } from "../src/modules/idle-rpg/game/combatSkills.ts";
+import { COMBAT_SKILLS, combatClassForHero } from "../src/modules/idle-rpg/game/combatSkills.ts";
 import { HERO_ARCHETYPES } from "../src/modules/idle-rpg/game/heroArchetypes.ts";
 import { StageRun, damage } from "../src/modules/idle-rpg/game/stageRun.ts";
 
 const source = (id) => {
   const role = HERO_ARCHETYPES[id];
-  return { id, classId: id, level: 1, maxHp: 1000, attack: 20, defence: 0,
+  const rosterClass = { Knight: "Warrior", Archer: "Ranger", Mage: "Mage" }[id];
+  return { id, classId: combatClassForHero(id, rosterClass), level: 1, maxHp: 1000, attack: 20, defence: 0,
     attackSpeed: 1, moveSpeed: role.moveSpeed, attackRange: role.attackRange,
     combatType: role.combatType, projectile: role.projectile };
 };
+assert.deepEqual(["Knight", "Archer", "Mage"].map((id) => source(id).classId),
+  ["Knight", "Archer", "Mage"], "live roster classes resolve to skill classes");
 const enemy = (defence = 0) => ({ type: "Target", maxHp: 10000, attack: 1,
   defence, attackSpeed: 1, moveSpeed: 0, attackRange: 0.1 });
 const stage = (enemies, distance = 1) => ({ id: "skills", chapter: 1, stage: 1,

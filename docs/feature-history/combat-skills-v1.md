@@ -60,3 +60,12 @@ from `combatSkills.ts`; only prose and visual identity live in the UI. The roste
 hero IDs Knight/Archer/Mage, so the card receives `hero.id`. The dialog can scroll
 on short screens and remains independent of current party formation. Combat
 simulation, stage state and Title data were not changed.
+
+## Live roster class mapping fix
+
+The Title roster reports ClassID `Warrior` for Knight and `Ranger` for Archer.
+DEV combat QA used hero IDs as class IDs, so those two skills worked in preview
+while live formation had no matching skill or cooldown bar. `IdleSession.syncParty`
+now resolves the combat class from the playable hero ID when it creates a
+`StageRun` source. The roster's original ClassID remains available for other
+systems. Combat skill tests use the live roster values before that mapping.

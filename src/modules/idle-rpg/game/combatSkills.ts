@@ -26,6 +26,11 @@ export function skillFor(classId: string) {
   return COMBAT_SKILLS[classId as SkillClass] as typeof COMBAT_SKILLS[SkillClass] | undefined;
 }
 
+/** Combat uses playable hero IDs; Title roster ClassID is Warrior/Ranger/Mage. */
+export function combatClassForHero(heroId: string, rosterClassId: string): string {
+  return skillFor(heroId)?.classId ?? rosterClassId;
+}
+
 export function skillById(id: SkillId) {
   return Object.values(COMBAT_SKILLS).find((skill) => skill.id === id)!;
 }
