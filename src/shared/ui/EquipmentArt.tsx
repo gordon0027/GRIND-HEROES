@@ -2,7 +2,8 @@ import type { CSSProperties, ReactNode } from "react";
 import { equipmentRarityColors } from "./equipmentRarity";
 import "./equipment-art.css";
 
-const assetRoot = `${import.meta.env.BASE_URL}assets/ui/`;
+const publicAssetRoot = `${import.meta.env.BASE_URL}assets/`;
+const assetRoot = `${publicAssetRoot}ui/`;
 
 /** Item definitions use paths relative to public/, while older art uses symbolic icon names. */
 export function equipmentImageSource(ref: string | null | undefined): string | null {
@@ -13,6 +14,9 @@ export function equipmentImageSource(ref: string | null | undefined): string | n
     return `${assetRoot}source/Component/Icon_FunctionIcons_(Original)/${ref.replace(/\.png$/, "")}.png`;
   if (ref.startsWith("icon_"))
     return `${assetRoot}source/Component/Icon_Icons_(Original)/${ref.replace(/\.png$/, "")}.png`;
+  // Catalog paths arrive at runtime and must use the same art root as bundled UI.
+  if (/^(?:\.\/)?assets\//.test(ref))
+    return `${publicAssetRoot}${ref.replace(/^(?:\.\/)?assets\//, "")}`;
   return `${import.meta.env.BASE_URL}${ref.replace(/^\/+/, "")}`;
 }
 
