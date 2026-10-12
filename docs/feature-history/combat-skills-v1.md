@@ -45,3 +45,18 @@ brighter trail embers and a layered impact with ground fire. Short skill effects
 retain world anchors while the camera scrolls. Feedback objects remain capped
 and are cleaned up on scene reset. DEV render diagnostics expose cast counts and
 cooldown seconds for runtime QA, with no new timers or simulation changes.
+
+## Hero Active Skill UI V1
+
+The Inventory hero stats dialog shows an informational Active Skill card below
+combat stats. It uses the same fantasy panel framing and keeps equipment controls
+in their existing layout. Knight, Archer and Mage have distinct code-drawn icons
+and colors. AUTO means the skill fires in combat without player input; there is
+no equip, unlock, upgrade or manual-cast control.
+
+`activeSkillPresentation.ts` formats damage, speed bonus, duration and cooldown
+from `combatSkills.ts`; only prose and visual identity live in the UI. The roster's
+`ClassID` values are Warrior/Ranger/Mage, while skill config is keyed by playable
+hero IDs Knight/Archer/Mage, so the card receives `hero.id`. The dialog can scroll
+on short screens and remains independent of current party formation. Combat
+simulation, stage state and Title data were not changed.

@@ -11,6 +11,7 @@ import { EquipmentArt } from "../../../shared/ui/EquipmentArt";
 import { GearStatRows } from "./GearStatRows";
 import { PremiumChestPanel } from "./PremiumChestPanel";
 import { PetsSection } from "./PetsSection";
+import { ActiveSkillCard } from "./ActiveSkillCard";
 import "./management-sections.css";
 
 const slotGroups: [GearSlot[], GearSlot[]] = [["Helmet", "Armor", "Gloves"], ["Weapon", "Offhand", "Boots"]];
@@ -130,6 +131,7 @@ function HeroStatsDialog({ session, heroID, close }: { session: IdleSession; her
       <HeroXp hero={hero} />
       <div className="gh-hero-stats-dialog__stats">{rows.map(([label, value]) =>
         <div key={label}><span>{label}</span><strong>{number(value)}</strong></div>)}</div>
+      <ActiveSkillCard heroID={hero.id} />
     </section>
   </div>;
 }

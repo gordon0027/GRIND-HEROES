@@ -1,0 +1,18 @@
+.gh-active-skill{--skill-accent:#ffd367;--skill-glow:#ffd36733;margin-top:15px;padding:11px 12px 12px;border:1px solid #a47c43;background:linear-gradient(145deg,#3a2c20,#241e1b 62%,#201b19);box-shadow:inset 0 1px #e0b76b4d,0 3px 9px #0005;color:#eadcc2}
+.gh-active-skill--archer{--skill-accent:#8df269;--skill-glow:#8df2692e}
+.gh-active-skill--mage{--skill-accent:#ff8a4d;--skill-glow:#ff713a38}
+.gh-active-skill__heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid #8568468a;color:#d9b775;font:800 10px system-ui,sans-serif;letter-spacing:.14em}
+.gh-active-skill__auto{padding:3px 6px;border:1px solid #95814c;border-radius:3px;background:#504329;color:#f5d98f;font:800 9px system-ui,sans-serif;letter-spacing:.1em;cursor:help}
+.gh-active-skill__body{display:flex;align-items:flex-start;gap:11px;min-width:0}
+.gh-active-skill__icon{box-sizing:border-box;display:grid;flex:none;place-items:center;width:60px;height:60px;border:2px solid #917046;border-radius:5px;background:radial-gradient(circle at 50% 45%,var(--skill-glow),transparent 70%),linear-gradient(145deg,#433224,#211c19);box-shadow:inset 0 0 0 2px #1c1713,0 2px 5px #0008;color:var(--skill-accent)}
+.gh-active-skill__icon svg{width:49px;height:49px;filter:drop-shadow(0 0 5px var(--skill-glow))}
+.gh-active-skill__copy{min-width:0}.gh-active-skill__title{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px}
+.gh-active-skill__title h4{margin:0;color:var(--skill-accent);font:700 18px Georgia,serif;text-shadow:0 1px 1px #000}
+.gh-active-skill__title span{color:#bca98d;font:700 10px system-ui,sans-serif}
+.gh-active-skill__copy p{margin:5px 0 0;color:#e1d0b1;font:12px/1.4 system-ui,sans-serif}
+.gh-active-skill__details{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.gh-active-skill__details>div{display:grid;gap:3px;min-width:0;padding:6px 8px;border:1px solid #675137;background:#211c18a8}
+.gh-active-skill__details span{color:#b7a27f;font:800 9px system-ui,sans-serif;letter-spacing:.08em}
+.gh-active-skill__details strong{color:#f0dcba;font:700 11px system-ui,sans-serif}
+.gh-active-skill__cooldown strong{color:var(--skill-accent)}
+@media(max-width:560px){.gh-active-skill{padding:9px}.gh-active-skill__body{gap:9px}.gh-active-skill__icon{width:52px;height:52px}.gh-active-skill__icon svg{width:44px;height:44px}.gh-active-skill__title h4{font-size:16px}.gh-active-skill__details{gap:5px}.gh-active-skill__details>div{padding:5px 6px}}
