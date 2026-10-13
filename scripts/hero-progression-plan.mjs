@@ -1,4 +1,4 @@
-/** Read Character via iDos MCP, apply this plan, then save to DEV only. */
+/** Read Character via iDos MCP, apply this plan; PROD requires explicit release authorization. */
 export function heroProgressionPlan(section) {
   const next = structuredClone(section);
   for (const id of ["Knight", "Archer", "Mage"]) {

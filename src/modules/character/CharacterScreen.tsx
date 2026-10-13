@@ -298,7 +298,6 @@ function Heroes({
           label={t("rank")}
           value={`${hero.rank}${ladder?.MaxRank ? ` / ${ladder.MaxRank}` : ""}`}
         />
-        <Stat label={t("power")} value={formatAmount(hero.power)} />
       </div>
       {hero.state === "locked" ? null : nextRank === null ? (
         <div style={{ ...outlined, fontSize: 13, color: v.textDim }}>
@@ -673,7 +672,7 @@ function HeroesPopup({
                 {catalog.localize(e.def.Identity?.DisplayName ?? e.id)}
               </div>
               <div style={{ ...outlined, fontSize: 12, color: v.textDim }}>
-                {t("rank")} {e.rank} · {t("power")} {formatAmount(e.power)}
+                {t("rank")} {e.rank}
               </div>
               {e.id === current ? (
                 <span style={{ ...outlined, fontSize: 13, color: v.gold }}>

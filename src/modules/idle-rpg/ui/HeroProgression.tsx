@@ -42,7 +42,7 @@ export function HeroProgression({ session, heroID }: { session: IdleSession; her
       <p className="gh-upgrade-hint">Next milestone: Level {hero.rank < 5 ? "5 · passive skill" : "10 · active skill mastery"}</p>
     </> : <p className="gh-upgrade-max">Maximum level reached · active skill mastered</p>}
     {upgrade.error ? <p role="alert" className="gh-hero-window__error">{upgrade.error}</p> : null}
-    {upgrade.notice ? <p role="status" className="gh-upgrade-success">{upgrade.notice}</p> : null}
+    {upgrade.notice && upgrade.noticeHeroID === heroID ? <p role="status" className="gh-upgrade-success">{upgrade.notice}</p> : null}
     <p className="gh-upgrade-hint">Stage Mastery uses your existing XP to unlock equipment. GOLD levels improve combat stats and skills.</p>
     <h3 className="gh-skills-heading">Skills</h3><ActiveSkillCard heroID={heroID} level={hero.rank} progression />
     <article className={`gh-passive${hero.rank < 5 ? " is-locked" : ""}`}>

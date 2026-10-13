@@ -7,13 +7,14 @@ export class HeroUpgrade {
   busy = false;
   error: string | null = null;
   notice: string | null = null;
+  noticeHeroID: string | null = null;
   private client: IDosGamesClient;
   private changed: () => void;
   constructor(client: IDosGamesClient, changed: () => void) { this.client = client; this.changed = changed; }
 
   async upgrade(hero: HeroView): Promise<void> {
     if (this.busy || heroLevelCost(hero.def, hero.rank) === null) return;
-    this.busy = true; this.error = null; this.notice = null; this.changed();
+    this.busy = true; this.error = null; this.notice = null; this.noticeHeroID = hero.id; this.changed();
     try {
       const result = await this.client.character.upgradeCharacterLevel(hero.id, { targetLevel: hero.rank + 1 });
       if (!result.ok) throw new Error(String(result.error ?? result.reason));
