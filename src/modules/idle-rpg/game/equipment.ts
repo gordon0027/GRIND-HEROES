@@ -99,7 +99,7 @@ export function equipProblems(item: GearItem, heroID: string, heroLevel: number,
   if (!unlocked) problems.push("Hero is locked");
   if (!heroSlots.has(item.slot)) problems.push(`No ${item.slot} slot`);
   if (!gearAllowsHero(item, heroID)) problems.push(`Requires ${item.allowedHeroes.join(" / ")}`);
-  if (heroLevel < item.requiredLevel) problems.push(`Requires Lv ${item.requiredLevel}`);
+  if (heroLevel < item.requiredLevel) problems.push(`Requires Mastery ${item.requiredLevel}`);
   if (item.equippedBy && item.equippedBy.heroID !== heroID)
     problems.push(`Equipped by ${item.equippedBy.heroID}`);
   if (item.equippedBy?.heroID === heroID) problems.push("Already equipped");

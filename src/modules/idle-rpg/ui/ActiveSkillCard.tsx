@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { activeSkillPresentation, type ActiveSkillPresentation } from "./activeSkillPresentation";
 import "./active-skill.css";
 
-function SkillIcon({ classId }: { classId: ActiveSkillPresentation["classId"] }): ReactNode {
+export function SkillIcon({ classId }: { classId: ActiveSkillPresentation["classId"] }): ReactNode {
   if (classId === "Knight") return <svg viewBox="0 0 64 64" aria-hidden="true" fill="none">
     <path d="M11 53C20 32 37 17 57 9" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
     <path d="M16 43c12-15 25-24 39-28L41 33 27 47" fill="currentColor" opacity=".82" />
@@ -23,8 +23,8 @@ function SkillIcon({ classId }: { classId: ActiveSkillPresentation["classId"] })
   </svg>;
 }
 
-export function ActiveSkillCard({ heroID }: { heroID: string }): ReactNode {
-  const skill = activeSkillPresentation(heroID);
+export function ActiveSkillCard({ heroID, level = 1, progression = false }: { heroID: string; level?: number; progression?: boolean }): ReactNode {
+  const skill = activeSkillPresentation(heroID, level, progression);
   if (!skill) return null;
   return <section className={`gh-active-skill gh-active-skill--${skill.classId.toLowerCase()}`}
     aria-label={`${skill.name} active skill`} data-skill-id={skill.id}>

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useIDosGamesClient, useUserState } from "@idosgames/react";
 import { waitForAuthoritativeGh, wholeGh } from "./ghBalance";
+import { useDialogFocus } from "../../shared/ui/useDialogFocus";
 
 interface EarningsOverview {
   day: string;
@@ -54,6 +55,7 @@ export function Earnings(): React.ReactNode {
   const client = useIDosGamesClient();
   const user = useUserState();
   const [open, setOpen] = useState(false);
+  const dialogRef = useDialogFocus(() => setOpen(false), open);
   const [loading, setLoading] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -195,7 +197,7 @@ export function Earnings(): React.ReactNode {
     {open && createPortal(<div className="gh-earnings-overlay" onClick={(event) => {
       if (event.target === event.currentTarget) setOpen(false);
     }}>
-      <section className="gh-earnings-dialog" role="dialog" aria-modal="true" aria-labelledby="gh-earnings-title">
+      <section ref={dialogRef} className="gh-earnings-dialog" role="dialog" aria-modal="true" aria-labelledby="gh-earnings-title">
         <header className="gh-earnings-dialog__header">
           <div><small>GRIND HEROES / POWER REWARDS</small><h2 id="gh-earnings-title">GH Earnings</h2></div>
           <button type="button" aria-label="Close earnings" onClick={() => setOpen(false)}>×</button>

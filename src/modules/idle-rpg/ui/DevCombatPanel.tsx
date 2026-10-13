@@ -9,6 +9,7 @@ export function DevCombatPanel({ session }: { session: IdleSession }) {
   const [tier, setTier] = useState<PreviewTier>("Rare");
   const [count, setCount] = useState(3);
   const [pet, setPet] = useState("pet_gold_v1");
+  const [level, setLevel] = useState(1);
   if (!session.devPreviewAvailable) return null;
   return <details style={{ position: "absolute", left: 8, top: 115, zIndex: 10,
     pointerEvents: "auto", background: "#171f2ee8", color: "#eee", padding: 5, fontSize: 11 }}>
@@ -28,7 +29,10 @@ export function DevCombatPanel({ session }: { session: IdleSession }) {
         <option value="">No pet</option><option value="pet_gold_v1">Donkey</option>
         <option value="pet_gems_v1">Pug</option><option value="pet_gh_v1">Watchdog</option>
       </select>
-      <button onClick={() => session.previewCombat(stage, tier, count, pet || null)}>Start QA preview</button>
+      <select aria-label="QA hero level" value={level} onChange={e => setLevel(Number(e.target.value))}>
+        {[1,5,10].map(n => <option key={n} value={n}>Level {n} skills</option>)}
+      </select>
+      <button onClick={() => session.previewCombat(stage, tier, count, pet || null, level)}>Start QA preview</button>
       <button onClick={() => { session.previewPaused = !session.previewPaused; }}>Pause / resume QA</button>
       <button onClick={() => { session.previewHoldKind = "next"; session.previewHoldCombat = true; }}>Hold next combat</button>
       <button onClick={() => { session.previewHoldKind = "dense"; session.previewHoldCombat = true; }}>Hold six enemies</button>
@@ -36,6 +40,8 @@ export function DevCombatPanel({ session }: { session: IdleSession }) {
       <button onClick={() => { session.previewRate = session.previewRate === 1 ? 4 : 1; }}>QA speed 1× / 4×</button>
       <button onClick={() => session.setDevPreview(null)}>Exit QA preview</button>
       <output>{session.run.state} · {session.run.enemies.length} enemies · {session.previewPaused ? "paused" : "playing"} · no rewards</output>
+      {session.isDevPreview ? <output aria-label="QA progression effects">{session.run.heroes.map(h =>
+        `${h.id} L${h.level}: attacks ${h.passiveAttacks}, shield ${h.shieldHp}, buff ${h.skillBuffRemaining.toFixed(1)}s`).join("; ")} · burning {session.run.enemies.filter(e => e.burn).length}</output> : null}
       <output aria-label="QA render metrics">{JSON.stringify(session.renderDiagnostics)}</output>
     </div>
   </details>;

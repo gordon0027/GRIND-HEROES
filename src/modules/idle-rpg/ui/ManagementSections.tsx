@@ -12,6 +12,9 @@ import { GearStatRows } from "./GearStatRows";
 import { PremiumChestPanel } from "./PremiumChestPanel";
 import { PetsSection } from "./PetsSection";
 import { ActiveSkillCard } from "./ActiveSkillCard";
+import { HeroProgression } from "./HeroProgression";
+import { heroLevelEnabled } from "../game/heroLevel";
+import { useDialogFocus } from "../../../shared/ui/useDialogFocus";
 import "./management-sections.css";
 
 const slotGroups: [GearSlot[], GearSlot[]] = [["Helmet", "Armor", "Gloves"], ["Weapon", "Offhand", "Boots"]];
@@ -60,7 +63,7 @@ function HeroXp({ hero }: { hero: HeroView }): ReactNode {
     aria-valuenow={capped ? 1 : hero.xp} aria-valuemax={needed}>
     <div className="gh-hero-xp__track">
       <div className="gh-hero-xp__fill" style={{ width: `${capped ? 100 : Math.min(100, hero.xp / needed * 100)}%` }} />
-      <span className="gh-hero-xp__text">{capped ? "MAX LEVEL" : `${hero.xp} / ${needed} XP`}</span>
+      <span className="gh-hero-xp__text">{capped ? "MAX MASTERY" : `Mastery ${hero.level} · ${hero.xp}/${needed}`}</span>
     </div>
   </div>;
 }
@@ -86,7 +89,7 @@ function HeroEquipment({ session, heroID, selectedID, selectItem, showStats }: {
       {hero ? <HeroIcon id={hero.id} /> : null}
       <div className="gh-hero-portrait__caption">
         <strong>{hero?.name ?? heroID}</strong>
-        <span>Lv {hero?.level ?? 1} · Power {session.heroPower(heroID)}</span>
+        <span>Lv {hero?.rank ?? 1} · Power {session.heroPower(heroID)}</span>
       </div>
       {hero ? <HeroXp hero={hero} /> : null}
     </div>
@@ -104,6 +107,7 @@ function HeroEquipment({ session, heroID, selectedID, selectItem, showStats }: {
 }
 
 function HeroStatsDialog({ session, heroID, close }: { session: IdleSession; heroID: string; close: () => void }): ReactNode {
+  const dialogRef = useDialogFocus(close);
   const hero = session.roster.find((entry) => entry.id === heroID);
   const stats = session.heroCombatStats(heroID);
   useEffect(() => {
@@ -121,17 +125,17 @@ function HeroStatsDialog({ session, heroID, close }: { session: IdleSession; her
   return <div className="gh-hero-stats-overlay" onClick={(event) => {
     if (event.target === event.currentTarget) close();
   }}>
-    <section className="gh-hero-stats-dialog" role="dialog" aria-modal="true" aria-label={`${hero.name} stats`}
+    <section ref={dialogRef} className="gh-hero-stats-dialog" role="dialog" aria-modal="true" aria-label={`${hero.name} stats`}
       style={{ borderImageSource: `url("${heroUi.panel}")` }}>
       <button type="button" className="gh-hero-stats-dialog__close" onClick={close} aria-label="Close hero stats">×</button>
       <div className="gh-hero-stats-dialog__hero">
         <HeroIcon id={hero.id} small />
-        <div><span>HERO STATS</span><h3>{hero.name}</h3><p>Lv {hero.level} · Power {session.heroPower(heroID)}</p></div>
+        <div><span>HERO STATS</span><h3>{hero.name}</h3><p>Lv {hero.rank} · Power {session.heroPower(heroID)}</p></div>
       </div>
       <HeroXp hero={hero} />
       <div className="gh-hero-stats-dialog__stats">{rows.map(([label, value]) =>
         <div key={label}><span>{label}</span><strong>{number(value)}</strong></div>)}</div>
-      <ActiveSkillCard heroID={hero.id} />
+      <ActiveSkillCard heroID={hero.id} level={hero.rank} progression={heroLevelEnabled(hero.def)} />
     </section>
   </div>;
 }
@@ -146,7 +150,7 @@ function ItemDetails({ session, heroID, item, close }: {
     <div className="gh-item-detail__header">
       <img src={itemImage(item, item.slot, heroID)} alt="" />
       <div><strong style={{ color: rarityColors[item.rarity] }}>{item.name}</strong>
-        <small>{item.rarity} · {item.slot} · Requires Lv {item.requiredLevel}</small></div>
+        <small>{item.rarity} · {item.slot} · Requires Mastery {item.requiredLevel}</small></div>
       <button type="button" onClick={close} aria-label="Close item details">×</button>
     </div>
     {current && current.instanceID !== item.instanceID ? <p className="gh-item-detail__compare">Compared with {current.name}</p> : null}
@@ -177,7 +181,7 @@ function InventoryGrid({ session, heroID, selectedID, selectItem }: {
         const levelLocked = heroLevel < item.requiredLevel;
         return <ItemSlot key={item.instanceID} item={item} slot={item.slot} heroID={heroID}
           selected={selectedID === item.instanceID} incompatible={incompatible} levelLocked={levelLocked}
-          label={`${item.name}, ${item.rarity}, ${item.slot}, requires Lv ${item.requiredLevel}${incompatible ? `, requires ${item.allowedHeroes.join(" or ")}` : ""}`}
+          label={`${item.name}, ${item.rarity}, ${item.slot}, requires Mastery ${item.requiredLevel}${incompatible ? `, requires ${item.allowedHeroes.join(" or ")}` : ""}`}
           onClick={() => selectItem(item.instanceID)} />;
       })}
     </div> : <p className="gh-empty">Clear stages for gear and chests. Open earned Stage Chests on Play; their equipment appears here.</p>}
@@ -220,7 +224,7 @@ function FormationPanel({ session, heroID, selectHero }: {
       return <button type="button" key={hero.id} className={`gh-roster-card${heroID === hero.id ? " gh-roster-card--selected" : ""}`}
         onClick={() => assign(hero)} aria-label={`${hero.name}${position ? `, party slot ${position}` : ""}`}>
         <HeroIcon id={hero.id} small />
-        <span><strong>{hero.name}</strong><small>Lv {hero.level}</small></span>
+        <span><strong>{hero.name}</strong><small>Lv {hero.rank}</small></span>
         {position ? <b className="gh-roster-card__position">{position}</b> : null}
       </button>;
     })}{RECRUITABLE_HERO_IDS.some((id) => !session.ownedHeroIDs().has(id)) ?
@@ -271,7 +275,8 @@ function PurchaseDialog({ title, detail, amount, busy, disabled, error, confirm,
   title: string; detail: string; amount: number | null; busy: boolean; disabled: boolean;
   error: string | null; confirm: () => void; close: () => void;
 }): ReactNode {
-  return <div className="gh-purchase-overlay"><section className="gh-purchase-dialog" role="dialog" aria-modal="true" aria-label={title}
+  const dialogRef = useDialogFocus(close);
+  return <div className="gh-purchase-overlay" onClick={e => { if (e.target === e.currentTarget) close(); }}><section ref={dialogRef} className="gh-purchase-dialog" role="dialog" aria-modal="true" aria-label={title}
     style={{ borderImageSource: `url("${heroUi.panel}")` }}>
     <button className="gh-purchase-dialog__close" type="button" onClick={close} aria-label="Close purchase">×</button>
     <h3>{title}</h3><p>{detail}</p>
@@ -284,14 +289,15 @@ function PurchaseDialog({ title, detail, amount, busy, disabled, error, confirm,
 
 function RecruitHeroDialog({ session, close }: { session: IdleSession; close: () => void }): ReactNode {
   const [chosen, setChosen] = useState<string | null>(null);
+  const dialogRef = useDialogFocus(close, !chosen);
   const available = RECRUITABLE_HERO_IDS.map((id) => session.roster.find((hero) => hero.id === id))
     .filter((hero): hero is HeroView => !!hero && hero.rank <= 0);
   const hero = available.find((entry) => entry.id === chosen);
   if (hero) return <PurchaseDialog title={`Recruit ${hero.name}`} detail="This hero joins your roster. Party slots unlock separately."
     amount={session.recruitCost(hero.id)} busy={session.recruitBusy} error={session.recruitError}
-    disabled={false} close={() => setChosen(null)}
+    disabled={session.balance("GOLD") < (session.recruitCost(hero.id) ?? Infinity)} close={() => setChosen(null)}
     confirm={async () => { if (await session.recruitHero(hero.id)) close(); }} />;
-  return <div className="gh-purchase-overlay"><section className="gh-purchase-dialog" role="dialog" aria-modal="true" aria-label="Recruit Hero"
+  return <div className="gh-purchase-overlay" onClick={e => { if (e.target === e.currentTarget) close(); }}><section ref={dialogRef} className="gh-purchase-dialog" role="dialog" aria-modal="true" aria-label="Recruit Hero"
     style={{ borderImageSource: `url("${heroUi.panel}")` }}>
     <button className="gh-purchase-dialog__close" type="button" onClick={close} aria-label="Close recruitment">×</button>
     <h3>Recruit Hero</h3><div className="gh-recruit-options">{available.map((entry) => <button type="button" key={entry.id}
@@ -333,6 +339,7 @@ export function InventorySection({ session }: { session: IdleSession }): ReactNo
         <HeroSelector session={session} chosenHero={chosenHero} pick={setPreferredHeroID} />
         <HeroEquipment session={session} heroID={chosenHero} selectedID={selectedID} selectItem={setSelectedID}
           showStats={() => setStatsOpen(true)} />
+        <HeroProgression session={session} heroID={chosenHero} />
       </div>
       <div className="gh-management__items-column">
         <InventoryGrid session={session} heroID={chosenHero} selectedID={selectedID} selectItem={setSelectedID} />
@@ -361,7 +368,8 @@ export function TeamSection({ session }: { session: IdleSession }): ReactNode {
       <button type="button" onClick={() => { setShowLeaderboard((open) => !open); if (!showLeaderboard) void session.loadTeamLeaderboard(); }}>
         {showLeaderboard ? "Back to team" : "Power leaderboard"}</button></div>
     {session.teamPowerError && !showLeaderboard ? <p role="alert" className="gh-hero-window__error">{session.teamPowerError}</p> : null}
-    {showLeaderboard ? <PowerLeaderboard session={session} /> : <FormationPanel session={session} heroID={heroID} selectHero={setHeroID} />}
+    {showLeaderboard ? <PowerLeaderboard session={session} /> : <><FormationPanel session={session} heroID={heroID} selectHero={setHeroID} />
+      <HeroProgression session={session} heroID={heroID} /></>}
     </>}
   </SectionFrame>;
 }

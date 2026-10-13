@@ -4,6 +4,8 @@
 import { enemySpawnX } from "./encounterLayout.ts";
 import { heroAttackTiming, enemyAttackTiming, scaledEventDelay } from "./combatTiming.ts";
 import { COMBAT_SKILLS, effectiveAttackSpeed, skillFor, type SkillId } from "./combatSkills.ts";
+import { HERO_SKILLS } from "./progressionSkills.ts";
+import { advanceBurns, shieldedDamage } from "./progressionCombat.ts";
 
 export const MAX_PARTY_SIZE = 3;
 export type SlotIndex = 1 | 2 | 3;
@@ -14,6 +16,7 @@ export type ProjectileType = "ARROW" | "MAGIC_ORB" | "METEOR_FIREBALL";
 export interface ProjectileSpec { type: ProjectileType; speed: number; releaseDelay: number }
 
 export interface HeroSource {
+  progressionSkills?: boolean;
   id: string;
   classId: string;
   level: number;
@@ -83,10 +86,15 @@ export interface RuntimeHero extends HeroSource {
   cooldown: number;
   skillCooldown: number;
   skillBuffRemaining: number;
+  passiveAttacks: number;
+  shieldUsed: boolean;
+  shieldHp: number;
+  shieldRemaining: number;
   pendingImpact: { targetId: number; damage: number; remaining: number; skillId?: SkillId } | null;
 }
 
 export interface RuntimeEnemy extends EnemyDefinition {
+  burn?: { attackerId: string; damage: number; ticks: number; remaining: number };
   id: number;
   formationIndex: number;
   hp: number;
@@ -109,6 +117,8 @@ export interface PendingProjectile {
   skillId?: SkillId;
   impactX?: number;
   empowered?: boolean;
+  mastery?: boolean;
+  burnDamage?: number;
   originX: number;
   targetX: number;
   elapsed: number;
@@ -280,6 +290,7 @@ export class StageRun {
         travelDistance: rear.length ? Math.min(...rear.map((member) => member.travelDistance)) : this.distance,
         cooldown: 0, skillCooldown: inherited?.cooldown ?? 0,
         skillBuffRemaining: inherited?.buffRemaining ?? 0, pendingImpact: null,
+        passiveAttacks: 0, shieldUsed: false, shieldHp: 0, shieldRemaining: 0,
       };
       this.runHeroStates.set(source.id, hero);
       return [hero];
@@ -339,6 +350,8 @@ export class StageRun {
       if (!hero.alive) continue;
       hero.skillCooldown = Math.max(0, hero.skillCooldown - dt);
       hero.skillBuffRemaining = Math.max(0, hero.skillBuffRemaining - dt);
+      hero.shieldRemaining = Math.max(0, hero.shieldRemaining - dt);
+      if (hero.shieldRemaining === 0) hero.shieldHp = 0;
     }
     if (this.state === "running") {
       const living = this.heroes.filter((hero) => hero.alive);
@@ -367,6 +380,7 @@ export class StageRun {
       return;
     }
     this.advanceImpacts(dt, events);
+    advanceBurns(this.enemies, dt, (enemy, amount, attacker) => this.hitEnemy(enemy, amount, "MAGIC_ORB", events, attacker));
     if (this.enemies.length === 0) return this.finishEncounter(events);
     for (const hero of this.heroes.filter((h) => h.alive)) this.actHero(hero, dt, events);
     this.advanceProjectiles(dt, events);
@@ -428,16 +442,20 @@ export class StageRun {
     if (hero.cooldown > 0) return;
     const skill = skillFor(hero.classId);
     const cast = skill && hero.skillCooldown <= 0 && hero.skillBuffRemaining <= 0 ? skill : null;
+    const passive = hero.progressionSkills && hero.level >= HERO_SKILLS.passiveLevel;
+    const mastery = hero.progressionSkills && hero.level >= HERO_SKILLS.masteryLevel;
+    hero.passiveAttacks++;
+    const precision = passive && hero.classId === "Archer" && hero.passiveAttacks % HERO_SKILLS.Archer.everyAttacks === 0;
     if (cast) {
       hero.skillCooldown = cast.cooldown;
-      if (cast.id === COMBAT_SKILLS.Archer.id) hero.skillBuffRemaining = cast.buffDuration;
+      if (cast.id === COMBAT_SKILLS.Archer.id) hero.skillBuffRemaining = mastery ? HERO_SKILLS.mastery.Archer : cast.buffDuration;
       events.push({ type: "skillActivated", id: hero.id, skillId: cast.id, targetId: target.id });
     }
     const speed = effectiveAttackSpeed(hero.attackSpeed, hero.classId, hero.skillBuffRemaining);
     hero.cooldown = 1 / speed;
     events.push({ type: "heroAttacked", id: hero.id, targetId: target.id });
     const strike = Math.round(damage(hero.attack, target.defence) *
-      (cast?.id === COMBAT_SKILLS.Knight.id ? cast.damageMultiplier : 1));
+      (cast?.id === COMBAT_SKILLS.Knight.id ? (mastery ? HERO_SKILLS.mastery.Knight : cast.damageMultiplier) : precision ? HERO_SKILLS.Archer.damageMultiplier : 1));
     if (hero.combatType === "RANGED" && hero.projectile) {
       const meteor = cast?.id === COMBAT_SKILLS.Mage.id;
       this.projectiles.push({
@@ -445,7 +463,9 @@ export class StageRun {
         type: meteor ? "METEOR_FIREBALL" : hero.projectile.type, damageSnapshot: strike,
         attackSnapshot: meteor ? hero.attack : undefined,
         skillId: meteor ? cast.id : undefined, impactX: meteor ? target.x : undefined,
-        empowered: hero.classId === "Archer" && hero.skillBuffRemaining > 0,
+        empowered: precision || hero.classId === "Archer" && hero.skillBuffRemaining > 0,
+        mastery: !!mastery,
+        burnDamage: meteor && passive ? Math.max(1, Math.round(hero.attack * HERO_SKILLS.Mage.attackFraction)) : undefined,
         originX: hero.x, targetX: target.x,
         elapsed: -Math.max(0, scaledEventDelay(heroAttackTiming(hero.id),
           speed, hero.projectile.releaseDelay)),
@@ -514,7 +534,9 @@ export class StageRun {
         for (const enemy of [...this.enemies]) {
           if (Math.abs(enemy.x - center) > COMBAT_SKILLS.Mage.aoeRadius) continue;
           this.hitEnemy(enemy, Math.round(damage(shot.attackSnapshot ?? 1, enemy.defence) *
-            COMBAT_SKILLS.Mage.damageMultiplier), shot.type, events, shot.attackerId, shot.skillId);
+            (shot.mastery ? HERO_SKILLS.mastery.Mage : COMBAT_SKILLS.Mage.damageMultiplier)), shot.type, events, shot.attackerId, shot.skillId);
+          if (enemy.alive && shot.burnDamage) enemy.burn = { attackerId: shot.attackerId,
+            damage: shot.burnDamage, ticks: HERO_SKILLS.Mage.ticks, remaining: HERO_SKILLS.Mage.interval };
         }
         continue;
       }
@@ -542,6 +564,7 @@ export class StageRun {
   }
 
   private hitHero(target: RuntimeHero, amount: number, attackerId: number, events: RunEvent[]): void {
+    amount = shieldedDamage(target, amount);
     target.hp = Math.max(0, target.hp - amount);
     events.push({ type: "enemyAttacked", id: attackerId, targetId: target.id, damage: amount });
     if (target.hp > 0) return;

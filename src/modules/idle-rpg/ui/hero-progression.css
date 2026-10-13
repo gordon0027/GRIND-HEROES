@@ -1,0 +1,13 @@
+.gh-hero-progression{box-sizing:border-box;width:min(100%,440px);padding:14px;border:1px solid #927048;background:#292018;color:#f1ddba}
+.gh-hero-progression header{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.gh-hero-progression small{font:700 10px/1.5 system-ui,sans-serif;letter-spacing:.06em;color:#c9aa77}
+.gh-hero-progression h3{margin:3px 0 10px;font-size:22px;color:#f2cd86}.gh-hero-progression h3 span{font-size:14px;color:#bba58a}
+.gh-hero-progression header>strong{font-size:14px;color:#f2cd86}
+.gh-upgrade-preview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin:6px 0 12px}
+.gh-upgrade-preview div{padding:8px 4px;background:#1d1713;border:1px solid #5f4932;text-align:center}
+.gh-upgrade-preview dt{font:11px system-ui,sans-serif;color:#c8b79d}.gh-upgrade-preview dd{margin:5px 0 0;font:600 12px system-ui,sans-serif}.gh-upgrade-preview b{color:#b6d494}
+.gh-upgrade-button{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;min-height:48px;padding:9px;border:1px solid #c39a57;border-radius:4px;background:#74502a;color:#fff0c8;font:700 14px Georgia,serif;cursor:pointer}
+.gh-upgrade-button span{display:flex;gap:5px;align-items:center}.gh-upgrade-button img{width:20px;height:20px;object-fit:contain}.gh-upgrade-button:disabled{opacity:.55;cursor:default}
+.gh-upgrade-button:not(:disabled):hover{filter:brightness(1.12)}.gh-upgrade-button:not(:disabled):active{transform:translateY(1px)}
+.gh-upgrade-hint,.gh-upgrade-success,.gh-upgrade-max{font:12px/1.5 system-ui,sans-serif;color:#cfbc9e;margin:9px 0}.gh-upgrade-success{color:#c3e2a3;border-left:3px solid #92b760;padding-left:9px}
+.gh-hero-progression .gh-skills-heading{margin-top:18px;font-size:18px}.gh-passive{display:flex;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid #6b5034}.gh-passive.is-locked{color:#b8aa95}.gh-passive__icon{flex:none;width:38px;color:#ddb671}.is-locked .gh-passive__icon{opacity:.45}.gh-passive h4{margin:3px 0;font-size:15px}.gh-passive p{margin:0;font:12px/1.5 system-ui,sans-serif}.gh-hero-progression .gh-active-skill{width:100%}

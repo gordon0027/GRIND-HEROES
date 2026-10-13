@@ -58,6 +58,7 @@ export interface StatDefView {
 }
 
 export interface CharacterDefView {
+  RankLadder?: { MaxRank?: number; FirstPaidRank?: number; PriceOptions?: PriceOptions; CostCurve?: ScalarCurveSpec | null } | null;
   CharacterID?: string;
   Identity?: {
     DisplayName?: string | null;

@@ -211,8 +211,9 @@ function Heroes({
   const skinCount = Object.keys(hero.def.Skins?.Definitions ?? {}).length;
 
   const rankUp = async () => {
+    if (busy) return;
     setBusy("rank");
-    const res = await client.character.upgradeCharacterLevel(hero.id);
+    const res = await client.character.upgradeCharacterLevel(hero.id, { targetLevel: hero.rank + 1 });
     setBusy(null);
     if (!res.ok) return toast(errorText(res.error), "error");
     kit.play("levelUp");

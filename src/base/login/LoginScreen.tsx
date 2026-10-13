@@ -602,6 +602,7 @@ export function LoginScreen({
               style={styles.input}
               type="email"
               placeholder="Email"
+              aria-label="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={busy}
@@ -612,6 +613,7 @@ export function LoginScreen({
               style={styles.input}
               type="password"
               placeholder="Password"
+              aria-label="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={busy}
@@ -681,6 +683,7 @@ export function LoginScreen({
               inputMode="numeric"
               autoComplete="one-time-code"
               placeholder="Confirmation code"
+              aria-label="Confirmation code"
               value={code}
               onChange={(e) => setCode(e.target.value)}
               disabled={busy}
@@ -732,6 +735,7 @@ export function LoginScreen({
               style={styles.input}
               type="email"
               placeholder="Email"
+              aria-label="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={busy}
@@ -772,6 +776,7 @@ export function LoginScreen({
               inputMode="numeric"
               autoComplete="one-time-code"
               placeholder="Code from the e-mail"
+              aria-label="Code from the e-mail"
               value={code}
               onChange={(e) => setCode(e.target.value)}
               disabled={busy}
@@ -783,6 +788,7 @@ export function LoginScreen({
               type="password"
               autoComplete="new-password"
               placeholder="New password"
+              aria-label="New password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={busy}

@@ -1,4 +1,5 @@
 import { COMBAT_SKILLS } from "../game/combatSkills.ts";
+import { HERO_SKILLS } from "../game/progressionSkills.ts";
 
 export type ActiveSkillPresentation = {
   id: string;
@@ -13,11 +14,12 @@ const percent = (multiplier: number) => `${Math.round(multiplier * 100)}%`;
 const seconds = (duration: number) => `${duration} seconds`;
 
 // The roster's ClassID is Warrior/Ranger/Mage; combat skills use the playable hero IDs.
-export function activeSkillPresentation(heroID: string): ActiveSkillPresentation | null {
+export function activeSkillPresentation(heroID: string, level = 1, progression = false): ActiveSkillPresentation | null {
+  const mastered = progression && level >= HERO_SKILLS.masteryLevel;
   switch (heroID) {
     case "Knight": {
       const skill = COMBAT_SKILLS.Knight;
-      const damage = percent(skill.damageMultiplier);
+      const damage = percent(mastered ? HERO_SKILLS.mastery.Knight : skill.damageMultiplier);
       return {
         id: skill.id, classId: skill.classId, name: "Crushing Blow",
         description: `Delivers a devastating sword strike dealing ${damage} damage to a single enemy.`,
@@ -28,7 +30,7 @@ export function activeSkillPresentation(heroID: string): ActiveSkillPresentation
     case "Archer": {
       const skill = COMBAT_SKILLS.Archer;
       const speed = percent(skill.attackSpeedMultiplier - 1);
-      const duration = seconds(skill.buffDuration);
+      const duration = seconds(mastered ? HERO_SKILLS.mastery.Archer : skill.buffDuration);
       return {
         id: skill.id, classId: skill.classId, name: "Rapid Fire",
         description: `Increases attack speed by ${speed} for ${duration}.`,
@@ -41,7 +43,7 @@ export function activeSkillPresentation(heroID: string): ActiveSkillPresentation
     }
     case "Mage": {
       const skill = COMBAT_SKILLS.Mage;
-      const damage = percent(skill.damageMultiplier);
+      const damage = percent(mastered ? HERO_SKILLS.mastery.Mage : skill.damageMultiplier);
       return {
         id: skill.id, classId: skill.classId, name: "Meteor Fireball",
         description: `Launches a massive fireball that explodes, dealing ${damage} damage to nearby enemies.`,

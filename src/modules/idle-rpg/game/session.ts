@@ -59,6 +59,8 @@ import { PetService, petBonus, resolvePetOffer, visiblePetId, type PetDefinition
 import type { GetStorefrontResponse } from "@idosgames/core";
 import { previewParty, type PreviewTier } from "./combatPreview";
 import type { HeroSource } from "./stageRun";
+import { HeroUpgrade } from "./heroUpgrade";
+import { heroLevelEnabled } from "./heroLevel";
 
 /** The private custom-data key of the stage progress ("." and "$" are not allowed in keys). */
 export const PROGRESS_KEY = "idle_rpg_progress";
@@ -214,11 +216,13 @@ export class IdleSession {
   private metricQueue = new Map<string, { pending: number; busy: boolean }>();
   private offClient: Array<() => void> = [];
   private ownershipRefresh: Promise<void> | null = null;
+  readonly heroUpgrade: HeroUpgrade;
 
   constructor(
     private readonly client: IDosGamesClient,
     private readonly callbacks: SessionCallbacks = {},
   ) {
+    this.heroUpgrade = new HeroUpgrade(client, () => this.changed());
     this.stageService = new StageService(client);
     this.equipmentService = new GrindEquipmentService(client);
     this.teamPowerService = new TeamPowerService(client);
@@ -661,13 +665,14 @@ export class IdleSession {
     this.selectStage(stageID);
   }
 
-  previewCombat(stageID: string, tier: PreviewTier, count: number, pet: string | null): void {
+  previewCombat(stageID: string, tier: PreviewTier, count: number, pet: string | null, level = 1): void {
     if (!this.devPreviewAvailable || !stageByID(stageID)) return;
     this.previewPaused = false;
     this.previewRate = 1;
     this.previewPauseAt = null;
     this.setDevPreview(Math.max(1, Math.min(3, count)) as 1 | 2 | 3);
-    this.previewHeroes = previewParty(tier, count);
+    this.previewHeroes = previewParty(tier, count).map(hero => ({ ...hero, level,
+      progressionSkills: true }));
     this.previewPet = ["pet_gold_v1", "pet_gems_v1", "pet_gh_v1"].includes(pet ?? "") ? pet : null;
     this.selectStage(stageID, true);
   }
@@ -729,6 +734,7 @@ export class IdleSession {
         totalBonuses(this.gearItems, usable.id), petBonus(this.petState)) : null;
       return { index, unlocked: index <= this.activeCapacity, hero: usable && archetype ? {
         id: usable.id, classId: combatClassForHero(usable.id, usable.classID), level: Math.max(1, usable.rank),
+        progressionSkills: heroLevelEnabled(usable.def),
         ...final!, combatType: archetype.combatType, projectile: archetype.projectile,
       } : null };
     });
@@ -1154,7 +1160,7 @@ export class IdleSession {
         this.refreshHero();
         const levelUps = completed.xpAwards.filter((award) => award.level > award.previousLevel);
         if (levelUps.length) {
-          this.lastLevelNotice = levelUps.map((award) => `${award.heroID} Level Up! Lv ${award.level}`).join(" · ");
+          this.lastLevelNotice = levelUps.map((award) => `${award.heroID} Mastery Up! ${award.level}`).join(" · ");
           const notice = this.lastLevelNotice;
           setTimeout(() => { if (this.lastLevelNotice === notice) { this.lastLevelNotice = null; this.changed(); } }, 3500);
         }

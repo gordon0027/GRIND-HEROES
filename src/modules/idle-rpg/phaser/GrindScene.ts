@@ -456,6 +456,14 @@ export class GrindScene extends Phaser.Scene {
         .setData("slotX", enemyGroundSlot(enemy.formationIndex).x * battleScale)
         .setData("slotY", slotY).setData("shadowWidth", (enemy.boss ? 100 : 36) * scale);
       actor.shadow.follow(x, groundY + slotY, (enemy.boss ? 100 : 36) * scale);
+      if (this.lastRun?.enemies.find(entry => entry.id === enemy.id)?.burn) {
+        const fire = this.enemyPaint!;
+        for (let ember = 0; ember < 3; ember++) {
+          const px = x + (ember - 1) * 8 * scale;
+          fire.fillStyle(0xff963f, 0.7).fillTriangle(px - 3 * scale, groundY + slotY,
+            px + 3 * scale, groundY + slotY, px, groundY + slotY - (10 + ember * 3) * scale);
+        }
+      }
       if (attacks.has(enemy.id)) {
         const speed = this.lastRun?.enemies.find((entry) => entry.id === enemy.id)?.attackSpeed ?? 1;
         actor.sprite.anims.timeScale = attackPlaybackScale(enemyAttackTiming(enemy.boss).fps, speed);

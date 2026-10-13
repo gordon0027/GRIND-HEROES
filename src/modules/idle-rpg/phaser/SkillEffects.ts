@@ -5,6 +5,10 @@ import type { RuntimeHero } from "../game/stageRun";
 /** Repainted in one Graphics object; no timers or per-frame particle objects. */
 export function drawRapidFireAura(g: Phaser.GameObjects.Graphics, hero: RuntimeHero,
   x: number, groundY: number, scale: number, time: number): void {
+  if (hero.alive && hero.shieldRemaining > 0 && hero.shieldHp > 0) {
+    g.fillStyle(0xffd367, 0.12).fillEllipse(x, groundY - 48 * scale, 64 * scale, 102 * scale);
+    g.lineStyle(2 * scale, 0xffd367, 0.75).strokeEllipse(x, groundY - 48 * scale, 64 * scale, 102 * scale);
+  }
   if (!hero.alive || hero.classId !== "Archer" || hero.skillBuffRemaining <= 0) return;
   const pulse = 0.72 + 0.15 * Math.sin(time / 125);
   g.fillStyle(0x51ee4a, 0.15 * pulse).fillEllipse(x, groundY - 52 * scale, 56 * scale, 92 * scale);
