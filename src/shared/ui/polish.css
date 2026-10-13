@@ -1,0 +1,39 @@
+:root{--gh-panel:#292018;--gh-frame:#927048;--gh-ink:#f1ddba;--gh-muted:#c9b79b;--gh-focus:#f2cd86}
+*{box-sizing:border-box}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--gh-focus);outline-offset:3px}
+button{touch-action:manipulation}
+.gh-game-section{padding-bottom:24px;scroll-padding:16px;inset-block-end:calc(74px + env(safe-area-inset-bottom))}
+.gh-game-footer{height:calc(74px + env(safe-area-inset-bottom))}
+.gh-management,.gh-pets,.gh-market{color:var(--gh-ink)}
+.gh-management__header,.gh-section-title{flex-wrap:wrap}
+.gh-power-gain{white-space:normal}
+.gh-purchase-dialog,.gh-hero-stats-dialog{max-height:calc(100dvh - 24px);overflow-y:auto;overscroll-behavior:contain}
+.gh-purchase-dialog__close,.gh-hero-stats-dialog__close,.gh-item-detail__header button{min-width:44px;min-height:44px}
+.gh-purchase-dialog h3{padding-inline:18px}
+.gh-team-tabs button,.gh-hero-window__selector button,.gh-market__tabs button,.gh-market__button,.gh-pet-card__action button,.gh-power-board>button{min-height:44px}
+.gh-hero-portrait__info{width:36px;height:36px;top:7px;right:7px}
+.gh-fantasy-button:not(:disabled):active,.gh-game-footer button:active{transform:translateY(1px)}
+.grind-frame-header__balances{min-width:0}
+.grind-frame-header__balance{min-width:0}.grind-frame-header__balance strong{overflow:hidden;text-overflow:ellipsis}
+@media(max-width:560px){
+ .gh-game-section{inset-block-end:calc(74px + env(safe-area-inset-bottom))}
+ .gh-game-footer{height:calc(74px + env(safe-area-inset-bottom))}
+ .gh-equipment{grid-template-columns:52px minmax(0,1fr) 52px;gap:4px;padding:5px}
+ .gh-equipment__entry{flex-direction:column!important;gap:2px}.gh-equipment__entry>span{font-size:10px}
+ .gh-equipment .gh-item-slot{width:46px;height:48px}
+ .gh-hero-portrait{height:222px;padding-inline:4px}.gh-hero-portrait__caption{max-width:100%}
+ .gh-hero-window__selector button{min-width:0;flex:1;padding-inline:3px}
+ .gh-team-tabs button{min-width:0;flex:1}
+ .gh-formation__slots{gap:5px}.gh-party-slot{padding-inline:2px}
+ .gh-team-power{flex-wrap:wrap;gap:8px}.gh-team-power button{min-height:44px}
+ .gh-pet-card{grid-template-columns:58px minmax(0,1fr)}.gh-pet-card__art{width:54px;height:62px}
+ .gh-pet-card__action{grid-column:1/-1;max-width:none;display:flex;justify-content:space-between;align-items:center}
+ .gh-pet-card__action button{width:auto;min-width:120px;font-size:12px}.gh-pet-card__body p{font-size:12px}
+ .gh-pet-card__action span{font-size:10px}.gh-item-detail__stats>div{flex-wrap:wrap}
+}
+@media(max-width:360px){
+ .grind-frame-header__earnings span:first-child{display:inline;font-size:18px}.grind-frame-header__earnings span:last-child{display:none}
+ .grind-frame-header__earnings{min-width:30px;padding-inline:5px}
+ .gh-hero-portrait__caption span{font-size:10px}.gh-hero-xp__text{font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){.gh-stage-hud__fill,button{transition:none!important}.gh-power-gain{animation:none}}

@@ -7,6 +7,12 @@ import { defineUiConfig } from "@idosgames/react/ui";
 // Everything is optional; what you leave out keeps its default. Uncomment and edit.
 export default defineUiConfig({
   theme: {
+    bgTop: "#29221d", bgBottom: "#141211",
+    panel: "#30261f", panelDeep: "#201914", panelEdge: "#8b6941",
+    text: "#f3e2bf", textDim: "#c3af90", gold: "#edc47c", goldDeep: "#98632c",
+    green: "#779853", greenDeep: "#425f32", blue: "#698895", blueDeep: "#354d59",
+    red: "#c67560", redDeep: "#793e34", radius: 8, buttonRadius: 5,
+    font: "Georgia, 'Times New Roman', serif",
     // bgTop: "#232a6b",          // screen background, top of the gradient
     // bgBottom: "#0d1033",       // … and bottom
     // panel: "#2c3480",          // cards and popups
@@ -19,6 +25,7 @@ export default defineUiConfig({
     // rarity: { Mythic: "#ff3df5" },   // frame colour of a rarity id (adds to Common…Legendary)
   },
   motion: {
+    intensity: 0.35, respectReducedMotion: true,
     // enabled: true,             // false — no animations at all
     // speed: 1,                  // 2 — twice as fast, 0.5 — twice as slow
     // intensity: 1,              // bounce/overshoot strength: 0 none … 2 cartoonish

@@ -9,6 +9,7 @@ import { modules } from "./modules";
 import { TITLE_ID, BUILD_KEY } from "./config";
 import { IS_DEV } from "./env";
 import ui from "./ui.config";
+import "./shared/ui/polish.css";
 
 // Тайтл зонду — отдельным вызовом: сам он встал раньше, чем config.ts успел его разрешить.
 installPreviewProbe({ titleId: TITLE_ID });
