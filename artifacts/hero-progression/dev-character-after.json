@@ -1,0 +1,888 @@
+{
+  "Definitions": {
+    "Knight": {
+      "CharacterID": "Knight",
+      "Identity": {
+        "DisplayName": "Knight",
+        "SortOrder": 0,
+        "AssetPaths": {
+          "icon": "https://static.idos.games/drive/app/98JRCAKG/v/bld10bcf682805049998dc0137ea9103491/assets/ui/icons/knight/knight_icon.png",
+          "portrait": "https://static.idos.games/drive/app/98JRCAKG/v/bld10bcf682805049998dc0137ea9103491/assets/ui/icons/knight/knight_icon.png"
+        }
+      },
+      "Classification": {
+        "ClassID": "Warrior",
+        "RarityID": "Common"
+      },
+      "Unlock": {
+        "UnlockedByDefault": true
+      },
+      "Equipment": {
+        "Slots": {
+          "Helmet": {
+            "SlotID": "Helmet",
+            "MinCharacterLevel": 0,
+            "MinItemLevel": 0,
+            "MaxItemLevel": 0
+          },
+          "Armor": {
+            "SlotID": "Armor",
+            "MinCharacterLevel": 0,
+            "MinItemLevel": 0,
+            "MaxItemLevel": 0
+          },
+          "Gloves": {
+            "SlotID": "Gloves",
+            "MinCharacterLevel": 0,
+            "MinItemLevel": 0,
+            "MaxItemLevel": 0
+          },
+          "Boots": {
+            "SlotID": "Boots",
+            "MinCharacterLevel": 0,
+            "MinItemLevel": 0,
+            "MaxItemLevel": 0
+          },
+          "Weapon": {
+            "SlotID": "Weapon",
+            "MinCharacterLevel": 0,
+            "MinItemLevel": 0,
+            "MaxItemLevel": 0
+          },
+          "Offhand": {
+            "SlotID": "Offhand",
+            "MinCharacterLevel": 0,
+            "MinItemLevel": 0,
+            "MaxItemLevel": 0
+          }
+        }
+      },
+      "Stats": {
+        "Damage": {
+          "StatID": "Damage",
+          "DisplayName": "Attack",
+          "Description": "Attack",
+          "MaxLevel": 200,
+          "Weight": 10,
+          "PriceOptions": {
+            "default": {
+              "OptionID": "default",
+              "Cost": {
+                "Standard": {
+                  "Entries": [
+                    {
+                      "Type": "VirtualCurrency",
+                      "CurrencyID": "GOLD",
+                      "Amount": 10
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "CostCurve": {
+            "Shape": "Geometric",
+            "GrowthRate": 0.012
+          },
+          "BaseStatValue": 10,
+          "ValueCurve": {
+            "Shape": "PerStep",
+            "PerStep": 2
+          }
+        },
+        "Health": {
+          "StatID": "Health",
+          "DisplayName": "HP",
+          "Description": "HP",
+          "MaxLevel": 200,
+          "Weight": 1,
+          "PriceOptions": {
+            "default": {
+              "OptionID": "default",
+              "Cost": {
+                "Standard": {
+                  "Entries": [
+                    {
+                      "Type": "VirtualCurrency",
+                      "CurrencyID": "GOLD",
+                      "Amount": 8
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "CostCurve": {
+            "Shape": "Geometric",
+            "GrowthRate": 0.012
+          },
+          "BaseStatValue": 120,
+          "ValueCurve": {
+            "Shape": "PerStep",
+            "PerStep": 24
+          }
+        },
+        "HpRegen": {
+          "StatID": "HpRegen",
+          "DisplayName": "HP Recovery",
+          "Description": "HP Recovery",
+          "MaxLevel": 200,
+          "Weight": 0,
+          "PriceOptions": {
+            "default": {
+              "OptionID": "default",
+              "Cost": {
+                "Standard": {
+                  "Entries": [
+                    {
+                      "Type": "VirtualCurrency",
+                      "CurrencyID": "GOLD",
+                      "Amount": 12
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "CostCurve": {
+            "Shape": "Geometric",
+            "GrowthRate": 0.012
+          },
+          "BaseStatValue": 1.2,
+          "ValueCurve": {
+            "Shape": "PerStep",
+            "PerStep": 0.48
+          }
+        },
+        "AttackSpeed": {
+          "StatID": "AttackSpeed",
+          "DisplayName": "Attack Speed",
+          "Description": "Attack Speed",
+          "MaxLevel": 50,
+          "Weight": 100,
+          "PriceOptions": {
+            "default": {
+              "OptionID": "default",
+              "Cost": {
+                "Standard": {
+                  "Entries": [
+                    {
+                      "Type": "VirtualCurrency",
+                      "CurrencyID": "GOLD",
+                      "Amount": 50
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "CostCurve": {
+            "Shape": "Geometric",
+            "GrowthRate": 0.03
+          },
+          "BaseStatValue": 1,
+          "ValueCurve": {
+            "Shape": "PerStep",
+            "PerStep": 0.01
+          }
+        },
+        "CritChance": {
+          "StatID": "CritChance",
+          "DisplayName": "Critical Hit",
+          "Description": "Critical Hit",
+          "MaxLevel": 50,
+          "Weight": 1000,
+          "PriceOptions": {
+            "default": {
+              "OptionID": "default",
+              "Cost": {
+                "Standard": {
+                  "Entries": [
+                    {
+                      "Type": "VirtualCurrency",
+                      "CurrencyID": "GOLD",
+                      "Amount": 40
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "CostCurve": {
+            "Shape": "Geometric",
+            "GrowthRate": 0.03
+          },
+          "BaseStatValue": 0.05,
+          "ValueCurve": {
+            "Shape": "PerStep",
+            "PerStep": 0.002
+          }
+        },
+        "CritDamage": {
+          "StatID": "CritDamage",
+          "DisplayName": "Critical Hit Damage",
+          "Description": "Critical Hit Damage",
+          "MaxLevel": 100,
+          "Weight": 100,
+          "PriceOptions": {
+            "default": {
+              "OptionID": "default",
+              "Cost": {
+                "Standard": {
+                  "Entries": [
+                    {
+                      "Type": "VirtualCurrency",
+                      "CurrencyID": "GOLD",
+                      "Amount": 30
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "CostCurve": {
+            "Shape": "Geometric",
+            "GrowthRate": 0.02
+          },
+          "BaseStatValue": 1.5,
+          "ValueCurve": {
+            "Shape": "PerStep",
+            "PerStep": 0.02
+          }
+        }
+      },
+      "RankStatCurve": {
+        "Shape": "PerStepRate",
+        "PerStepRate": 0.04
+      },
+      "StatMaxLevelCurve": {
+        "Shape": "PerStepRate",
+        "PerStepRate": 1
+      },
+      "RankLadder": {
+        "MaxRank": 10,
+        "FirstPaidRank": 2,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 500
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        }
+      }
+    },
+    "Archer": {
+      "CharacterID": "Archer",
+      "Identity": {
+        "DisplayName": "Archer",
+        "SortOrder": 1,
+        "AssetPaths": {
+          "icon": "https://static.idos.games/drive/app/98JRCAKG/v/bld10bcf682805049998dc0137ea9103491/assets/ui/icons/archer/archer_icon.png",
+          "portrait": "https://static.idos.games/drive/app/98JRCAKG/v/bld10bcf682805049998dc0137ea9103491/assets/ui/icons/archer/archer_icon.png"
+        }
+      },
+      "Classification": {
+        "ClassID": "Ranger",
+        "RarityID": "Rare"
+      },
+      "Unlock": {
+        "UnlockedByDefault": false,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 8000
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "Equipment": {
+        "Slots": {
+          "Helmet": {
+            "SlotID": "Helmet",
+            "MinCharacterLevel": 0,
+            "MinItemLevel": 0,
+            "MaxItemLevel": 0
+          },
+          "Armor": {
+            "SlotID": "Armor",
+            "MinCharacterLevel": 0,
+            "MinItemLevel": 0,
+            "MaxItemLevel": 0
+          },
+          "Gloves": {
+            "SlotID": "Gloves",
+            "MinCharacterLevel": 0,
+            "MinItemLevel": 0,
+            "MaxItemLevel": 0
+          },
+          "Boots": {
+            "SlotID": "Boots",
+            "MinCharacterLevel": 0,
+            "MinItemLevel": 0,
+            "MaxItemLevel": 0
+          },
+          "Weapon": {
+            "SlotID": "Weapon",
+            "MinCharacterLevel": 0,
+            "MinItemLevel": 0,
+            "MaxItemLevel": 0
+          },
+          "Offhand": {
+            "SlotID": "Offhand",
+            "MinCharacterLevel": 0,
+            "MinItemLevel": 0,
+            "MaxItemLevel": 0
+          }
+        }
+      },
+      "Stats": {
+        "Damage": {
+          "StatID": "Damage",
+          "DisplayName": "Attack",
+          "Description": "Attack",
+          "MaxLevel": 200,
+          "Weight": 10,
+          "PriceOptions": {
+            "default": {
+              "OptionID": "default",
+              "Cost": {
+                "Standard": {
+                  "Entries": [
+                    {
+                      "Type": "VirtualCurrency",
+                      "CurrencyID": "GOLD",
+                      "Amount": 10
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "CostCurve": {
+            "Shape": "Geometric",
+            "GrowthRate": 0.012
+          },
+          "BaseStatValue": 9,
+          "ValueCurve": {
+            "Shape": "PerStep",
+            "PerStep": 1.8
+          }
+        },
+        "Health": {
+          "StatID": "Health",
+          "DisplayName": "HP",
+          "Description": "HP",
+          "MaxLevel": 200,
+          "Weight": 1,
+          "PriceOptions": {
+            "default": {
+              "OptionID": "default",
+              "Cost": {
+                "Standard": {
+                  "Entries": [
+                    {
+                      "Type": "VirtualCurrency",
+                      "CurrencyID": "GOLD",
+                      "Amount": 8
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "CostCurve": {
+            "Shape": "Geometric",
+            "GrowthRate": 0.012
+          },
+          "BaseStatValue": 90,
+          "ValueCurve": {
+            "Shape": "PerStep",
+            "PerStep": 18
+          }
+        },
+        "HpRegen": {
+          "StatID": "HpRegen",
+          "DisplayName": "HP Recovery",
+          "Description": "HP Recovery",
+          "MaxLevel": 200,
+          "Weight": 0,
+          "PriceOptions": {
+            "default": {
+              "OptionID": "default",
+              "Cost": {
+                "Standard": {
+                  "Entries": [
+                    {
+                      "Type": "VirtualCurrency",
+                      "CurrencyID": "GOLD",
+                      "Amount": 12
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "CostCurve": {
+            "Shape": "Geometric",
+            "GrowthRate": 0.012
+          },
+          "BaseStatValue": 0.9,
+          "ValueCurve": {
+            "Shape": "PerStep",
+            "PerStep": 0.36
+          }
+        },
+        "AttackSpeed": {
+          "StatID": "AttackSpeed",
+          "DisplayName": "Attack Speed",
+          "Description": "Attack Speed",
+          "MaxLevel": 50,
+          "Weight": 100,
+          "PriceOptions": {
+            "default": {
+              "OptionID": "default",
+              "Cost": {
+                "Standard": {
+                  "Entries": [
+                    {
+                      "Type": "VirtualCurrency",
+                      "CurrencyID": "GOLD",
+                      "Amount": 50
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "CostCurve": {
+            "Shape": "Geometric",
+            "GrowthRate": 0.03
+          },
+          "BaseStatValue": 1.4,
+          "ValueCurve": {
+            "Shape": "PerStep",
+            "PerStep": 0.01
+          }
+        },
+        "CritChance": {
+          "StatID": "CritChance",
+          "DisplayName": "Critical Hit",
+          "Description": "Critical Hit",
+          "MaxLevel": 50,
+          "Weight": 1000,
+          "PriceOptions": {
+            "default": {
+              "OptionID": "default",
+              "Cost": {
+                "Standard": {
+                  "Entries": [
+                    {
+                      "Type": "VirtualCurrency",
+                      "CurrencyID": "GOLD",
+                      "Amount": 40
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "CostCurve": {
+            "Shape": "Geometric",
+            "GrowthRate": 0.03
+          },
+          "BaseStatValue": 0.12,
+          "ValueCurve": {
+            "Shape": "PerStep",
+            "PerStep": 0.002
+          }
+        },
+        "CritDamage": {
+          "StatID": "CritDamage",
+          "DisplayName": "Critical Hit Damage",
+          "Description": "Critical Hit Damage",
+          "MaxLevel": 100,
+          "Weight": 100,
+          "PriceOptions": {
+            "default": {
+              "OptionID": "default",
+              "Cost": {
+                "Standard": {
+                  "Entries": [
+                    {
+                      "Type": "VirtualCurrency",
+                      "CurrencyID": "GOLD",
+                      "Amount": 30
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "CostCurve": {
+            "Shape": "Geometric",
+            "GrowthRate": 0.02
+          },
+          "BaseStatValue": 1.5,
+          "ValueCurve": {
+            "Shape": "PerStep",
+            "PerStep": 0.02
+          }
+        }
+      },
+      "RankStatCurve": {
+        "Shape": "PerStepRate",
+        "PerStepRate": 0.04
+      },
+      "StatMaxLevelCurve": {
+        "Shape": "PerStepRate",
+        "PerStepRate": 1
+      },
+      "RankLadder": {
+        "MaxRank": 10,
+        "FirstPaidRank": 2,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 500
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        }
+      }
+    },
+    "Mage": {
+      "CharacterID": "Mage",
+      "Identity": {
+        "DisplayName": "Mage",
+        "SortOrder": 2,
+        "AssetPaths": {
+          "icon": "https://static.idos.games/drive/app/98JRCAKG/v/bld10bcf682805049998dc0137ea9103491/assets/ui/icons/mage/mage_icon.png",
+          "portrait": "https://static.idos.games/drive/app/98JRCAKG/v/bld10bcf682805049998dc0137ea9103491/assets/ui/icons/mage/mage_icon.png"
+        }
+      },
+      "Classification": {
+        "ClassID": "Mage",
+        "RarityID": "Epic"
+      },
+      "Unlock": {
+        "UnlockedByDefault": false,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 30000
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "Equipment": {
+        "Slots": {
+          "Helmet": {
+            "SlotID": "Helmet",
+            "MinCharacterLevel": 0,
+            "MinItemLevel": 0,
+            "MaxItemLevel": 0
+          },
+          "Armor": {
+            "SlotID": "Armor",
+            "MinCharacterLevel": 0,
+            "MinItemLevel": 0,
+            "MaxItemLevel": 0
+          },
+          "Gloves": {
+            "SlotID": "Gloves",
+            "MinCharacterLevel": 0,
+            "MinItemLevel": 0,
+            "MaxItemLevel": 0
+          },
+          "Boots": {
+            "SlotID": "Boots",
+            "MinCharacterLevel": 0,
+            "MinItemLevel": 0,
+            "MaxItemLevel": 0
+          },
+          "Weapon": {
+            "SlotID": "Weapon",
+            "MinCharacterLevel": 0,
+            "MinItemLevel": 0,
+            "MaxItemLevel": 0
+          },
+          "Offhand": {
+            "SlotID": "Offhand",
+            "MinCharacterLevel": 0,
+            "MinItemLevel": 0,
+            "MaxItemLevel": 0
+          }
+        }
+      },
+      "Stats": {
+        "Damage": {
+          "StatID": "Damage",
+          "DisplayName": "Attack",
+          "Description": "Attack",
+          "MaxLevel": 200,
+          "Weight": 10,
+          "PriceOptions": {
+            "default": {
+              "OptionID": "default",
+              "Cost": {
+                "Standard": {
+                  "Entries": [
+                    {
+                      "Type": "VirtualCurrency",
+                      "CurrencyID": "GOLD",
+                      "Amount": 10
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "CostCurve": {
+            "Shape": "Geometric",
+            "GrowthRate": 0.012
+          },
+          "BaseStatValue": 22,
+          "ValueCurve": {
+            "Shape": "PerStep",
+            "PerStep": 4.4
+          }
+        },
+        "Health": {
+          "StatID": "Health",
+          "DisplayName": "HP",
+          "Description": "HP",
+          "MaxLevel": 200,
+          "Weight": 1,
+          "PriceOptions": {
+            "default": {
+              "OptionID": "default",
+              "Cost": {
+                "Standard": {
+                  "Entries": [
+                    {
+                      "Type": "VirtualCurrency",
+                      "CurrencyID": "GOLD",
+                      "Amount": 8
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "CostCurve": {
+            "Shape": "Geometric",
+            "GrowthRate": 0.012
+          },
+          "BaseStatValue": 80,
+          "ValueCurve": {
+            "Shape": "PerStep",
+            "PerStep": 16
+          }
+        },
+        "HpRegen": {
+          "StatID": "HpRegen",
+          "DisplayName": "HP Recovery",
+          "Description": "HP Recovery",
+          "MaxLevel": 200,
+          "Weight": 0,
+          "PriceOptions": {
+            "default": {
+              "OptionID": "default",
+              "Cost": {
+                "Standard": {
+                  "Entries": [
+                    {
+                      "Type": "VirtualCurrency",
+                      "CurrencyID": "GOLD",
+                      "Amount": 12
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "CostCurve": {
+            "Shape": "Geometric",
+            "GrowthRate": 0.012
+          },
+          "BaseStatValue": 0.8,
+          "ValueCurve": {
+            "Shape": "PerStep",
+            "PerStep": 0.32
+          }
+        },
+        "AttackSpeed": {
+          "StatID": "AttackSpeed",
+          "DisplayName": "Attack Speed",
+          "Description": "Attack Speed",
+          "MaxLevel": 50,
+          "Weight": 100,
+          "PriceOptions": {
+            "default": {
+              "OptionID": "default",
+              "Cost": {
+                "Standard": {
+                  "Entries": [
+                    {
+                      "Type": "VirtualCurrency",
+                      "CurrencyID": "GOLD",
+                      "Amount": 50
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "CostCurve": {
+            "Shape": "Geometric",
+            "GrowthRate": 0.03
+          },
+          "BaseStatValue": 0.8,
+          "ValueCurve": {
+            "Shape": "PerStep",
+            "PerStep": 0.01
+          }
+        },
+        "CritChance": {
+          "StatID": "CritChance",
+          "DisplayName": "Critical Hit",
+          "Description": "Critical Hit",
+          "MaxLevel": 50,
+          "Weight": 1000,
+          "PriceOptions": {
+            "default": {
+              "OptionID": "default",
+              "Cost": {
+                "Standard": {
+                  "Entries": [
+                    {
+                      "Type": "VirtualCurrency",
+                      "CurrencyID": "GOLD",
+                      "Amount": 40
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "CostCurve": {
+            "Shape": "Geometric",
+            "GrowthRate": 0.03
+          },
+          "BaseStatValue": 0.08,
+          "ValueCurve": {
+            "Shape": "PerStep",
+            "PerStep": 0.002
+          }
+        },
+        "CritDamage": {
+          "StatID": "CritDamage",
+          "DisplayName": "Critical Hit Damage",
+          "Description": "Critical Hit Damage",
+          "MaxLevel": 100,
+          "Weight": 100,
+          "PriceOptions": {
+            "default": {
+              "OptionID": "default",
+              "Cost": {
+                "Standard": {
+                  "Entries": [
+                    {
+                      "Type": "VirtualCurrency",
+                      "CurrencyID": "GOLD",
+                      "Amount": 30
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "CostCurve": {
+            "Shape": "Geometric",
+            "GrowthRate": 0.02
+          },
+          "BaseStatValue": 1.5,
+          "ValueCurve": {
+            "Shape": "PerStep",
+            "PerStep": 0.02
+          }
+        }
+      },
+      "RankStatCurve": {
+        "Shape": "PerStepRate",
+        "PerStepRate": 0.04
+      },
+      "StatMaxLevelCurve": {
+        "Shape": "PerStepRate",
+        "PerStepRate": 1
+      },
+      "RankLadder": {
+        "MaxRank": 10,
+        "FirstPaidRank": 2,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 500
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        }
+      }
+    }
+  }
+}

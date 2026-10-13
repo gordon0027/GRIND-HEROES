@@ -1,0 +1,17 @@
+{
+  "BuildId": "bld2be1cd5d35a4400eb014fd505d800ce1",
+  "Version": 81,
+  "Label": "Polish UI, hero progression 1–10 and skill milestones",
+  "Status": "Live",
+  "Source": "upload",
+  "DeployRequested": false,
+  "Errors": [],
+  "Files": 119,
+  "Bytes": 31818899,
+  "TestUrl": "https://98jrcakg-dev.idos.games/v/bld2be1cd5d35a4400eb014fd505d800ce1/index.html",
+  "TestUrlProdConfig": "https://98jrcakg.idos.games/v/bld2be1cd5d35a4400eb014fd505d800ce1/index.html",
+  "LiveUrl": "https://98jrcakg.idos.games/",
+  "AppPageUrl": "https://idosgames.com/app/98JRCAKG/",
+  "Published": true,
+  "Next": "Live for players at LiveUrl and on https://idosgames.com/app/98JRCAKG/."
+}

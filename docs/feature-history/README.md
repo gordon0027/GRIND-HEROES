@@ -24,3 +24,4 @@ instead.
 - [Grind Heroes Shop](shop.md) — native GH Store purchases for GEMS and Premium Chests, deployed to PROD.
 - [Secure Team Power](team-power.md) — server-derived active party Power and a protected custom Top 100.
 - [Pet System V1–V2](pets.md) — native Store ownership, next-run bonuses and animated battle companions in TEAM.
+- [Game polish V1 release report (RU)](game-polish-v1-report-ru.md) — production build 81, browser verification and known limits.
