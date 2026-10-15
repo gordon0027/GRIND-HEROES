@@ -64,3 +64,24 @@ const victim=dying.enemies[0].id;
 const death=frames(dying,90);assert.ok(death.some(e=>e.type==="enemyDefeated"&&e.id===victim),"burn death clears enemy safely");
 assert.ok(dying.enemies.every(e=>!e.burn),"burn does not leak into next encounter");
 console.log("Hero level prices, in-flight guard, level-5 skills, level-8 passives, expiry, retry, burn death and level-10 mastery passed");
+// Transient refresh errors recover without another upgrade request or balance mutation.
+let refreshReads=0,mutations=0;
+const retryService=new HeroUpgrade({character:{
+  upgradeCharacterLevel:async()=>{mutations++;return {ok:true,data:{NewLevel:5}};},
+  getUserCharacters:async()=>({ok:++refreshReads>=3}),
+},user:{getUserInventory:async()=>({ok:true})}},()=>{},async()=>{});
+await retryService.upgrade(hero);
+assert.equal(refreshReads,3);assert.equal(mutations,1);assert.equal(retryService.busy,false);
+let readable=false;
+const uncertainService=new HeroUpgrade({character:{
+  upgradeCharacterLevel:async()=>{mutations++;throw new Error("Connection lost after request");},
+  getUserCharacters:async()=>({ok:readable}),
+},user:{getUserInventory:async()=>({ok:readable})}},()=>{},async()=>{});
+await uncertainService.upgrade(hero);
+assert.equal(uncertainService.needsRefresh,true);assert.equal(uncertainService.busy,true);
+const beforeRetry=mutations;
+await uncertainService.upgrade(hero);assert.equal(mutations,beforeRetry,"uncertain writes remain locked");
+readable=true;await uncertainService.refresh();
+assert.equal(mutations,beforeRetry,"manual recovery only reads");assert.equal(uncertainService.busy,false);
+assert.equal(uncertainService.needsRefresh,false);assert.equal(uncertainService.error,null);
+console.log("Upgrade read-back retry, uncertain lock and read-only manual recovery passed");

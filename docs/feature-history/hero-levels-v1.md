@@ -74,3 +74,10 @@ No Title configuration, GH reward rules or payout gates changed.
 Verified: typecheck, complete npm test, build; real DEV UI at 390 and 1366 px.
 Boundary tests exercise normal attacks without skills at 1/4, actives at 5,
 locked passives at 7, passives at 8 and mastery at 10.
+
+Browser QA found a confirmed upgrade whose roster/inventory read-back failed.
+HeroUpgrade now retries only those reads at bounded delays and exposes Refresh
+Hero after exhaustion. The upgrade write remains locked until state is confirmed;
+manual recovery never replays a purchase. The button no longer implies an endless
+pending purchase. Unit tests cover transient recovery, persistent failure, blocked
+writes and successful read-only manual recovery.

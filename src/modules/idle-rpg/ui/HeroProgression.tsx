@@ -60,12 +60,14 @@ export function HeroProgression({ session, heroID, tab }: {
     </div>}
     <footer className="gh-upgrade-dock">
       {upgrade.error ? <p role="alert" className="gh-hero-window__error">{upgrade.error}</p> : null}
+      {upgrade.needsRefresh ? <button type="button" className="gh-upgrade-reconcile" disabled={upgrade.reconciling}
+        onClick={() => void upgrade.refresh()}>{upgrade.reconciling ? "Refreshing hero…" : "REFRESH HERO"}</button> : null}
       {upgrade.notice && upgrade.noticeHeroID === heroID ? <p role="status" className="gh-upgrade-success" key={upgrade.notice}>{upgrade.notice}</p> : null}
       {cost !== null ? <>
         <div className="gh-upgrade-wallet"><span>Your GOLD</span><strong>{gold.toLocaleString("en-US")}</strong></div>
         <button type="button" className="gh-upgrade-button" disabled={upgrade.busy || !affordable}
           style={{ borderImageSource: `url("${heroUi.primary}")` }} onClick={() => void upgrade.upgrade(hero)}>
-          {upgrade.busy ? "Confirming upgrade…" : `Upgrade to Level ${hero.rank + 1}`} <span><img src={heroUi.gold} alt="GOLD" />{cost.toLocaleString("en-US")}</span>
+          {upgrade.needsRefresh ? "Confirm latest state" : upgrade.busy ? "Confirming upgrade…" : `Upgrade to Level ${hero.rank + 1}`} <span><img src={heroUi.gold} alt="GOLD" />{cost.toLocaleString("en-US")}</span>
         </button>
         {!affordable ? <p className="gh-upgrade-hint">Need {(cost - gold).toLocaleString("en-US")} more GOLD. Farm cleared stages or collect AFK Rewards.</p> : null}
         <small>Upgrades apply after server confirmation.</small>

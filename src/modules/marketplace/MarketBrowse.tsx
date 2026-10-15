@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
 import type { ItemDefinition, MarketplaceGroupedOfferView } from "@idosgames/core";
 import { useIDosGamesClient } from "@idosgames/react";
-import { plural, useCatalog } from "@idosgames/react/ui";
+import { plural, useCatalog, Spinner } from "@idosgames/react/ui";
 import { groupCounts } from "./model";
 import { t } from "./i18n";
 import { GRIND_RARITIES, GRIND_REQUIRED_LEVEL, GRIND_SLOTS, itemRarity, itemSlot, itemStatLines } from "./itemPresentation";
@@ -15,6 +15,7 @@ export function MarketBrowse({ onPick, version }: { onPick: (itemID: string) => 
   const catalog = useCatalog();
   const [groups, setGroups] = useState<MarketplaceGroupedOfferView[] | null>(null);
   const [error, setError] = useState(false);
+  const [attempt, setAttempt] = useState(0);
   const [search, setSearch] = useState("");
   const [slot, setSlot] = useState("");
   const [rarity, setRarity] = useState("");
@@ -24,13 +25,14 @@ export function MarketBrowse({ onPick, version }: { onPick: (itemID: string) => 
   useEffect(() => {
     let active = true;
     setGroups(null);
+    setError(false);
     void client.marketplace.getGroupedOffers().then((res) => {
       if (!active) return;
       setGroups(res.ok ? (res.data.Groups ?? []) : []);
       setError(!res.ok);
-    });
+    }).catch(() => { if (active) { setGroups([]); setError(true); } });
     return () => { active = false; };
-  }, [client, version]);
+  }, [client, version, attempt]);
 
   const definitions = catalog.items as Map<string, ItemDefinition>;
   const all = useMemo(() => (groups ?? []).filter((g) => !!g.GoodsItemID
@@ -80,8 +82,8 @@ export function MarketBrowse({ onPick, version }: { onPick: (itemID: string) => 
           {rarity ? <button className="gh-market__chip" onClick={() => setRarity("")}>{rarity} ×</button> : null}
           <button className="gh-market__chip" onClick={clear}>{t("clearAll")}</button>
         </div> : null}
-        {groups === null ? <div className="gh-market__grid" aria-busy="true">{Array.from({ length: 6 }, (_, i) => <div className="gh-market__card" key={i} style={{ opacity: .4 }} />)}</div>
-          : error ? <div className="gh-market__empty" role="alert">{t("loadError")}</div>
+        {groups === null ? <div className="gh-market__loading" aria-busy="true" role="status"><Spinner /><span>{t("loadingOffers")}</span></div>
+          : error ? <div className="gh-market__empty" role="alert">{t("loadError")}<p><button type="button" className="gh-market__button" onClick={() => setAttempt(n => n + 1)}>{t("retryLoad")}</button></p></div>
           : shown.length === 0 ? <div className="gh-market__empty">{active ? t("noMatches") : t("noListings")}{active ? <p><button className="gh-market__chip" onClick={clear}>{t("clearFilters")}</button></p> : null}</div>
           : <div className="gh-market__grid">{shown.map((g) => {
             const id = g.GoodsItemID!;
