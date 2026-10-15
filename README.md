@@ -25,9 +25,9 @@ Not everyone has hours to play every day. Grind Heroes lets players check in, co
 
 The current web build is playable now. It has **three acts and 30 finite stages**, a party of up to three heroes, melee and ranged combat, bosses, equipment, chests, and an in-game marketplace.
 
-![Grind Heroes three-hero combat in Jury Edition DEV preview](assets/readme/jury-combat-three-heroes.jpg)
+![Grind Heroes combat and stage map in the live game](assets/readme/combat.png)
 
-*Actual capture in local DEV combat preview: three classes, with rewards disabled. Jury Edition is live on PROD as v82 (October 15, 2026). Earlier demo videos predate this release.*
+*Actual live game capture: an automatic boss fight above the stage map. The hero progression update is live on PROD as v82 (October 15, 2026); earlier demo videos predate it.*
 
 ## The game loop
 
