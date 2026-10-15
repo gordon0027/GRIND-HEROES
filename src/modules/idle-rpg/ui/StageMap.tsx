@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { Icon } from "@idosgames/react/ui";
 import { STAGE_CATALOG, STAGES_PER_CHAPTER } from "../game/stageCatalog";
@@ -8,11 +8,12 @@ import type { StageDefinition } from "../game/stageRun";
 import type { IdleSession } from "../game/session";
 import { heroUi } from "./heroAssets";
 import { StagePreparation } from "./StagePreparation";
+import { useDialogFocus } from "../../../shared/ui/useDialogFocus";
 
 type Position = { x: number; y: number };
 
 export function StageMapDialog({ session, close }: { session: IdleSession; close: () => void }) {
-  const ref = useRef<HTMLDialogElement>(null);
+  const ref = useDialogFocus<HTMLDialogElement>(close);
   useEffect(() => {
     const panel = ref.current;
     const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;

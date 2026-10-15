@@ -1,16 +1,17 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { createPortal } from "react-dom";
 import type { IdleSession } from "../game/session";
 import { heroLevelEnabled } from "../game/heroLevel";
 import { HERO_SKILLS, nextSkillMilestone } from "../game/progressionSkills";
 import { HeroProgression } from "./HeroProgression";
 import { heroUi } from "./heroAssets";
+import { useDialogFocus } from "../../../shared/ui/useDialogFocus";
 
 /** Native modal containment blocks host, footer, pointer and keyboard behind the window. */
 export function HeroProgressionDialog({ session, heroID, close }: {
   session: IdleSession; heroID: string; close: () => void;
 }) {
-  const ref = useRef<HTMLDialogElement>(null);
+  const ref = useDialogFocus<HTMLDialogElement>(close);
   const titleID = useId();
   const [tab, setTab] = useState<"upgrades" | "skills">("upgrades");
   const hero = session.roster.find(entry => entry.id === heroID);

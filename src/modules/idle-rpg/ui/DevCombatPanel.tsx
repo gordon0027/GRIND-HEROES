@@ -13,7 +13,7 @@ export function DevCombatPanel({ session }: { session: IdleSession }) {
   if (!session.devPreviewAvailable) return null;
   return <details style={{ position: "absolute", left: 8, top: 115, zIndex: 10,
     pointerEvents: "auto", background: "#171f2ee8", color: "#eee", padding: 5, fontSize: 11 }}>
-    <summary>DEV combat QA</summary>
+    <summary>{session.isDevPreview ? "DEV PREVIEW / NO REWARDS" : "DEV combat QA"}</summary>
     <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr)", gap: 4,
       width: 205, maxHeight: 160, overflowY: "auto", overflowWrap: "anywhere" }}>
       <select aria-label="QA stage" value={stage} onChange={e => setStage(e.target.value)}>

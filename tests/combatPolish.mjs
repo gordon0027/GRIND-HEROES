@@ -77,6 +77,8 @@ for (const [chapter, stage] of [[1,1],[1,5],[1,10],[2,1],[2,5],[2,10],[3,1],[3,5
     if (result.result==="clear") assert.ok(result.seconds > STAGE_CATALOG.find(s=>s.chapter===chapter&&s.stage===stage).minimumClearSeconds && result.seconds<1200);
   }
 }
-mkdirSync("artifacts/combat-polish",{recursive:true});
-writeFileSync("artifacts/combat-polish/profile-simulations.json",JSON.stringify(results,null,2));
+if (process.env.GRIND_WRITE_BALANCE_REPORT === "1") {
+  mkdirSync("artifacts/jury-edition",{recursive:true});
+  writeFileSync("artifacts/jury-edition/legacy-profile-simulations.json",JSON.stringify(results,null,2));
+}
 console.log("30-stage density, stable spawn slots, boss guards, pet anchors and 54 combat profiles passed");

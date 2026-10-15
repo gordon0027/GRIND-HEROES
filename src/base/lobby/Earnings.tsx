@@ -4,6 +4,7 @@ import { useIDosGamesClient } from "@idosgames/react";
 import { parseEarnings, type EarningsOverview } from "./earningsModel";
 import { EarningsView } from "./EarningsView";
 import "./earnings.css";
+import { useDialogFocus } from "../../shared/ui/useDialogFocus";
 
 /** Read-only reward accounting. Claiming stays disabled; no grant or probe action is exposed. */
 export function Earnings(): React.ReactNode {
@@ -17,7 +18,7 @@ export function Earnings(): React.ReactNode {
   const inFlight = useRef(false);
   const lastRequest = useRef(0);
   const cooldownTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const ref = useRef<HTMLDialogElement>(null);
+  const ref = useDialogFocus<HTMLDialogElement>(() => setOpen(false), open);
   useEffect(() => () => { if (cooldownTimer.current) clearTimeout(cooldownTimer.current); }, []);
   useEffect(() => {
     if (!open) return;

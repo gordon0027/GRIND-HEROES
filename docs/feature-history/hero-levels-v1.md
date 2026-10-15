@@ -81,3 +81,9 @@ Hero after exhaustion. The upgrade write remains locked until state is confirmed
 manual recovery never replays a purchase. The button no longer implies an endless
 pending purchase. Unit tests cover transient recovery, persistent failure, blocked
 writes and successful read-only manual recovery.
+
+The shared focus hook also supports typed native dialog refs. It contains Tab and
+Shift+Tab instead of allowing focus into browser chrome, ignores inactive tabs
+with tabindex=-1, and includes details summaries. Native top-layer modality still
+provides inert background behavior. Browser checks in keyboard-qa.json verify
+both wrap directions, arrow-key tabs, Escape and launcher focus restoration.

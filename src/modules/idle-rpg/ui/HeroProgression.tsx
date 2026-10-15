@@ -42,7 +42,8 @@ export function HeroProgression({ session, heroID, tab }: {
           <progress aria-label={`Level progress to ${milestone.label}`} value={hero.rank} max={milestone.level} />
           <span>Level {hero.rank} / {milestone.level}</span></div>
       </section> : <p className="gh-upgrade-max">All skills unlocked · Signature mastered</p>}
-      <div className="gh-upgrade-preview-heading"><h3>Grow stronger</h3><span>NOW → LEVEL {Math.min(10, hero.rank + 1)}</span></div>
+      <div className="gh-upgrade-preview-heading"><h3>{cost === null ? "Current stats" : "Grow stronger"}</h3>
+        <span>{cost === null ? hero.rank >= 10 ? "MAX LEVEL" : "UPGRADES UNAVAILABLE" : `NOW → LEVEL ${hero.rank + 1}`}</span></div>
       <dl className="gh-upgrade-preview">{([
         ["Attack", current.attack, next.attack], ["Max HP", current.maxHp, next.maxHp],
         ["Hero Power", combatPower(current), combatPower(next)],
