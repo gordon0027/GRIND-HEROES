@@ -27,3 +27,4 @@ instead.
 - [Game polish V1 release report (RU)](game-polish-v1-report-ru.md) — production build 81, browser verification and known limits.
 - [Jury Edition balance](jury-balance.md) — real DEV stat profiles, 720 deterministic runs, stage preparation and unchanged rewards.
 - [Jury Edition Earnings](jury-earnings.md) — read-only budget, allocation and receipt hierarchy, strict data validation and disabled payouts.
+- [Jury Edition production release](jury-release.md) — authorized v82 deployment, complete CDN audit and live browser verification.

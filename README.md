@@ -8,7 +8,7 @@
 
 ![Grind Heroes three-hero combat in Jury Edition DEV preview](assets/readme/jury-combat-three-heroes.jpg)
 
-*Actual capture of this branch in local DEV combat preview: three classes, with rewards disabled. Jury Edition has not been deployed to PROD; the live links and earlier demo still show the existing release.*
+*Actual capture in local DEV combat preview: three classes, with rewards disabled. Jury Edition is live on PROD as v82 (October 15, 2026). Earlier demo videos predate this release.*
 
 ## Try Grind Heroes in 2 Minutes
 
@@ -179,7 +179,7 @@ More: [Gameplay](docs/GAMEPLAY.md) · [Progression](docs/PROGRESSION.md) ·
 - [x] Three-hero party, equipment progression, and chest rewards
 - [x] GEMS equipment marketplace and GH Store offers
 - [x] Jury Edition implementation, progression boundaries, balance evidence and transparent Earnings
-- [ ] Authorized deployment of the verified Jury Edition branch
+- [x] Jury Edition deployed to PROD as v82; hosted assets and live progression verified
 - [ ] Expand content and keep tuning progression and the economy
 - [ ] Explore broader token rewards and Solana-linked item features
 
