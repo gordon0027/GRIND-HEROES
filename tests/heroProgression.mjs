@@ -19,7 +19,7 @@ const upgrade = new HeroUpgrade({character:{upgradeCharacterLevel:(_id,opts)=>{
 },getUserCharacters:async()=>({ok:true})},user:{getUserInventory:async()=>({ok:true})}},()=>{});
 const hero={id:"Knight",name:"Knight",rank:4,def:config.Definitions.Knight};
 const pending=upgrade.upgrade(hero);await upgrade.upgrade(hero);assert.equal(calls,1);
-resolveUpgrade({ok:true,data:{NewLevel:5}});await pending;assert.match(upgrade.notice,/Passive skill unlocked/);assert.equal(upgrade.busy,false);
+resolveUpgrade({ok:true,data:{NewLevel:5}});await pending;assert.match(upgrade.notice,/Signature skill unlocked/);assert.equal(upgrade.busy,false);
 const target = {type:"dummy",maxHp:10000,attack:10,defence:0,attackSpeed:1,moveSpeed:0,attackRange:1};
 const stage={id:"qa",chapter:1,stage:1,name:"QA",length:101,encounters:[{id:"one",distance:1,enemies:[target]}],boss:{id:"boss",distance:101,enemies:[target]}};
 function start(id,level,enabled=true){
@@ -32,29 +32,35 @@ function start(id,level,enabled=true){
 }
 function frames(run,n){const events=[];for(let i=0;i<n;i++)events.push(...run.tick(1/60));return events;}
 for(const id of ["Knight","Archer","Mage"]){
-  const run=start(id,1);assert.ok(frames(run,60).some(e=>e.type==="skillActivated"),`${id} active at level 1`);
+  for (const level of [1, 4]) {
+    const run=start(id,level); const events=frames(run,120);
+    assert.ok(events.some(e=>e.type==="enemyHit"),`${id} still attacks at level ${level}`);
+    assert.equal(events.some(e=>e.type==="skillActivated"||e.type==="skillImpact"),false,`${id} signature locked at ${level}`);
+    assert.equal(run.heroes[0].skillCooldown,0);
+  }
+  const run=start(id,5);assert.ok(frames(run,60).some(e=>e.type==="skillActivated"),`${id} active at level 5`);
 }
-const knight=start("Knight",5), k=knight.heroes[0];k.hp=29;
+const knight=start("Knight",8), k=knight.heroes[0];k.hp=29;
 knight.hitHero(k,10,1,[]);assert.equal(k.hp,29);assert.equal(k.shieldHp,5);
 knight.hitHero(k,10,1,[]);assert.equal(k.hp,24);assert.equal(k.shieldHp,0);
 knight.hitHero(k,10,1,[]);assert.equal(k.hp,14,"shield cannot trigger twice");
 knight.retry();assert.equal(knight.heroes[0].shieldUsed,false,"retry resets shield");
-const expiry=start("Knight",5);expiry.heroes[0].hp=29;expiry.hitHero(expiry.heroes[0],1,1,[]);frames(expiry,241);assert.equal(expiry.heroes[0].shieldHp,0);
-const locked=start("Knight",4);locked.heroes[0].hp=29;locked.hitHero(locked.heroes[0],10,1,[]);assert.equal(locked.heroes[0].hp,19);
+const expiry=start("Knight",8);expiry.heroes[0].hp=29;expiry.hitHero(expiry.heroes[0],1,1,[]);frames(expiry,241);assert.equal(expiry.heroes[0].shieldHp,0);
+const locked=start("Knight",7);locked.heroes[0].hp=29;locked.hitHero(locked.heroes[0],10,1,[]);assert.equal(locked.heroes[0].hp,19);
 const disabled=start("Knight",10,false);disabled.heroes[0].hp=29;disabled.hitHero(disabled.heroes[0],10,1,[]);assert.equal(disabled.heroes[0].hp,19,"old environment has no passives");
-const archer=start("Archer",5);archer.heroes[0].skillCooldown=999;
+const archer=start("Archer",8);archer.heroes[0].skillCooldown=999;
 const arrows=frames(archer,320).filter(e=>e.type==="enemyHit");
 assert.deepEqual(arrows.slice(0,5).map(e=>e.damage),[20,20,20,20,28],"fifth attack empowered");
-const mage=start("Mage",5);const fire=frames(mage,250).filter(e=>e.type==="enemyHit");
+const mage=start("Mage",8);const fire=frames(mage,250).filter(e=>e.type==="enemyHit");
 assert.equal(fire.filter(e=>e.damage===2).length,3,"three burn ticks");
-const mageLocked=start("Mage",4);assert.equal(frames(mageLocked,250).filter(e=>e.type==="enemyHit"&&e.damage===2).length,0);
+const mageLocked=start("Mage",7);assert.equal(frames(mageLocked,250).filter(e=>e.type==="enemyHit"&&e.damage===2).length,0);
 for(const [id,amount] of [["Knight",55],["Mage",40]]){
   const run=start(id,10);const hit=frames(run,90).find(e=>e.type==="enemyHit"&&e.skillId);
   assert.equal(hit.damage,amount,`${id} mastery damage`);
 }
 const rapid=start("Archer",10);rapid.tick(1/60);assert.equal(rapid.heroes[0].skillBuffRemaining,3.5);
-const dying=start("Mage",5);frames(dying,45);dying.enemies[0].hp=1;
+const dying=start("Mage",8);frames(dying,45);dying.enemies[0].hp=1;
 const victim=dying.enemies[0].id;
 const death=frames(dying,90);assert.ok(death.some(e=>e.type==="enemyDefeated"&&e.id===victim),"burn death clears enemy safely");
 assert.ok(dying.enemies.every(e=>!e.burn),"burn does not leak into next encounter");
-console.log("Hero level prices, in-flight guard, level-1 skills, passives, expiry, retry, burn death and level-10 mastery passed");
+console.log("Hero level prices, in-flight guard, level-5 skills, level-8 passives, expiry, retry, burn death and level-10 mastery passed");

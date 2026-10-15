@@ -1,5 +1,6 @@
 import type { IDosGamesClient } from "@idosgames/core";
 import { heroLevelCost } from "./heroLevel.ts";
+import { HERO_SKILLS } from "./progressionSkills.ts";
 import type { HeroView } from "./session";
 
 /** One in-flight upgrade per session; an absolute target makes stale retries harmless. */
@@ -19,7 +20,7 @@ export class HeroUpgrade {
       const result = await this.client.character.upgradeCharacterLevel(hero.id, { targetLevel: hero.rank + 1 });
       if (!result.ok) throw new Error(String(result.error ?? result.reason));
       const level = result.data.NewLevel;
-      this.notice = `${hero.name} reached Level ${level}!${level === 5 ? " Passive skill unlocked." : level === 10 ? " Active skill mastered." : ""}`;
+      this.notice = `${hero.name} reached Level ${level}!${level === HERO_SKILLS.activeLevel ? " Signature skill unlocked." : level === HERO_SKILLS.passiveLevel ? " Passive skill unlocked." : level === HERO_SKILLS.masteryLevel ? " Active skill mastered." : ""}`;
     } catch (error) {
       this.error = error instanceof Error ? error.message : String(error);
     } finally {

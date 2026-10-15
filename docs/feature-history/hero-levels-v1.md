@@ -55,3 +55,22 @@ ReadOnly Power or native Character.Level; the regression verifies this.
 Read-before-write configuration backups and browser evidence are under
 artifacts/hero-progression. The Russian release report records deployed build
 identity and remaining verification limits.
+
+## Jury Edition progression (2026-10-15)
+
+Inventory and Team now open one reusable native Hero Progression dialog. Inventory
+keeps equipment and the bag visible before Premium Chests; a compact upgrade
+button replaces the inline progression sections. Native dialog containment blocks
+background interaction and restores focus; its header remains outside internal
+scrolling. Upgrades still use HeroUpgrade and the atomic iDos target-level flow.
+
+Milestones in progressionSkills.ts are now signature active at 5, passive at 8,
+and mastery at 10. Levels and XP are retained. Existing level-5–7 heroes keep
+their signature active but their former level-5 passive returns at level 8.
+All active casts and Phaser cooldown bars require the shared level-5 check,
+including older environments. Passives/mastery still require the supported ladder.
+No Title configuration, GH reward rules or payout gates changed.
+
+Verified: typecheck, complete npm test, build; real DEV UI at 390 and 1366 px.
+Boundary tests exercise normal attacks without skills at 1/4, actives at 5,
+locked passives at 7, passives at 8 and mastery at 10.

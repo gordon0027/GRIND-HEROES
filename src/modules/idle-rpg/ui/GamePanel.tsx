@@ -69,7 +69,7 @@ export function makeGamePanel(session: IdleSession, features: FeatureRegistry): 
           {session.lootError || session.stageError ? <div className="gh-stage-hud__error" role="alert">{session.lootError ?? session.stageError}</div> : null}
       </div> : <div className="gh-game-section">
         <div className="gh-game-section__inner">
-          {section === "inventory" ? <InventorySection session={session} /> : null}
+          {section === "inventory" ? <InventorySection session={session} onPlay={() => setSection("play")} /> : null}
           {section === "team" ? <TeamSection session={session} /> : null}
           {section === "marketplace" ? <section className="gh-more-panel gh-more-panel--marketplace"
             style={{ borderImageSource: `url("${heroUi.panel}")` }}>

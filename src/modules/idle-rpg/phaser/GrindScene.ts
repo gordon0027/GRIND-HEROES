@@ -18,6 +18,7 @@ import { ContactShadow } from "./ContactShadow";
 import { enemyGroundSlot } from "../game/encounterLayout";
 import { BattleAssets, BACKGROUNDS } from "./BattleAssets";
 import { effectiveAttackSpeed, COMBAT_SKILLS, skillFor } from "../game/combatSkills";
+import { activeSkillUnlocked } from "../game/progressionSkills";
 import { drawRapidFireAura, meteorGroundFire, skillBurst } from "./SkillEffects";
 import { hitProfile } from "../game/hitFeedback";
 import { CombatJuice } from "./CombatJuice";
@@ -509,7 +510,7 @@ export class GrindScene extends Phaser.Scene {
       const scale = (visual?.scale ?? 1) * Math.min(1, Math.max(0.7, battleH / 320));
       const barY = y - 135 * scale;
       const skill = skillFor(hero.classId);
-      if (skill) drawSkillCooldownBar(bars, x, barY, 46,
+      if (skill && activeSkillUnlocked(hero.level)) drawSkillCooldownBar(bars, x, barY, 46,
         hero.alive ? 1 - hero.skillCooldown / skill.cooldown : 0);
       drawHealthBar(bars, x, barY, 46, hero.hp / hero.maxHp, "hero");
       drawRapidFireAura(aura, hero, x, y, scale, this.visualTime);

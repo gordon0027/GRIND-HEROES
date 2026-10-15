@@ -30,7 +30,7 @@ export function DevCombatPanel({ session }: { session: IdleSession }) {
         <option value="pet_gems_v1">Pug</option><option value="pet_gh_v1">Watchdog</option>
       </select>
       <select aria-label="QA hero level" value={level} onChange={e => setLevel(Number(e.target.value))}>
-        {[1,5,10].map(n => <option key={n} value={n}>Level {n} skills</option>)}
+        {[1,4,5,7,8,10].map(n => <option key={n} value={n}>Level {n} skills</option>)}
       </select>
       <button onClick={() => session.previewCombat(stage, tier, count, pet || null, level)}>Start QA preview</button>
       <button onClick={() => { session.previewPaused = !session.previewPaused; }}>Pause / resume QA</button>

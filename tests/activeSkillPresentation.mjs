@@ -23,7 +23,7 @@ assert.match(archer.description, new RegExp(`${COMBAT_SKILLS.Archer.buffDuration
 assert.deepEqual(archer.details.map(({ label }) => label), ["ATTACK SPEED", "DURATION"]);
 
 const mage = activeSkillPresentation("Mage");
-assert.equal(mage.name, "Meteor Fireball");
+assert.equal(mage.name, "Meteor");
 assert.match(mage.description, new RegExp(`${COMBAT_SKILLS.Mage.damageMultiplier * 100}%`));
 assert.equal(mage.details.find(({ label }) => label === "TARGET")?.value, "Area of Effect");
 assert.equal(activeSkillPresentation("Unknown"), null);

@@ -12,7 +12,7 @@ import { GearStatRows } from "./GearStatRows";
 import { PremiumChestPanel } from "./PremiumChestPanel";
 import { PetsSection } from "./PetsSection";
 import { ActiveSkillCard } from "./ActiveSkillCard";
-import { HeroProgression } from "./HeroProgression";
+import { HeroProgressionButton } from "./HeroProgressionDialog";
 import { heroLevelEnabled } from "../game/heroLevel";
 import { useDialogFocus } from "../../../shared/ui/useDialogFocus";
 import "./management-sections.css";
@@ -164,8 +164,8 @@ function ItemDetails({ session, heroID, item, close }: {
   </div>;
 }
 
-function InventoryGrid({ session, heroID, selectedID, selectItem }: {
-  session: IdleSession; heroID: string; selectedID: string | null; selectItem: (id: string) => void;
+function InventoryGrid({ session, heroID, selectedID, selectItem, onPlay }: {
+  session: IdleSession; heroID: string; selectedID: string | null; selectItem: (id: string) => void; onPlay: () => void;
 }): ReactNode {
   const available = availableGear(session.gearItems);
   const heroLevel = session.roster.find((entry) => entry.id === heroID)?.level ?? 1;
@@ -184,7 +184,9 @@ function InventoryGrid({ session, heroID, selectedID, selectItem }: {
           label={`${item.name}, ${item.rarity}, ${item.slot}, requires Mastery ${item.requiredLevel}${incompatible ? `, requires ${item.allowedHeroes.join(" or ")}` : ""}`}
           onClick={() => selectItem(item.instanceID)} />;
       })}
-    </div> : <p className="gh-empty">Clear stages for gear and chests. Open earned Stage Chests on Play; their equipment appears here.</p>}
+    </div> : <div className="gh-inventory-empty"><img src={heroUi.functionIcon("function_icon_battle")} alt="" />
+      <strong>Your next upgrade is out there</strong><p>Win battles and open chests to find equipment.</p>
+      <FantasyButton onClick={onPlay}>BACK TO BATTLE</FantasyButton></div>}
   </section>;
 }
 
@@ -307,7 +309,7 @@ function RecruitHeroDialog({ session, close }: { session: IdleSession; close: ()
   </section></div>;
 }
 
-export function InventorySection({ session }: { session: IdleSession }): ReactNode {
+export function InventorySection({ session, onPlay }: { session: IdleSession; onPlay: () => void }): ReactNode {
   const [preferredHeroID, setPreferredHeroID] = useState<string | null>(null);
   const [selectedID, setSelectedID] = useState<string | null>(null);
   const [statsOpen, setStatsOpen] = useState(false);
@@ -332,20 +334,20 @@ export function InventorySection({ session }: { session: IdleSession }): ReactNo
   }, [powerGain]);
   return <SectionFrame title="INVENTORY" kicker="GRIND HEROES / EQUIPMENT" className="gh-management--inventory">
     {powerGain ? <div className="gh-power-gain" role="status">{powerGain}</div> : null}
-    <PremiumChestPanel session={session} />
     {!chosenHero ? <p className="gh-empty" role="status">Loading inventory…</p> : <>
     <div className="gh-management__inventory-layout">
       <div className="gh-management__hero-column">
         <HeroSelector session={session} chosenHero={chosenHero} pick={setPreferredHeroID} />
         <HeroEquipment session={session} heroID={chosenHero} selectedID={selectedID} selectItem={setSelectedID}
           showStats={() => setStatsOpen(true)} />
-        <HeroProgression session={session} heroID={chosenHero} />
+        <HeroProgressionButton key={chosenHero} session={session} heroID={chosenHero} />
       </div>
       <div className="gh-management__items-column">
-        <InventoryGrid session={session} heroID={chosenHero} selectedID={selectedID} selectItem={setSelectedID} />
+        <InventoryGrid session={session} heroID={chosenHero} selectedID={selectedID} selectItem={setSelectedID} onPlay={onPlay} />
         {selected ? <div style={{ borderImageSource: `url("${heroUi.panel}")` }} className="gh-item-detail-shell">
           <ItemDetails session={session} heroID={chosenHero} item={selected} close={() => setSelectedID(null)} />
         </div> : null}
+        <PremiumChestPanel session={session} />
       </div>
     </div>
     {session.equipmentError ? <p role="alert" className="gh-hero-window__error">{session.equipmentError}</p> : null}
@@ -369,7 +371,7 @@ export function TeamSection({ session }: { session: IdleSession }): ReactNode {
         {showLeaderboard ? "Back to team" : "Power leaderboard"}</button></div>
     {session.teamPowerError && !showLeaderboard ? <p role="alert" className="gh-hero-window__error">{session.teamPowerError}</p> : null}
     {showLeaderboard ? <PowerLeaderboard session={session} /> : <><FormationPanel session={session} heroID={heroID} selectHero={setHeroID} />
-      <HeroProgression session={session} heroID={heroID} /></>}
+      <HeroProgressionButton key={heroID} session={session} heroID={heroID} /></>}
     </>}
   </SectionFrame>;
 }

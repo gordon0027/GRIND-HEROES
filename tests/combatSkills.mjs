@@ -6,7 +6,7 @@ import { StageRun, damage } from "../src/modules/idle-rpg/game/stageRun.ts";
 const source = (id) => {
   const role = HERO_ARCHETYPES[id];
   const rosterClass = { Knight: "Warrior", Archer: "Ranger", Mage: "Mage" }[id];
-  return { id, classId: combatClassForHero(id, rosterClass), level: 1, maxHp: 1000, attack: 20, defence: 0,
+  return { id, classId: combatClassForHero(id, rosterClass), level: 5, maxHp: 1000, attack: 20, defence: 0,
     attackSpeed: 1, moveSpeed: role.moveSpeed, attackRange: role.attackRange,
     combatType: role.combatType, projectile: role.projectile };
 };
