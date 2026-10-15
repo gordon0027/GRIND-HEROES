@@ -1,0 +1,50 @@
+{
+  "releasedAt": "2026-10-15T14:15:53.747Z",
+  "sourceCommit": "bf2b94b2393c8e00bd25df44bdac99929c98b524",
+  "branch": "codex/grind-heroes-update",
+  "previousBuild": {
+    "id": "bld2be1cd5d35a4400eb014fd505d800ce1",
+    "version": 81
+  },
+  "build": {
+    "BuildId": "bld038f0b8740cb4c379b72311165eb294b",
+    "Version": 82,
+    "Label": "Jury Edition: premium UI, hero skills 5/8/10 and transparent earnings",
+    "Status": "Live",
+    "Source": "upload",
+    "DeployRequested": false,
+    "Errors": [],
+    "Files": 119,
+    "Bytes": 31845242,
+    "TestUrl": "https://98jrcakg-dev.idos.games/v/bld038f0b8740cb4c379b72311165eb294b/index.html",
+    "TestUrlProdConfig": "https://98jrcakg.idos.games/v/bld038f0b8740cb4c379b72311165eb294b/index.html",
+    "LiveUrl": "https://98jrcakg.idos.games/",
+    "AppPageUrl": "https://idosgames.com/app/98JRCAKG/",
+    "Published": true,
+    "Next": "Live for players at LiveUrl and on https://idosgames.com/app/98JRCAKG/."
+  },
+  "archive": {
+    "files": 119,
+    "bytes": 31845080,
+    "zipBytes": 27950989,
+    "sha256": "e84a7501dcbfc860df8697634a0d85bcde048172afcd7e669bdbc1f5d428e37a"
+  },
+  "rootVerification": {
+    "httpStatus": 200,
+    "javascript": "index-C0YsBddY.js",
+    "stylesheet": "index-B9lJOQ4_.css",
+    "heroProgressionDialog": true,
+    "skillMilestones": [
+      5,
+      8,
+      10
+    ]
+  },
+  "serverChanges": [],
+  "financialTransactions": [],
+  "notes": [
+    "Existing PROD session resumed. AFK native popup auto-claimed on dismissal; no manual economic purchase, hero upgrade or GH action was submitted.",
+    "One SDK Too soon retry warning occurred during staged page/navigation; new progression dialog and live combat loaded successfully."
+  ],
+  "iframeVerification": "Public iDos app PLAY NOW successfully embedded the live root and rendered the login screen; no new iframe guest/authentication or purchase was submitted."
+}

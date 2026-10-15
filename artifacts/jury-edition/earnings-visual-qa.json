@@ -1,0 +1,52 @@
+[
+  {
+    "name": "Real PROD read",
+    "claimEnabled": false,
+    "text": "GH payouts are currently unavailable\n\nRewards may be calculated, but they cannot presently be claimed.\n\nREMAINING REWARD BUDGET\n36,164 GH\nLive pool balance unavailable\n\nGame accounting budget, separate from the platform's live GH reserve and your wallet.\n\nToday's allocation\nToday's GH Budget\n3,616 GH\nParticipants\n73\n\nUTC 2026-10-15 · Window 2 of 3\n\nNext window: 15 Oct 2026, 16:00 UTC\n\nYour calculated rewards\nYour Rank\nUnranked\nYour Team Power\n0\nToday's Calculated GH Share\n0 GH\nAccounting allocation\nCurrent Window Allocation\n0 GH\nNot a confirmed payment\nPayment status\nConfirmed Lifetime GH Received\n0 GH\nPending Review\n0 GH\nUnconfirmed reserved amount\n\nNo new allocation is recorded for this reward window.\n\nHow Rewards Work\n\nLast updated: 15 Oct 2026, 12:47 UTC"
+  },
+  {
+    "name": "Allocation, payouts disabled",
+    "claimEnabled": false,
+    "text": "GH payouts are currently unavailable\n\nRewards may be calculated, but they cannot presently be claimed.\n\nREMAINING REWARD BUDGET\n36,164 GH\nLive pool balance unavailable\n\nGame accounting budget, separate from the platform's live GH reserve and your wallet.\n\nToday's allocation\nToday's GH Budget\n3,616 GH\nParticipants\n73\n\nUTC 2026-10-15 · Window 2 of 3\n\nNext window: 15 Oct 2026, 16:00 UTC\n\nYour calculated rewards\nYour Rank\n#3\nYour Team Power\n584\nToday's Calculated GH Share\n440 GH\nAccounting allocation\nCurrent Window Allocation\n147 GH\nNot a confirmed payment\nPayment status\nConfirmed Lifetime GH Received\n0 GH\nPending Review\n0 GH\nUnconfirmed reserved amount\n\nAn accounting allocation is calculated for this window. It is not currently claimable.\n\nHow Rewards Work\n\nLast updated: 15 Oct 2026, 12:47 UTC"
+  },
+  {
+    "name": "Paused",
+    "claimEnabled": false,
+    "text": "GH payouts are currently unavailable\n\nRewards may be calculated, but they cannot presently be claimed.\n\nREMAINING REWARD BUDGET\n36,164 GH\nLive pool balance unavailable\n\nGame accounting budget, separate from the platform's live GH reserve and your wallet.\n\nToday's allocation\nToday's GH Budget\n3,616 GH\nParticipants\n73\n\nUTC 2026-10-15 · Window 2 of 3\n\nNext window: 15 Oct 2026, 16:00 UTC\n\nYour calculated rewards\nYour Rank\n#3\nYour Team Power\n584\nToday's Calculated GH Share\n440 GH\nAccounting allocation\nCurrent Window Allocation\n147 GH\nNot a confirmed payment\nPayment status\nConfirmed Lifetime GH Received\n0 GH\nPending Review\n0 GH\nUnconfirmed reserved amount\n\nReward accounting is paused. No new allocation is available.\n\nHow Rewards Work\n\nLast updated: 15 Oct 2026, 12:47 UTC"
+  },
+  {
+    "name": "No participants",
+    "claimEnabled": false,
+    "text": "GH payouts are currently unavailable\n\nRewards may be calculated, but they cannot presently be claimed.\n\nREMAINING REWARD BUDGET\n36,164 GH\nLive pool balance unavailable\n\nGame accounting budget, separate from the platform's live GH reserve and your wallet.\n\nToday's allocation\nToday's GH Budget\n3,616 GH\nParticipants\n0\n\nUTC 2026-10-15 · Window 2 of 3\n\nNext window: 15 Oct 2026, 16:00 UTC\n\nYour calculated rewards\nYour Rank\nUnranked\nYour Team Power\n0\nToday's Calculated GH Share\n0 GH\nAccounting allocation\nCurrent Window Allocation\n0 GH\nNot a confirmed payment\nPayment status\nConfirmed Lifetime GH Received\n0 GH\nPending Review\n0 GH\nUnconfirmed reserved amount\n\nThere are no eligible participants in today's snapshot.\n\nHow Rewards Work\n\nLast updated: 15 Oct 2026, 12:47 UTC"
+  },
+  {
+    "name": "Snapshot not ready",
+    "claimEnabled": false,
+    "text": "GH payouts are currently unavailable\n\nRewards may be calculated, but they cannot presently be claimed.\n\nREMAINING REWARD BUDGET\n—\nLive pool balance unavailable\n\nGame accounting budget, separate from the platform's live GH reserve and your wallet.\n\nToday's allocation\nToday's GH Budget\n—\nParticipants\n—\n\nUTC date unavailable · Window unavailable\n\nNext window: Unavailable\n\nYour calculated rewards\nYour Rank\n—\nYour Team Power\n—\nToday's Calculated GH Share\n—\nAccounting allocation\nCurrent Window Allocation\n—\nNot a confirmed payment\nPayment status\nConfirmed Lifetime GH Received\n—\nPending Review\n—\nUnconfirmed reserved amount\n\nToday's reward snapshot is not ready. Check again later.\n\nHow Rewards Work\n\nLast updated: 15 Oct 2026, 12:47 UTC"
+  },
+  {
+    "name": "Pending review",
+    "claimEnabled": false,
+    "text": "GH payouts are currently unavailable\n\nRewards may be calculated, but they cannot presently be claimed.\n\nREMAINING REWARD BUDGET\n36,164 GH\nLive pool balance unavailable\n\nGame accounting budget, separate from the platform's live GH reserve and your wallet.\n\nToday's allocation\nToday's GH Budget\n3,616 GH\nParticipants\n73\n\nUTC 2026-10-15 · Window 2 of 3\n\nNext window: 15 Oct 2026, 16:00 UTC\n\nYour calculated rewards\nYour Rank\n#3\nYour Team Power\n584\nToday's Calculated GH Share\n440 GH\nAccounting allocation\nCurrent Window Allocation\n147 GH\nNot a confirmed payment\nPayment status\nConfirmed Lifetime GH Received\n0 GH\nPending Review\n180 GH\nUnconfirmed reserved amount\n\nA previous payout is reserved for review. It is not a confirmed payment.\n\nHow Rewards Work\n\nLast updated: 15 Oct 2026, 12:47 UTC"
+  },
+  {
+    "name": "Historical payment",
+    "claimEnabled": false,
+    "text": "GH payouts are currently unavailable\n\nRewards may be calculated, but they cannot presently be claimed.\n\nREMAINING REWARD BUDGET\n36,164 GH\nLive pool balance unavailable\n\nGame accounting budget, separate from the platform's live GH reserve and your wallet.\n\nToday's allocation\nToday's GH Budget\n3,616 GH\nParticipants\n73\n\nUTC 2026-10-15 · Window 2 of 3\n\nNext window: 15 Oct 2026, 16:00 UTC\n\nYour calculated rewards\nYour Rank\n#3\nYour Team Power\n584\nToday's Calculated GH Share\n440 GH\nAccounting allocation\nCurrent Window Allocation\n147 GH\nNot a confirmed payment\nPayment status\nConfirmed Lifetime GH Received\n22 GH\nPending Review\n0 GH\nUnconfirmed reserved amount\n\nAn accounting allocation is calculated for this window. It is not currently claimable.\n\nHow Rewards Work\n\nLast updated: 15 Oct 2026, 12:47 UTC"
+  },
+  {
+    "name": "Stale data",
+    "claimEnabled": false,
+    "text": "GH payouts are currently unavailable\n\nRewards may be calculated, but they cannot presently be claimed.\n\nREMAINING REWARD BUDGET\n36,164 GH\nLive pool balance unavailable\n\nGame accounting budget, separate from the platform's live GH reserve and your wallet.\n\nToday's allocation\nToday's GH Budget\n3,616 GH\nParticipants\n73\n\nUTC 2026-10-15 · Window 2 of 3\n\nNext window: 15 Oct 2026, 16:00 UTC\n\nYour calculated rewards\nYour Rank\n#3\nYour Team Power\n584\nToday's Calculated GH Share\n440 GH\nAccounting allocation\nCurrent Window Allocation\n147 GH\nNot a confirmed payment\nPayment status\nConfirmed Lifetime GH Received\n0 GH\nPending Review\n0 GH\nUnconfirmed reserved amount\n\nAn accounting allocation is calculated for this window. It is not currently claimable.\n\nHow Rewards Work\n\nShowing previous data · Last updated: 15 Oct 2026, 12:47 UTC"
+  },
+  {
+    "name": "Rate-limited refresh",
+    "claimEnabled": false,
+    "text": "unavailable\n\nRewards may be calculated, but they cannot presently be claimed.\n\nEarnings could not be refreshed. Please wait a moment and try again. Previous data is shown below.\n\nREMAINING REWARD BUDGET\n36,164 GH\nLive pool balance unavailable\n\nGame accounting budget, separate from the platform's live GH reserve and your wallet.\n\nToday's allocation\nToday's GH Budget\n3,616 GH\nParticipants\n73\n\nUTC 2026-10-15 · Window 2 of 3\n\nNext window: 15 Oct 2026, 16:00 UTC\n\nYour calculated rewards\nYour Rank\n#3\nYour Team Power\n584\nToday's Calculated GH Share\n440 GH\nAccounting allocation\nCurrent Window Allocation\n147 GH\nNot a confirmed payment\nPayment status\nConfirmed Lifetime GH Received\n0 GH\nPending Review\n0 GH\nUnconfirmed reserved amount\n\nAn accounting allocation is calculated for this window. It is not currently claimable.\n\nHow Rewards Work\n\nShowing previous data · Last updated: 15 Oct 2026, 12:47 UTC"
+  },
+  {
+    "name": "Data unavailable",
+    "claimEnabled": false,
+    "text": "GH payouts are currently unavailable\n\nRewards may be calculated, but they cannot presently be claimed.\n\nReward data is unavailable. No allocation or payment has been confirmed."
+  }
+]

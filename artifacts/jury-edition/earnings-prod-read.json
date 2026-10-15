@@ -1,0 +1,25 @@
+{
+  "titleID": "98JRCAKG",
+  "readAt": "2026-10-15T12:47:33.721Z",
+  "operation": "getPowerRewardOverview only; no claims, no financial probe",
+  "transportOk": true,
+  "overview": {
+    "status": "nothing_owed",
+    "day": "2026-10-15",
+    "budgetRemainingUnits": "36164",
+    "dailyBudgetUnits": "3616",
+    "participantCount": 73,
+    "rank": null,
+    "power": 0,
+    "dailyShareUnits": "0",
+    "currentWindowUnits": "0",
+    "inactiveCreditUnits": "0",
+    "pendingReviewUnits": "0",
+    "paidTotalUnits": "0",
+    "claimedWindow": false,
+    "cooldownUntilUtc": null,
+    "window": 2,
+    "nextWindowAtUtc": "2026-10-15T16:00:00Z",
+    "updatedAtUtc": "2026-10-15T12:47:34.166Z"
+  }
+}

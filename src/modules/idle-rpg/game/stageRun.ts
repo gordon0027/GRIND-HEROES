@@ -4,7 +4,7 @@
 import { enemySpawnX } from "./encounterLayout.ts";
 import { heroAttackTiming, enemyAttackTiming, scaledEventDelay } from "./combatTiming.ts";
 import { COMBAT_SKILLS, effectiveAttackSpeed, skillFor, type SkillId } from "./combatSkills.ts";
-import { HERO_SKILLS } from "./progressionSkills.ts";
+import { HERO_SKILLS, activeSkillUnlocked } from "./progressionSkills.ts";
 import { advanceBurns, shieldedDamage } from "./progressionCombat.ts";
 
 export const MAX_PARTY_SIZE = 3;
@@ -441,7 +441,7 @@ export class StageRun {
     hero.state = "attacking";
     if (hero.cooldown > 0) return;
     const skill = skillFor(hero.classId);
-    const cast = skill && hero.skillCooldown <= 0 && hero.skillBuffRemaining <= 0 ? skill : null;
+    const cast = skill && activeSkillUnlocked(hero.level) && hero.skillCooldown <= 0 && hero.skillBuffRemaining <= 0 ? skill : null;
     const passive = hero.progressionSkills && hero.level >= HERO_SKILLS.passiveLevel;
     const mastery = hero.progressionSkills && hero.level >= HERO_SKILLS.masteryLevel;
     hero.passiveAttacks++;

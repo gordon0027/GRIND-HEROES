@@ -1,0 +1,1 @@
+Knight L8: attacks 10, shield 0, buff 0.0s; Archer L8: attacks 31, shield 0, buff 3.0s; Mage L8: attacks 7, shield 0, buff 0.0s · burning 0

@@ -1,0 +1,1 @@
+{"fps":239,"objects":19,"actors":5,"corpses":0,"vfx":0,"feedback":"{\"hits\":39,\"heavy\":4,\"holds\":4,\"deaths\":10}","casts":"K:4 A:0 M:0","cooldowns":"K:0.0 A:0.0","projectiles":0,"textures":19,"textureMiB":126,"width":1366}

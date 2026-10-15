@@ -13,7 +13,7 @@ export function DevCombatPanel({ session }: { session: IdleSession }) {
   if (!session.devPreviewAvailable) return null;
   return <details style={{ position: "absolute", left: 8, top: 115, zIndex: 10,
     pointerEvents: "auto", background: "#171f2ee8", color: "#eee", padding: 5, fontSize: 11 }}>
-    <summary>DEV combat QA</summary>
+    <summary>{session.isDevPreview ? "DEV PREVIEW / NO REWARDS" : "DEV combat QA"}</summary>
     <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr)", gap: 4,
       width: 205, maxHeight: 160, overflowY: "auto", overflowWrap: "anywhere" }}>
       <select aria-label="QA stage" value={stage} onChange={e => setStage(e.target.value)}>
@@ -30,7 +30,7 @@ export function DevCombatPanel({ session }: { session: IdleSession }) {
         <option value="pet_gems_v1">Pug</option><option value="pet_gh_v1">Watchdog</option>
       </select>
       <select aria-label="QA hero level" value={level} onChange={e => setLevel(Number(e.target.value))}>
-        {[1,5,10].map(n => <option key={n} value={n}>Level {n} skills</option>)}
+        {[1,4,5,7,8,10].map(n => <option key={n} value={n}>Level {n} skills</option>)}
       </select>
       <button onClick={() => session.previewCombat(stage, tier, count, pet || null, level)}>Start QA preview</button>
       <button onClick={() => { session.previewPaused = !session.previewPaused; }}>Pause / resume QA</button>

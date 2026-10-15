@@ -1,4 +1,5 @@
 import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { Icon } from "@idosgames/react/ui";
 import { STAGE_CATALOG, STAGES_PER_CHAPTER } from "../game/stageCatalog";
 import { chapterAvailable } from "../game/stageFlow";
@@ -6,8 +7,24 @@ import { stageUnlocked } from "../game/stageProgress";
 import type { StageDefinition } from "../game/stageRun";
 import type { IdleSession } from "../game/session";
 import { heroUi } from "./heroAssets";
+import { StagePreparation } from "./StagePreparation";
+import { useDialogFocus } from "../../../shared/ui/useDialogFocus";
 
 type Position = { x: number; y: number };
+
+export function StageMapDialog({ session, close }: { session: IdleSession; close: () => void }) {
+  const ref = useDialogFocus<HTMLDialogElement>(close);
+  useEffect(() => {
+    const panel = ref.current;
+    const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    panel?.showModal();
+    return () => { panel?.close(); if (previous?.isConnected) previous.focus({preventScroll:true}); };
+  }, []);
+  return createPortal(<dialog ref={ref} className="gh-stage-map-dialog gh-stage-map-modal" aria-label="Stage map"
+    onCancel={event => { event.preventDefault(); close(); }}>
+    <StageMap session={session} onSelect={close} onClose={close} />
+  </dialog>, document.body);
+}
 
 const desktopPositions: Position[] = Array.from({ length: STAGES_PER_CHAPTER }, (_, index) => ({
   x: index < 5 ? 10 + index * 20 : 90 - (index - 5) * 20,
@@ -90,9 +107,9 @@ export function StageMap({ session, onSelect, onClose }: {
           return <button key={stage.id} type="button" style={style}
             className={`gh-map-node${unlocked ? " is-unlocked" : " is-locked"}${completed ? " is-completed" : ""}${selected ? " is-current" : ""}${boss ? " is-boss" : ""}${special ? " is-special" : ""}`}
             disabled={!unlocked || session.lootPending || session.lootBusy}
-            aria-label={`Stage ${stage.chapter}-${stage.stage}, ${selected ? completed ? "currently farming" : "current progression stage" : completed ? "completed" : unlocked ? "unlocked" : "locked"}${boss ? ", chapter boss" : ""}`}
+            aria-label={`Stage ${stage.chapter}-${stage.stage}, recommended Power ${stage.recommendedPower}, ${selected ? completed ? "currently farming" : "current progression stage" : completed ? "completed" : unlocked ? "unlocked" : "locked"}${boss ? ", chapter boss" : ""}`}
             aria-current={selected ? "location" : undefined}
-            title={`${stage.name} · ${selected ? completed ? "Farming" : "Progressing" : unlocked ? "Select this stage" : "Locked"}`}
+            title={`${stage.name} · Recommended Power ${stage.recommendedPower} · ${selected ? completed ? "Farming" : "Progressing" : unlocked ? "Select this stage" : "Clear the previous stage to unlock"}`}
             onClick={() => { if (session.selectStage(stage.id)) onSelect(); }}>
             {selected && <span className="gh-map-node__party"><img src={heroUi.functionIcon("function_icon_battle")} alt="" /></span>}
             <span className="gh-map-node__disc">
@@ -114,9 +131,9 @@ export function StageMap({ session, onSelect, onClose }: {
             onChange={(event) => session.setAutoProgressEnabled(event.target.checked)} /> Advance</label></div>
         {selectedVisible && <div className="gh-stage-map__detail-stats">
           <span>Best <b>{session.stageProgress.bestSeconds[current.id] == null ? "—" : `${session.stageProgress.bestSeconds[current.id]!.toFixed(1)}s`}</b></span>
-          <span>Power <b>{current.recommendedPower ?? "—"}</b></span>
           <span>Rewards <b>{current.rewards?.repeat.gold ?? 0} GOLD · Stage Chest{current.rewards?.repeat.bossChestItemID ? " · Boss Chest" : ""}</b></span>
         </div>}
+        {selectedVisible ? <StagePreparation session={session} /> : null}
       </div>
     </div>
   </section>;

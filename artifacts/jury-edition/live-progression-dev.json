@@ -1,0 +1,64 @@
+{
+  "passed": true,
+  "titleID": "98JRCAKG-DEV",
+  "levels": [
+    {
+      "level": 3,
+      "cost": 750,
+      "gold": 49250,
+      "power": 83
+    },
+    {
+      "level": 4,
+      "cost": 1125,
+      "gold": 48125,
+      "power": 84
+    },
+    {
+      "level": 5,
+      "cost": 1688,
+      "gold": 46437,
+      "power": 85
+    },
+    {
+      "level": 6,
+      "cost": 2532,
+      "gold": 43905,
+      "power": 86
+    },
+    {
+      "level": 7,
+      "cost": 3797,
+      "gold": 40108,
+      "power": 88
+    },
+    {
+      "level": 8,
+      "cost": 5696,
+      "gold": 34412,
+      "power": 89
+    },
+    {
+      "level": 9,
+      "cost": 8543,
+      "gold": 25869,
+      "power": 90
+    },
+    {
+      "level": 10,
+      "cost": 12815,
+      "gold": 13054,
+      "power": 92
+    }
+  ],
+  "checks": [
+    "ownership",
+    "concurrent target",
+    "insufficient funds",
+    "exact deductions",
+    "Power spoof ignored",
+    "cap",
+    "replay",
+    "state reload"
+  ]
+}

@@ -45,7 +45,7 @@ export function activeSkillPresentation(heroID: string, level = 1, progression =
       const skill = COMBAT_SKILLS.Mage;
       const damage = percent(mastered ? HERO_SKILLS.mastery.Mage : skill.damageMultiplier);
       return {
-        id: skill.id, classId: skill.classId, name: "Meteor Fireball",
+        id: skill.id, classId: skill.classId, name: "Meteor",
         description: `Launches a massive fireball that explodes, dealing ${damage} damage to nearby enemies.`,
         cooldown: seconds(skill.cooldown),
         details: [

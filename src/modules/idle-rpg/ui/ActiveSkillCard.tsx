@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { activeSkillPresentation, type ActiveSkillPresentation } from "./activeSkillPresentation";
 import "./active-skill.css";
+import { HERO_SKILLS, activeSkillUnlocked } from "../game/progressionSkills";
 
 export function SkillIcon({ classId }: { classId: ActiveSkillPresentation["classId"] }): ReactNode {
   if (classId === "Knight") return <svg viewBox="0 0 64 64" aria-hidden="true" fill="none">
@@ -26,12 +27,13 @@ export function SkillIcon({ classId }: { classId: ActiveSkillPresentation["class
 export function ActiveSkillCard({ heroID, level = 1, progression = false }: { heroID: string; level?: number; progression?: boolean }): ReactNode {
   const skill = activeSkillPresentation(heroID, level, progression);
   if (!skill) return null;
-  return <section className={`gh-active-skill gh-active-skill--${skill.classId.toLowerCase()}`}
+  const unlocked = activeSkillUnlocked(level);
+  return <section className={`gh-active-skill gh-active-skill--${skill.classId.toLowerCase()}${unlocked ? "" : " is-locked"}`}
     aria-label={`${skill.name} active skill`} data-skill-id={skill.id}>
     <div className="gh-active-skill__heading">
-      <span>ACTIVE SKILL</span>
-      <span className="gh-active-skill__auto" title="Activates automatically in combat. Skills cannot be equipped or activated manually."
-        aria-label="Activates automatically in combat">AUTO</span>
+      <span>SIGNATURE ACTIVE · LEVEL {HERO_SKILLS.activeLevel}</span>
+      <span className="gh-active-skill__auto" title={unlocked ? "Activates automatically in combat." : `Upgrade to Level ${HERO_SKILLS.activeLevel} to unlock.`}
+        aria-label={unlocked ? "Activates automatically in combat" : "Skill locked"}>{unlocked ? "AUTO" : "LOCKED"}</span>
     </div>
     <div className="gh-active-skill__body">
       <div className="gh-active-skill__icon"><SkillIcon classId={skill.classId} /></div>
@@ -44,5 +46,6 @@ export function ActiveSkillCard({ heroID, level = 1, progression = false }: { he
       {skill.details.map(({ label, value }) => <div key={label}><span>{label}</span><strong>{value}</strong></div>)}
       <div className="gh-active-skill__cooldown"><span>COOLDOWN</span><strong>{skill.cooldown}</strong></div>
     </div>
+    {!unlocked ? <p className="gh-skill-lock">Unlocks at Level {HERO_SKILLS.activeLevel} · Current level {level}/{HERO_SKILLS.activeLevel}</p> : null}
   </section>;
 }

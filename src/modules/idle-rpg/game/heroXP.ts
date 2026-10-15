@@ -1,4 +1,4 @@
-/** Stage-earned hero level. Character.Level remains the iDos paid rank for combat. */
+/** Stage Mastery from battle XP. Character.Level is the separate GOLD-paid Hero Level. */
 export const HERO_XP_KEY = "grind_hero_xp_v1";
 export const HERO_LEVEL_CAP = 30;
 

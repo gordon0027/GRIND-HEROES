@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-15",
+  "titleId": "98JRCAKG",
+  "version": 83,
+  "buildId": "bld4a79d819280646a88e8cca76c9c9b771",
+  "status": "Live",
+  "previousVersion": 82,
+  "sourceCommit": "d681b8c449f0cea898868285bfe9c2bf2461bb19",
+  "branch": "codex/grind-heroes-update",
+  "files": 119,
+  "zipBytes": 27950658,
+  "zipSha256": "1F11B6C72D9E7A71619998B890D13B023C8EF8EDF00BE501ECD0F1AFD182B260",
+  "rootJavascript": "index-DCP5gjXa.js",
+  "rootStylesheet": "index-BbtfwfAT.css",
+  "verified": [
+    "All 119 staged hosted resources returned HTTP 200",
+    "The PROD root served the new JavaScript and stylesheet",
+    "The direct Shop button replaced the game header menu",
+    "The existing Shop opened and closed on the PROD root",
+    "Desktop and 390px local browser layouts passed"
+  ],
+  "serverConfigChanged": false,
+  "cloudCodeChanged": false,
+  "purchaseSubmitted": false
+}

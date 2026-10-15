@@ -1,0 +1,485 @@
+{
+  "checkedAt": "2026-10-15T18:24:35.109Z",
+  "buildId": "bld4a79d819280646a88e8cca76c9c9b771",
+  "files": 119,
+  "passed": 119,
+  "failures": [],
+  "results": [
+    {
+      "file": "assets/backgrounds/stages/act2.png",
+      "status": 200
+    },
+    {
+      "file": "assets/backgrounds/stages/act3.png",
+      "status": 200
+    },
+    {
+      "file": "assets/backgrounds/stages/meadow-road.png",
+      "status": 200
+    },
+    {
+      "file": "assets/enemies/act2/GoblinOrange_1.png",
+      "status": 200
+    },
+    {
+      "file": "assets/enemies/act2/GoblinOrange_2_Fat.png",
+      "status": 200
+    },
+    {
+      "file": "assets/enemies/act2/GoblinOrange_Archer_4.png",
+      "status": 200
+    },
+    {
+      "file": "assets/enemies/act2/GoblinOrange_Heavy_3.png",
+      "status": 200
+    },
+    {
+      "file": "assets/enemies/act2/OrangeOgre.png",
+      "status": 200
+    },
+    {
+      "file": "assets/enemies/act3/Undead_1_Simple.png",
+      "status": 200
+    },
+    {
+      "file": "assets/enemies/act3/Undead_2_Archer.png",
+      "status": 200
+    },
+    {
+      "file": "assets/enemies/act3/Undead_3_Heavy.png",
+      "status": 200
+    },
+    {
+      "file": "assets/enemies/act3/ZombieOgre.png",
+      "status": 200
+    },
+    {
+      "file": "assets/enemies/goblin1/Goblin1.png",
+      "status": 200
+    },
+    {
+      "file": "assets/enemies/goblin2/Goblin2.png",
+      "status": 200
+    },
+    {
+      "file": "assets/enemies/goblin3/GoblinBoss.png",
+      "status": 200
+    },
+    {
+      "file": "assets/enemies/ogreboss/ogreboss.png",
+      "status": 200
+    },
+    {
+      "file": "assets/heroes/archer/spritesheet.png",
+      "status": 200
+    },
+    {
+      "file": "assets/heroes/knight/spritesheet.png",
+      "status": 200
+    },
+    {
+      "file": "assets/heroes/mage/spritesheet.png",
+      "status": 200
+    },
+    {
+      "file": "assets/index-BbtfwfAT.css",
+      "status": 200
+    },
+    {
+      "file": "assets/index-DCP5gjXa.js",
+      "status": 200
+    },
+    {
+      "file": "assets/pets/donkey/portrait.png",
+      "status": 200
+    },
+    {
+      "file": "assets/pets/donkey/spritesheet.png",
+      "status": 200
+    },
+    {
+      "file": "assets/pets/pug/portrait.png",
+      "status": 200
+    },
+    {
+      "file": "assets/pets/pug/spritesheet.png",
+      "status": 200
+    },
+    {
+      "file": "assets/pets/watchdog/portrait.png",
+      "status": 200
+    },
+    {
+      "file": "assets/pets/watchdog/spritesheet.png",
+      "status": 200
+    },
+    {
+      "file": "assets/projectiles/ShortWillowBow.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/chests/boss_chest.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/chests/Epic Purple Enchanted Treasure Chest.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/chests/stage_chest.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/archer/archer_icon.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/armor/chainmail.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/armor/dragon_scale.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/armor/knight_plate.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/armor/leather_vest.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/armor/reinforced_vest.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/boots/scout_boots.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/boots/stormstride_boots.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/boots/swift_boots.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/boots/traveler_boots.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/boots/windwalker_boots.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/boss/boss_icon.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/bow/hunter_bow.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/bow/moonweave_bow.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/bow/recurve_bow.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/bow/silverwood_bow.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/bow/starfall_bow.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/gloves/runebound_gloves.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/gloves/steel_gauntlets.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/gloves/titan_gauntlets.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/gloves/training_gloves.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/gloves/worn_gloves.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/helmet/leather_helmet.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/helmet/phoenix_helm.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/helmet/reinforced_helmet.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/helmet/runic_helm.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/helmet/steel_helmet.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/knight/knight_icon.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/mage/mage_icon.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/orb/apprentice_orb.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/orb/celestial_orb.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/orb/focus_orb.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/orb/runic_orb.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/orb/sapphire_orb.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/quiver/arrow_quiver.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/quiver/dragonflight_quiver.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/quiver/field_quiver.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/quiver/steelhead_quiver.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/quiver/stormshot_quiver.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/shield/oak_shield.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/shield/reinforced_shield.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/shield/runic_aegis.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/shield/steel_bulwark.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/shield/sunforge_aegis.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/staff/apprentice_staff.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/staff/ashwood_staff.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/staff/astral_staff.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/staff/crystal_staff.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/staff/sapphire_staff.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/sword/bronze_sword.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/sword/dragon_blade.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/sword/iron_sword.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/sword/runeblade.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/icons/sword/wooden_sword.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/revamp/rarity/common.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/revamp/rarity/epic.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/revamp/rarity/legendary.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/revamp/rarity/rare.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/revamp/rarity/uncommon.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/revamp/slots/base.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/revamp/slots/selected.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/source/Component/Button/btn_rectangle_01_n_brown.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/source/Component/Button/btn_rectangle_01_n_dark.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/source/Component/Frame/BossWarningEffect.controller",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/source/Component/Frame/frame_cardframe_02_front.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/source/Component/Frame/frame_itemframe_00_s1.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/source/Component/Frame/frame_itemframe_02_frame_brown1.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/source/Component/Frame/WarningBossSpawnAnim.anim",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/source/Component/Icon_FunctionIcons_(Original)/function_icon_bag_2.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/source/Component/Icon_FunctionIcons_(Original)/function_icon_battle.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/source/Component/Icon_FunctionIcons_(Original)/function_icon_magicball.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/source/Component/Icon_FunctionIcons_(Original)/function_icon_map.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/source/Component/Icon_FunctionIcons_(Original)/function_icon_menu_1.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/source/Component/Icon_FunctionIcons_(Original)/function_icon_user_1.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/source/Component/Icon_FunctionIcons_(Original)/function_icon_wand.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/source/Component/Icon_Icons_(Original)/icon_equip_armor.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/source/Component/Icon_Icons_(Original)/icon_equip_arrow.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/source/Component/Icon_Icons_(Original)/icon_equip_arrows.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/source/Component/Icon_Icons_(Original)/icon_equip_hand.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/source/Component/Icon_Icons_(Original)/icon_equip_helmet_0.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/source/Component/Icon_Icons_(Original)/icon_equip_shield.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/source/Component/Icon_Icons_(Original)/icon_equip_shoes.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/source/Component/Icon_Icons_(Original)/icon_equip_sword.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/source/Component/Icon_Icons_(Original)/icon_lock.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/source/Component/UI_Etc/status_icon_gem.png",
+      "status": 200
+    },
+    {
+      "file": "assets/ui/source/Component/UI_Etc/status_icon_gold.png",
+      "status": 200
+    },
+    {
+      "file": "index.html",
+      "status": 200
+    },
+    {
+      "file": "sw.js",
+      "status": 200
+    }
+  ]
+}

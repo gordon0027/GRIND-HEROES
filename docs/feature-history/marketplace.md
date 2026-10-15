@@ -54,3 +54,11 @@ A separate browser run opened a real DEV `leather_helmet` offer from another gue
 The player superseded the earlier Main-token plan: Marketplace trading in PROD uses GEMS. The footer now has a MARKET button between TEAM and MORE; it opens the registered Marketplace screen directly and uses the same equipment art and frame system. MORE no longer duplicates the Marketplace entry. If the title has no enabled Marketplace section, the footer shows an unavailable message instead of a broken screen. The PROD rollout requires GEMS tradability, the 50 Grind gear definitions to be tradable, the DEV-tested listing policy, and the server CloudCode equipment handlers; preserve PROD's existing Main token and party-slot prices while applying it.
 
 PROD rollout completed as client build v34 (`bld7d36c03e55db4d9f8f23bfbf613d6687`, 113 files) at `https://98jrcakg.idos.games/`. PROD `GEMS.Permissions.IsTradable` is enabled; the 50 `grind-gear` items are tradable; Marketplace uses the DEV-verified GEMS listing policy (24/72/168 hours, zero commission, auctions/orders/direct trades disabled). PROD CloudCode revision 3 uses the DEV-verified equipment and stage handlers while retaining PROD party-slot prices of 50,000 and 250,000 GOLD. The PROD Main crypto definition and `Main_IOU` remain unchanged. A fresh PROD guest opened the live root and Marketplace through the footer; the empty market rendered with no listings. A quick root reload logged one CloudCode rate-limit error, `Too soon. Try again in 3s`; the screen recovered. No live PROD sale or purchase was performed during rollout; the two-account trade test remains DEV-only.
+
+Jury Edition mobile pass (2026-10-15): market tabs wrap into a two-column grid,
+so History and Claims stay discoverable at 320 px. A compact labelled loading
+state replaces six tall blank cards. Failed browse requests offer a manual retry;
+rejections and transport exceptions show the same safe message. Fantasy button
+art, GEMS settlement, escrow, offer filters and purchase confirmation are retained.
+The purchase regression (settlement, inventory refresh, sold listing, insufficient
+balance) passes; no real trade or GH operation was needed for this UI pass.

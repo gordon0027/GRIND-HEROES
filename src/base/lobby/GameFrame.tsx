@@ -9,7 +9,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import type { FeatureRegistry, ModeRegistry } from "@idosgames/module-sdk";
-import { useLayout, useUiKit, v } from "@idosgames/react/ui";
+import { Icon, useLayout, useUiKit, v } from "@idosgames/react/ui";
 import type { AppConfig } from "../app-config";
 import { BottomTabs, LobbyHeader } from "./Lobby";
 import { PLAY, arrangeFeatures, chromeFor, splitTabs } from "./model";
@@ -86,52 +86,38 @@ function GrindFrameBalances(): ReactNode {
   </div>;
 }
 
-function GrindHeaderMenu({ features }: { features: FeatureRegistry }): ReactNode {
+function GrindHeaderShop({ features }: { features: FeatureRegistry }): ReactNode {
   const [open, setOpen] = useState(false);
-  const [screen, setScreen] = useState<string | null>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const entries = [
-    { id: "character", label: "Hero Upgrades" },
-    { id: "quests", label: "Quests" },
-    { id: "store", label: "Shop" },
-  ].filter((entry) => features.get(entry.id)?.available);
-  const Screen = screen ? features.get(screen)?.Screen : null;
+  const store = features.get("store");
+  const Screen = store?.available ? store.Screen : null;
 
   useEffect(() => {
-    if (!open && !screen) return;
+    if (!open) return;
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") { setOpen(false); setScreen(null); }
-    };
-    const onPointer = (event: PointerEvent) => {
-      if (open && !menuRef.current?.contains(event.target as Node)) setOpen(false);
+      if (event.key === "Escape") setOpen(false);
     };
     document.addEventListener("keydown", onKey);
-    document.addEventListener("pointerdown", onPointer);
     return () => {
       document.removeEventListener("keydown", onKey);
-      document.removeEventListener("pointerdown", onPointer);
     };
-  }, [open, screen]);
+  }, [open]);
 
-  return <div className="grind-header-menu" ref={menuRef}>
-    <button type="button" className="grind-header-menu__trigger" aria-label="Open game menu"
-      aria-expanded={open} onClick={() => setOpen((value) => !value)}>☰</button>
-    {open && <div className="grind-header-menu__dropdown" role="menu" aria-label="Game menu">
-      {entries.map((entry) => <button key={entry.id} type="button" role="menuitem"
-        onClick={() => { setOpen(false); setScreen(entry.id); }}>{entry.label}</button>)}
-      {!entries.length && <span>No features available</span>}
-    </div>}
-    {Screen && createPortal(<div className="grind-header-feature-overlay"
-      onMouseDown={(event) => { if (event.target === event.currentTarget) setScreen(null); }}>
+  return <>
+    <button type="button" className="grind-header-shop" aria-label="Open Shop"
+      disabled={!Screen} onClick={() => setOpen(true)}>
+      <Icon glyph="shop" size={21} />
+      <span>SHOP</span>
+    </button>
+    {open && Screen && createPortal(<div className="grind-header-feature-overlay"
+      onMouseDown={(event) => { if (event.target === event.currentTarget) setOpen(false); }}>
       <section className="grind-header-feature" role="dialog" aria-modal="true"
-        aria-label={entries.find((entry) => entry.id === screen)?.label ?? "Game feature"}>
-        <header><strong>{entries.find((entry) => entry.id === screen)?.label}</strong>
-          <button type="button" aria-label="Close game feature" onClick={() => setScreen(null)}>×</button></header>
-        <Screen args={screen === "character" ? { rankOnly: true } : undefined}
-          close={() => setScreen(null)} />
+        aria-label="Shop">
+        <header><strong>Shop</strong>
+          <button type="button" aria-label="Close Shop" onClick={() => setOpen(false)}>×</button></header>
+        <Screen close={() => setOpen(false)} />
       </section>
     </div>, document.body)}
-  </div>;
+  </>;
 }
 
 /** A game that lives inside the lobby (`inLobby`) is on screen — a full-screen game is not framed. */
@@ -157,7 +143,7 @@ export function makeFrameHeader(options: GameFrameOptions): ComponentType {
       return <div className="grind-frame-header">
         <GrindFrameBalances />
         <div className="grind-frame-header__actions">
-          <GrindHeaderMenu features={options.features} />
+          <GrindHeaderShop features={options.features} />
           <Account features={options.features} />
         </div>
       </div>;

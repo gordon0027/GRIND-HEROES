@@ -118,7 +118,7 @@ export function PremiumChestPanel({ session }: { session: IdleSession }): ReactN
           <EquipmentArt icon={gearImage(reward)} rarity={reward.rarity} size={132} />
           <strong className="gh-premium-reveal__rarity">{reward.rarity.toUpperCase()}</strong>
           <h3>{reward.name}</h3>
-          <p>{reward.slot} · Level {reward.level} · Requires Lv {reward.requiredLevel}</p>
+          <p>{reward.slot} · Item Level {reward.level} · Requires Stage Mastery {reward.requiredLevel}</p>
           <GearStatRows item={reward} relevantOnly />
           <button type="button" className="gh-premium-chest__button" onClick={() => {
             setPhase("idle"); setReward(null); setError(null);

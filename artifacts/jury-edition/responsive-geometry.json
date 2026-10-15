@@ -1,0 +1,142 @@
+[
+  {
+    "actual": {
+      "height": 740,
+      "width": 320
+    },
+    "dialog": {
+      "modal": true,
+      "overflow": false,
+      "rect": {
+        "bottom": 732,
+        "height": 724,
+        "left": 8,
+        "right": 312,
+        "top": 8,
+        "width": 304,
+        "x": 8,
+        "y": 8
+      }
+    }
+  },
+  {
+    "actual": {
+      "height": 800,
+      "width": 360
+    },
+    "dialog": {
+      "modal": true,
+      "overflow": false,
+      "rect": {
+        "bottom": 792,
+        "height": 784,
+        "left": 8,
+        "right": 352,
+        "top": 8,
+        "width": 344,
+        "x": 8,
+        "y": 8
+      }
+    }
+  },
+  {
+    "actual": {
+      "height": 844,
+      "width": 390
+    },
+    "dialog": {
+      "modal": true,
+      "overflow": false,
+      "rect": {
+        "bottom": 836,
+        "height": 828,
+        "left": 8,
+        "right": 382,
+        "top": 8,
+        "width": 374,
+        "x": 8,
+        "y": 8
+      }
+    }
+  },
+  {
+    "actual": {
+      "height": 932,
+      "width": 430
+    },
+    "dialog": {
+      "modal": true,
+      "overflow": false,
+      "rect": {
+        "bottom": 891.125,
+        "height": 850.25,
+        "left": 8,
+        "right": 422,
+        "top": 40.875,
+        "width": 414,
+        "x": 8,
+        "y": 40.875
+      }
+    }
+  },
+  {
+    "actual": {
+      "height": 1024,
+      "width": 768
+    },
+    "dialog": {
+      "modal": true,
+      "overflow": false,
+      "rect": {
+        "bottom": 900.53125,
+        "height": 777.0625,
+        "left": 16,
+        "right": 752,
+        "top": 123.46875,
+        "width": 736,
+        "x": 16,
+        "y": 123.46875
+      }
+    }
+  },
+  {
+    "actual": {
+      "height": 900,
+      "width": 1366
+    },
+    "dialog": {
+      "modal": true,
+      "overflow": false,
+      "rect": {
+        "bottom": 838.53125,
+        "height": 777.0625,
+        "left": 283,
+        "right": 1083,
+        "top": 61.46875,
+        "width": 800,
+        "x": 283,
+        "y": 61.46875
+      }
+    }
+  },
+  {
+    "actual": {
+      "height": 1080,
+      "width": 1920
+    },
+    "dialog": {
+      "modal": true,
+      "overflow": false,
+      "rect": {
+        "bottom": 928.53125,
+        "height": 777.0625,
+        "left": 560,
+        "right": 1360,
+        "top": 151.46875,
+        "width": 800,
+        "x": 560,
+        "y": 151.46875
+      }
+    }
+  }
+]
