@@ -25,3 +25,4 @@ instead.
 - [Secure Team Power](team-power.md) — server-derived active party Power and a protected custom Top 100.
 - [Pet System V1–V2](pets.md) — native Store ownership, next-run bonuses and animated battle companions in TEAM.
 - [Game polish V1 release report (RU)](game-polish-v1-report-ru.md) — production build 81, browser verification and known limits.
+- [Jury Edition balance](jury-balance.md) — real DEV stat profiles, 720 deterministic runs, stage preparation and unchanged rewards.

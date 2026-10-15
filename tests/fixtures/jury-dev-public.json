@@ -1,0 +1,3350 @@
+{
+  "source": "Read-only iDos DEV configuration, 2026-10-15",
+  "Character": {
+    "Definitions": {
+      "Knight": {
+        "CharacterID": "Knight",
+        "Stats": {
+          "Damage": {
+            "StatID": "Damage",
+            "DisplayName": "Attack",
+            "Description": "Attack",
+            "MaxLevel": 200,
+            "Weight": 10,
+            "PriceOptions": {
+              "default": {
+                "OptionID": "default",
+                "Cost": {
+                  "Standard": {
+                    "Entries": [
+                      {
+                        "Type": "VirtualCurrency",
+                        "CurrencyID": "GOLD",
+                        "Amount": 10
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "CostCurve": {
+              "Shape": "Geometric",
+              "GrowthRate": 0.012
+            },
+            "BaseStatValue": 10,
+            "ValueCurve": {
+              "Shape": "PerStep",
+              "PerStep": 2
+            }
+          },
+          "Health": {
+            "StatID": "Health",
+            "DisplayName": "HP",
+            "Description": "HP",
+            "MaxLevel": 200,
+            "Weight": 1,
+            "PriceOptions": {
+              "default": {
+                "OptionID": "default",
+                "Cost": {
+                  "Standard": {
+                    "Entries": [
+                      {
+                        "Type": "VirtualCurrency",
+                        "CurrencyID": "GOLD",
+                        "Amount": 8
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "CostCurve": {
+              "Shape": "Geometric",
+              "GrowthRate": 0.012
+            },
+            "BaseStatValue": 120,
+            "ValueCurve": {
+              "Shape": "PerStep",
+              "PerStep": 24
+            }
+          },
+          "HpRegen": {
+            "StatID": "HpRegen",
+            "DisplayName": "HP Recovery",
+            "Description": "HP Recovery",
+            "MaxLevel": 200,
+            "Weight": 0,
+            "PriceOptions": {
+              "default": {
+                "OptionID": "default",
+                "Cost": {
+                  "Standard": {
+                    "Entries": [
+                      {
+                        "Type": "VirtualCurrency",
+                        "CurrencyID": "GOLD",
+                        "Amount": 12
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "CostCurve": {
+              "Shape": "Geometric",
+              "GrowthRate": 0.012
+            },
+            "BaseStatValue": 1.2,
+            "ValueCurve": {
+              "Shape": "PerStep",
+              "PerStep": 0.48
+            }
+          },
+          "AttackSpeed": {
+            "StatID": "AttackSpeed",
+            "DisplayName": "Attack Speed",
+            "Description": "Attack Speed",
+            "MaxLevel": 50,
+            "Weight": 100,
+            "PriceOptions": {
+              "default": {
+                "OptionID": "default",
+                "Cost": {
+                  "Standard": {
+                    "Entries": [
+                      {
+                        "Type": "VirtualCurrency",
+                        "CurrencyID": "GOLD",
+                        "Amount": 50
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "CostCurve": {
+              "Shape": "Geometric",
+              "GrowthRate": 0.03
+            },
+            "BaseStatValue": 1,
+            "ValueCurve": {
+              "Shape": "PerStep",
+              "PerStep": 0.01
+            }
+          },
+          "CritChance": {
+            "StatID": "CritChance",
+            "DisplayName": "Critical Hit",
+            "Description": "Critical Hit",
+            "MaxLevel": 50,
+            "Weight": 1000,
+            "PriceOptions": {
+              "default": {
+                "OptionID": "default",
+                "Cost": {
+                  "Standard": {
+                    "Entries": [
+                      {
+                        "Type": "VirtualCurrency",
+                        "CurrencyID": "GOLD",
+                        "Amount": 40
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "CostCurve": {
+              "Shape": "Geometric",
+              "GrowthRate": 0.03
+            },
+            "BaseStatValue": 0.05,
+            "ValueCurve": {
+              "Shape": "PerStep",
+              "PerStep": 0.002
+            }
+          },
+          "CritDamage": {
+            "StatID": "CritDamage",
+            "DisplayName": "Critical Hit Damage",
+            "Description": "Critical Hit Damage",
+            "MaxLevel": 100,
+            "Weight": 100,
+            "PriceOptions": {
+              "default": {
+                "OptionID": "default",
+                "Cost": {
+                  "Standard": {
+                    "Entries": [
+                      {
+                        "Type": "VirtualCurrency",
+                        "CurrencyID": "GOLD",
+                        "Amount": 30
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "CostCurve": {
+              "Shape": "Geometric",
+              "GrowthRate": 0.02
+            },
+            "BaseStatValue": 1.5,
+            "ValueCurve": {
+              "Shape": "PerStep",
+              "PerStep": 0.02
+            }
+          }
+        },
+        "RankLadder": {
+          "MaxRank": 10,
+          "FirstPaidRank": 2,
+          "PriceOptions": {
+            "default": {
+              "OptionID": "default",
+              "Cost": {
+                "Standard": {
+                  "Entries": [
+                    {
+                      "Type": "VirtualCurrency",
+                      "CurrencyID": "GOLD",
+                      "Amount": 500
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "CostCurve": {
+            "Shape": "Geometric",
+            "GrowthRate": 0.5
+          }
+        },
+        "RankStatCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.04
+        },
+        "StatMaxLevelCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 1
+        },
+        "Unlock": {
+          "UnlockedByDefault": true
+        }
+      },
+      "Archer": {
+        "CharacterID": "Archer",
+        "Stats": {
+          "Damage": {
+            "StatID": "Damage",
+            "DisplayName": "Attack",
+            "Description": "Attack",
+            "MaxLevel": 200,
+            "Weight": 10,
+            "PriceOptions": {
+              "default": {
+                "OptionID": "default",
+                "Cost": {
+                  "Standard": {
+                    "Entries": [
+                      {
+                        "Type": "VirtualCurrency",
+                        "CurrencyID": "GOLD",
+                        "Amount": 10
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "CostCurve": {
+              "Shape": "Geometric",
+              "GrowthRate": 0.012
+            },
+            "BaseStatValue": 9,
+            "ValueCurve": {
+              "Shape": "PerStep",
+              "PerStep": 1.8
+            }
+          },
+          "Health": {
+            "StatID": "Health",
+            "DisplayName": "HP",
+            "Description": "HP",
+            "MaxLevel": 200,
+            "Weight": 1,
+            "PriceOptions": {
+              "default": {
+                "OptionID": "default",
+                "Cost": {
+                  "Standard": {
+                    "Entries": [
+                      {
+                        "Type": "VirtualCurrency",
+                        "CurrencyID": "GOLD",
+                        "Amount": 8
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "CostCurve": {
+              "Shape": "Geometric",
+              "GrowthRate": 0.012
+            },
+            "BaseStatValue": 90,
+            "ValueCurve": {
+              "Shape": "PerStep",
+              "PerStep": 18
+            }
+          },
+          "HpRegen": {
+            "StatID": "HpRegen",
+            "DisplayName": "HP Recovery",
+            "Description": "HP Recovery",
+            "MaxLevel": 200,
+            "Weight": 0,
+            "PriceOptions": {
+              "default": {
+                "OptionID": "default",
+                "Cost": {
+                  "Standard": {
+                    "Entries": [
+                      {
+                        "Type": "VirtualCurrency",
+                        "CurrencyID": "GOLD",
+                        "Amount": 12
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "CostCurve": {
+              "Shape": "Geometric",
+              "GrowthRate": 0.012
+            },
+            "BaseStatValue": 0.9,
+            "ValueCurve": {
+              "Shape": "PerStep",
+              "PerStep": 0.36
+            }
+          },
+          "AttackSpeed": {
+            "StatID": "AttackSpeed",
+            "DisplayName": "Attack Speed",
+            "Description": "Attack Speed",
+            "MaxLevel": 50,
+            "Weight": 100,
+            "PriceOptions": {
+              "default": {
+                "OptionID": "default",
+                "Cost": {
+                  "Standard": {
+                    "Entries": [
+                      {
+                        "Type": "VirtualCurrency",
+                        "CurrencyID": "GOLD",
+                        "Amount": 50
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "CostCurve": {
+              "Shape": "Geometric",
+              "GrowthRate": 0.03
+            },
+            "BaseStatValue": 1.4,
+            "ValueCurve": {
+              "Shape": "PerStep",
+              "PerStep": 0.01
+            }
+          },
+          "CritChance": {
+            "StatID": "CritChance",
+            "DisplayName": "Critical Hit",
+            "Description": "Critical Hit",
+            "MaxLevel": 50,
+            "Weight": 1000,
+            "PriceOptions": {
+              "default": {
+                "OptionID": "default",
+                "Cost": {
+                  "Standard": {
+                    "Entries": [
+                      {
+                        "Type": "VirtualCurrency",
+                        "CurrencyID": "GOLD",
+                        "Amount": 40
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "CostCurve": {
+              "Shape": "Geometric",
+              "GrowthRate": 0.03
+            },
+            "BaseStatValue": 0.12,
+            "ValueCurve": {
+              "Shape": "PerStep",
+              "PerStep": 0.002
+            }
+          },
+          "CritDamage": {
+            "StatID": "CritDamage",
+            "DisplayName": "Critical Hit Damage",
+            "Description": "Critical Hit Damage",
+            "MaxLevel": 100,
+            "Weight": 100,
+            "PriceOptions": {
+              "default": {
+                "OptionID": "default",
+                "Cost": {
+                  "Standard": {
+                    "Entries": [
+                      {
+                        "Type": "VirtualCurrency",
+                        "CurrencyID": "GOLD",
+                        "Amount": 30
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "CostCurve": {
+              "Shape": "Geometric",
+              "GrowthRate": 0.02
+            },
+            "BaseStatValue": 1.5,
+            "ValueCurve": {
+              "Shape": "PerStep",
+              "PerStep": 0.02
+            }
+          }
+        },
+        "RankLadder": {
+          "MaxRank": 10,
+          "FirstPaidRank": 2,
+          "PriceOptions": {
+            "default": {
+              "OptionID": "default",
+              "Cost": {
+                "Standard": {
+                  "Entries": [
+                    {
+                      "Type": "VirtualCurrency",
+                      "CurrencyID": "GOLD",
+                      "Amount": 500
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "CostCurve": {
+            "Shape": "Geometric",
+            "GrowthRate": 0.5
+          }
+        },
+        "RankStatCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.04
+        },
+        "StatMaxLevelCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 1
+        },
+        "Unlock": {
+          "UnlockedByDefault": false,
+          "PriceOptions": {
+            "default": {
+              "OptionID": "default",
+              "Cost": {
+                "Standard": {
+                  "Entries": [
+                    {
+                      "Type": "VirtualCurrency",
+                      "CurrencyID": "GOLD",
+                      "Amount": 8000
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "Mage": {
+        "CharacterID": "Mage",
+        "Stats": {
+          "Damage": {
+            "StatID": "Damage",
+            "DisplayName": "Attack",
+            "Description": "Attack",
+            "MaxLevel": 200,
+            "Weight": 10,
+            "PriceOptions": {
+              "default": {
+                "OptionID": "default",
+                "Cost": {
+                  "Standard": {
+                    "Entries": [
+                      {
+                        "Type": "VirtualCurrency",
+                        "CurrencyID": "GOLD",
+                        "Amount": 10
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "CostCurve": {
+              "Shape": "Geometric",
+              "GrowthRate": 0.012
+            },
+            "BaseStatValue": 22,
+            "ValueCurve": {
+              "Shape": "PerStep",
+              "PerStep": 4.4
+            }
+          },
+          "Health": {
+            "StatID": "Health",
+            "DisplayName": "HP",
+            "Description": "HP",
+            "MaxLevel": 200,
+            "Weight": 1,
+            "PriceOptions": {
+              "default": {
+                "OptionID": "default",
+                "Cost": {
+                  "Standard": {
+                    "Entries": [
+                      {
+                        "Type": "VirtualCurrency",
+                        "CurrencyID": "GOLD",
+                        "Amount": 8
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "CostCurve": {
+              "Shape": "Geometric",
+              "GrowthRate": 0.012
+            },
+            "BaseStatValue": 80,
+            "ValueCurve": {
+              "Shape": "PerStep",
+              "PerStep": 16
+            }
+          },
+          "HpRegen": {
+            "StatID": "HpRegen",
+            "DisplayName": "HP Recovery",
+            "Description": "HP Recovery",
+            "MaxLevel": 200,
+            "Weight": 0,
+            "PriceOptions": {
+              "default": {
+                "OptionID": "default",
+                "Cost": {
+                  "Standard": {
+                    "Entries": [
+                      {
+                        "Type": "VirtualCurrency",
+                        "CurrencyID": "GOLD",
+                        "Amount": 12
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "CostCurve": {
+              "Shape": "Geometric",
+              "GrowthRate": 0.012
+            },
+            "BaseStatValue": 0.8,
+            "ValueCurve": {
+              "Shape": "PerStep",
+              "PerStep": 0.32
+            }
+          },
+          "AttackSpeed": {
+            "StatID": "AttackSpeed",
+            "DisplayName": "Attack Speed",
+            "Description": "Attack Speed",
+            "MaxLevel": 50,
+            "Weight": 100,
+            "PriceOptions": {
+              "default": {
+                "OptionID": "default",
+                "Cost": {
+                  "Standard": {
+                    "Entries": [
+                      {
+                        "Type": "VirtualCurrency",
+                        "CurrencyID": "GOLD",
+                        "Amount": 50
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "CostCurve": {
+              "Shape": "Geometric",
+              "GrowthRate": 0.03
+            },
+            "BaseStatValue": 0.8,
+            "ValueCurve": {
+              "Shape": "PerStep",
+              "PerStep": 0.01
+            }
+          },
+          "CritChance": {
+            "StatID": "CritChance",
+            "DisplayName": "Critical Hit",
+            "Description": "Critical Hit",
+            "MaxLevel": 50,
+            "Weight": 1000,
+            "PriceOptions": {
+              "default": {
+                "OptionID": "default",
+                "Cost": {
+                  "Standard": {
+                    "Entries": [
+                      {
+                        "Type": "VirtualCurrency",
+                        "CurrencyID": "GOLD",
+                        "Amount": 40
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "CostCurve": {
+              "Shape": "Geometric",
+              "GrowthRate": 0.03
+            },
+            "BaseStatValue": 0.08,
+            "ValueCurve": {
+              "Shape": "PerStep",
+              "PerStep": 0.002
+            }
+          },
+          "CritDamage": {
+            "StatID": "CritDamage",
+            "DisplayName": "Critical Hit Damage",
+            "Description": "Critical Hit Damage",
+            "MaxLevel": 100,
+            "Weight": 100,
+            "PriceOptions": {
+              "default": {
+                "OptionID": "default",
+                "Cost": {
+                  "Standard": {
+                    "Entries": [
+                      {
+                        "Type": "VirtualCurrency",
+                        "CurrencyID": "GOLD",
+                        "Amount": 30
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "CostCurve": {
+              "Shape": "Geometric",
+              "GrowthRate": 0.02
+            },
+            "BaseStatValue": 1.5,
+            "ValueCurve": {
+              "Shape": "PerStep",
+              "PerStep": 0.02
+            }
+          }
+        },
+        "RankLadder": {
+          "MaxRank": 10,
+          "FirstPaidRank": 2,
+          "PriceOptions": {
+            "default": {
+              "OptionID": "default",
+              "Cost": {
+                "Standard": {
+                  "Entries": [
+                    {
+                      "Type": "VirtualCurrency",
+                      "CurrencyID": "GOLD",
+                      "Amount": 500
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "CostCurve": {
+            "Shape": "Geometric",
+            "GrowthRate": 0.5
+          }
+        },
+        "RankStatCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.04
+        },
+        "StatMaxLevelCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 1
+        },
+        "Unlock": {
+          "UnlockedByDefault": false,
+          "PriceOptions": {
+            "default": {
+              "OptionID": "default",
+              "Cost": {
+                "Standard": {
+                  "Entries": [
+                    {
+                      "Type": "VirtualCurrency",
+                      "CurrencyID": "GOLD",
+                      "Amount": 30000
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "items": {
+    "wooden_sword": {
+      "ItemID": "wooden_sword",
+      "DisplayName": "Wooden Sword",
+      "Stats": {
+        "FlatBonuses": {
+          "Damage": 5
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [
+          "Knight"
+        ],
+        "AllowedSlotIDs": [
+          "Weapon"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Common"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "iron_sword": {
+      "ItemID": "iron_sword",
+      "DisplayName": "Iron Sword",
+      "Stats": {
+        "FlatBonuses": {
+          "Damage": 15
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [
+          "Knight"
+        ],
+        "AllowedSlotIDs": [
+          "Weapon"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Rare"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "crystal_staff": {
+      "ItemID": "crystal_staff",
+      "DisplayName": "Crystal Staff",
+      "Stats": {
+        "FlatBonuses": {
+          "Damage": 15
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [
+          "Mage"
+        ],
+        "AllowedSlotIDs": [
+          "Weapon"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Rare"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "dragon_blade": {
+      "ItemID": "dragon_blade",
+      "DisplayName": "Dragon Blade",
+      "Stats": {
+        "FlatBonuses": {
+          "Damage": 36
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [
+          "Knight"
+        ],
+        "AllowedSlotIDs": [
+          "Weapon"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Legendary"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "leather_vest": {
+      "ItemID": "leather_vest",
+      "DisplayName": "Leather Vest",
+      "Stats": {
+        "FlatBonuses": {
+          "Health": 40,
+          "Armor": 1
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [],
+        "AllowedSlotIDs": [
+          "Armor"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Common"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "chainmail": {
+      "ItemID": "chainmail",
+      "DisplayName": "Chainmail",
+      "Stats": {
+        "FlatBonuses": {
+          "Health": 95,
+          "Armor": 3
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [],
+        "AllowedSlotIDs": [
+          "Armor"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Rare"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "knight_plate": {
+      "ItemID": "knight_plate",
+      "DisplayName": "Knight Plate",
+      "Stats": {
+        "FlatBonuses": {
+          "Health": 135,
+          "Armor": 4
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [],
+        "AllowedSlotIDs": [
+          "Armor"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Epic"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "dragon_scale": {
+      "ItemID": "dragon_scale",
+      "DisplayName": "Dragon Scale",
+      "Stats": {
+        "FlatBonuses": {
+          "Health": 190,
+          "Armor": 6
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [],
+        "AllowedSlotIDs": [
+          "Armor"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Legendary"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "leather_helmet": {
+      "ItemID": "leather_helmet",
+      "DisplayName": "Leather Helmet",
+      "Stats": {
+        "FlatBonuses": {
+          "Health": 20,
+          "Armor": 1
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [],
+        "AllowedSlotIDs": [
+          "Helmet"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Common"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "training_gloves": {
+      "ItemID": "training_gloves",
+      "DisplayName": "Training Gloves",
+      "Stats": {
+        "FlatBonuses": {
+          "Damage": 2,
+          "AttackSpeed": 0.05
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [],
+        "AllowedSlotIDs": [
+          "Gloves"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Uncommon"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "traveler_boots": {
+      "ItemID": "traveler_boots",
+      "DisplayName": "Traveler Boots",
+      "Stats": {
+        "FlatBonuses": {
+          "MoveSpeed": 5
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [],
+        "AllowedSlotIDs": [
+          "Boots"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Common"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "swift_boots": {
+      "ItemID": "swift_boots",
+      "DisplayName": "Swift Boots",
+      "Stats": {
+        "FlatBonuses": {
+          "MoveSpeed": 11
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [],
+        "AllowedSlotIDs": [
+          "Boots"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Rare"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "oak_shield": {
+      "ItemID": "oak_shield",
+      "DisplayName": "Oak Shield",
+      "Stats": {
+        "FlatBonuses": {
+          "Health": 25,
+          "Armor": 2
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [
+          "Knight"
+        ],
+        "AllowedSlotIDs": [
+          "Offhand"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Common"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "hunter_bow": {
+      "ItemID": "hunter_bow",
+      "DisplayName": "Hunter Bow",
+      "Stats": {
+        "FlatBonuses": {
+          "Damage": 5
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [
+          "Archer"
+        ],
+        "AllowedSlotIDs": [
+          "Weapon"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Common"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "arrow_quiver": {
+      "ItemID": "arrow_quiver",
+      "DisplayName": "Arrow Quiver",
+      "Stats": {
+        "FlatBonuses": {
+          "Damage": 2,
+          "AttackSpeed": 0.05
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [
+          "Archer"
+        ],
+        "AllowedSlotIDs": [
+          "Offhand"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Uncommon"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "apprentice_orb": {
+      "ItemID": "apprentice_orb",
+      "DisplayName": "Apprentice Orb",
+      "Stats": {
+        "FlatBonuses": {
+          "Damage": 3
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [
+          "Mage"
+        ],
+        "AllowedSlotIDs": [
+          "Offhand"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Common"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "bronze_sword": {
+      "ItemID": "bronze_sword",
+      "DisplayName": "Bronze Sword",
+      "Stats": {
+        "FlatBonuses": {
+          "Damage": 9
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [
+          "Knight"
+        ],
+        "AllowedSlotIDs": [
+          "Weapon"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Uncommon"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "runeblade": {
+      "ItemID": "runeblade",
+      "DisplayName": "Runeblade",
+      "Stats": {
+        "FlatBonuses": {
+          "Damage": 24
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [
+          "Knight"
+        ],
+        "AllowedSlotIDs": [
+          "Weapon"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Epic"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "reinforced_shield": {
+      "ItemID": "reinforced_shield",
+      "DisplayName": "Reinforced Shield",
+      "Stats": {
+        "FlatBonuses": {
+          "Health": 40,
+          "Armor": 3
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [
+          "Knight"
+        ],
+        "AllowedSlotIDs": [
+          "Offhand"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Uncommon"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "steel_bulwark": {
+      "ItemID": "steel_bulwark",
+      "DisplayName": "Steel Bulwark",
+      "Stats": {
+        "FlatBonuses": {
+          "Health": 60,
+          "Armor": 4
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [
+          "Knight"
+        ],
+        "AllowedSlotIDs": [
+          "Offhand"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Rare"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "runic_aegis": {
+      "ItemID": "runic_aegis",
+      "DisplayName": "Runic Aegis",
+      "Stats": {
+        "FlatBonuses": {
+          "Health": 85,
+          "Armor": 6
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [
+          "Knight"
+        ],
+        "AllowedSlotIDs": [
+          "Offhand"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Epic"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "sunforge_aegis": {
+      "ItemID": "sunforge_aegis",
+      "DisplayName": "Sunforge Aegis",
+      "Stats": {
+        "FlatBonuses": {
+          "Health": 120,
+          "Armor": 8
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [
+          "Knight"
+        ],
+        "AllowedSlotIDs": [
+          "Offhand"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Legendary"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "reinforced_helmet": {
+      "ItemID": "reinforced_helmet",
+      "DisplayName": "Reinforced Helmet",
+      "Stats": {
+        "FlatBonuses": {
+          "Health": 32,
+          "Armor": 2
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [],
+        "AllowedSlotIDs": [
+          "Helmet"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Uncommon"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "steel_helmet": {
+      "ItemID": "steel_helmet",
+      "DisplayName": "Steel Helmet",
+      "Stats": {
+        "FlatBonuses": {
+          "Health": 45,
+          "Armor": 3
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [],
+        "AllowedSlotIDs": [
+          "Helmet"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Rare"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "runic_helm": {
+      "ItemID": "runic_helm",
+      "DisplayName": "Runic Helm",
+      "Stats": {
+        "FlatBonuses": {
+          "Health": 65,
+          "Armor": 4
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [],
+        "AllowedSlotIDs": [
+          "Helmet"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Epic"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "phoenix_helm": {
+      "ItemID": "phoenix_helm",
+      "DisplayName": "Phoenix Helm",
+      "Stats": {
+        "FlatBonuses": {
+          "Health": 90,
+          "Armor": 5
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [],
+        "AllowedSlotIDs": [
+          "Helmet"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Legendary"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "reinforced_vest": {
+      "ItemID": "reinforced_vest",
+      "DisplayName": "Reinforced Vest",
+      "Stats": {
+        "FlatBonuses": {
+          "Health": 65,
+          "Armor": 2
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [],
+        "AllowedSlotIDs": [
+          "Armor"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Uncommon"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "worn_gloves": {
+      "ItemID": "worn_gloves",
+      "DisplayName": "Worn Gloves",
+      "Stats": {
+        "FlatBonuses": {
+          "Damage": 1,
+          "AttackSpeed": 0.03
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [],
+        "AllowedSlotIDs": [
+          "Gloves"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Common"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "steel_gauntlets": {
+      "ItemID": "steel_gauntlets",
+      "DisplayName": "Steel Gauntlets",
+      "Stats": {
+        "FlatBonuses": {
+          "Damage": 3,
+          "AttackSpeed": 0.07
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [],
+        "AllowedSlotIDs": [
+          "Gloves"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Rare"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "runebound_gloves": {
+      "ItemID": "runebound_gloves",
+      "DisplayName": "Runebound Gloves",
+      "Stats": {
+        "FlatBonuses": {
+          "Damage": 5,
+          "AttackSpeed": 0.1
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [],
+        "AllowedSlotIDs": [
+          "Gloves"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Epic"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "titan_gauntlets": {
+      "ItemID": "titan_gauntlets",
+      "DisplayName": "Titan Gauntlets",
+      "Stats": {
+        "FlatBonuses": {
+          "Damage": 7,
+          "AttackSpeed": 0.13
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [],
+        "AllowedSlotIDs": [
+          "Gloves"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Legendary"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "scout_boots": {
+      "ItemID": "scout_boots",
+      "DisplayName": "Scout Boots",
+      "Stats": {
+        "FlatBonuses": {
+          "MoveSpeed": 8
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [],
+        "AllowedSlotIDs": [
+          "Boots"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Uncommon"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "windwalker_boots": {
+      "ItemID": "windwalker_boots",
+      "DisplayName": "Windwalker Boots",
+      "Stats": {
+        "FlatBonuses": {
+          "MoveSpeed": 14
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [],
+        "AllowedSlotIDs": [
+          "Boots"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Epic"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "stormstride_boots": {
+      "ItemID": "stormstride_boots",
+      "DisplayName": "Stormstride Boots",
+      "Stats": {
+        "FlatBonuses": {
+          "MoveSpeed": 18
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [],
+        "AllowedSlotIDs": [
+          "Boots"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Legendary"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "recurve_bow": {
+      "ItemID": "recurve_bow",
+      "DisplayName": "Recurve Bow",
+      "Stats": {
+        "FlatBonuses": {
+          "Damage": 9
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [
+          "Archer"
+        ],
+        "AllowedSlotIDs": [
+          "Weapon"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Uncommon"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "silverwood_bow": {
+      "ItemID": "silverwood_bow",
+      "DisplayName": "Silverwood Bow",
+      "Stats": {
+        "FlatBonuses": {
+          "Damage": 15
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [
+          "Archer"
+        ],
+        "AllowedSlotIDs": [
+          "Weapon"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Rare"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "moonweave_bow": {
+      "ItemID": "moonweave_bow",
+      "DisplayName": "Moonweave Bow",
+      "Stats": {
+        "FlatBonuses": {
+          "Damage": 24
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [
+          "Archer"
+        ],
+        "AllowedSlotIDs": [
+          "Weapon"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Epic"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "starfall_bow": {
+      "ItemID": "starfall_bow",
+      "DisplayName": "Starfall Bow",
+      "Stats": {
+        "FlatBonuses": {
+          "Damage": 36
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [
+          "Archer"
+        ],
+        "AllowedSlotIDs": [
+          "Weapon"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Legendary"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "field_quiver": {
+      "ItemID": "field_quiver",
+      "DisplayName": "Field Quiver",
+      "Stats": {
+        "FlatBonuses": {
+          "Damage": 1,
+          "AttackSpeed": 0.03
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [
+          "Archer"
+        ],
+        "AllowedSlotIDs": [
+          "Offhand"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Common"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "steelhead_quiver": {
+      "ItemID": "steelhead_quiver",
+      "DisplayName": "Steelhead Quiver",
+      "Stats": {
+        "FlatBonuses": {
+          "Damage": 3,
+          "AttackSpeed": 0.07
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [
+          "Archer"
+        ],
+        "AllowedSlotIDs": [
+          "Offhand"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Rare"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "stormshot_quiver": {
+      "ItemID": "stormshot_quiver",
+      "DisplayName": "Stormshot Quiver",
+      "Stats": {
+        "FlatBonuses": {
+          "Damage": 5,
+          "AttackSpeed": 0.1
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [
+          "Archer"
+        ],
+        "AllowedSlotIDs": [
+          "Offhand"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Epic"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "dragonflight_quiver": {
+      "ItemID": "dragonflight_quiver",
+      "DisplayName": "Dragonflight Quiver",
+      "Stats": {
+        "FlatBonuses": {
+          "Damage": 7,
+          "AttackSpeed": 0.13
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [
+          "Archer"
+        ],
+        "AllowedSlotIDs": [
+          "Offhand"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Legendary"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "apprentice_staff": {
+      "ItemID": "apprentice_staff",
+      "DisplayName": "Apprentice Staff",
+      "Stats": {
+        "FlatBonuses": {
+          "Damage": 5
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [
+          "Mage"
+        ],
+        "AllowedSlotIDs": [
+          "Weapon"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Common"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "ashwood_staff": {
+      "ItemID": "ashwood_staff",
+      "DisplayName": "Ashwood Staff",
+      "Stats": {
+        "FlatBonuses": {
+          "Damage": 9
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [
+          "Mage"
+        ],
+        "AllowedSlotIDs": [
+          "Weapon"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Uncommon"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "sapphire_staff": {
+      "ItemID": "sapphire_staff",
+      "DisplayName": "Sapphire Staff",
+      "Stats": {
+        "FlatBonuses": {
+          "Damage": 24
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [
+          "Mage"
+        ],
+        "AllowedSlotIDs": [
+          "Weapon"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Epic"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "astral_staff": {
+      "ItemID": "astral_staff",
+      "DisplayName": "Astral Staff",
+      "Stats": {
+        "FlatBonuses": {
+          "Damage": 36
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [
+          "Mage"
+        ],
+        "AllowedSlotIDs": [
+          "Weapon"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Legendary"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "focus_orb": {
+      "ItemID": "focus_orb",
+      "DisplayName": "Focus Orb",
+      "Stats": {
+        "FlatBonuses": {
+          "Damage": 5
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [
+          "Mage"
+        ],
+        "AllowedSlotIDs": [
+          "Offhand"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Uncommon"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "sapphire_orb": {
+      "ItemID": "sapphire_orb",
+      "DisplayName": "Sapphire Orb",
+      "Stats": {
+        "FlatBonuses": {
+          "Damage": 8
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [
+          "Mage"
+        ],
+        "AllowedSlotIDs": [
+          "Offhand"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Rare"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "runic_orb": {
+      "ItemID": "runic_orb",
+      "DisplayName": "Runic Orb",
+      "Stats": {
+        "FlatBonuses": {
+          "Damage": 12
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [
+          "Mage"
+        ],
+        "AllowedSlotIDs": [
+          "Offhand"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Epic"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    },
+    "celestial_orb": {
+      "ItemID": "celestial_orb",
+      "DisplayName": "Celestial Orb",
+      "Stats": {
+        "FlatBonuses": {
+          "Damage": 17
+        },
+        "PercentBonuses": {},
+        "Power": 0
+      },
+      "Equipment": {
+        "MinCharacterLevel": 0,
+        "UseRequirements": {},
+        "AllowedCharacterIDs": [
+          "Mage"
+        ],
+        "AllowedSlotIDs": [
+          "Offhand"
+        ],
+        "IdleRateBonus": 0
+      },
+      "Metadata": {
+        "RarityID": "Legendary"
+      },
+      "Upgrade": {
+        "MaxLevel": 10,
+        "PriceOptions": {
+          "default": {
+            "OptionID": "default",
+            "Cost": {
+              "Standard": {
+                "Entries": [
+                  {
+                    "Type": "VirtualCurrency",
+                    "CurrencyID": "GOLD",
+                    "Amount": 300
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "CostCurve": {
+          "Shape": "Geometric",
+          "GrowthRate": 0.5
+        },
+        "FlatBonusCurve": {
+          "Shape": "PerStepRate",
+          "PerStepRate": 0.06
+        }
+      }
+    }
+  },
+  "idle": {
+    "AccrualID": "idle_gold",
+    "DisplayName": "Battle loot",
+    "Description": "Gold your hero earns in battle — online and while you are away (up to 8 hours).",
+    "AssetPaths": {
+      "icon": "coin"
+    },
+    "Rate": {
+      "BaseRatePerSecond": 0.4,
+      "PowerCoefficient": 0,
+      "BoardRankCoefficient": 0,
+      "EquipmentBonusEnabled": false
+    },
+    "Rewards": {
+      "Standard": {
+        "Entries": [
+          {
+            "Type": "VirtualCurrency",
+            "CurrencyID": "GOLD",
+            "Amount": 1
+          }
+        ]
+      }
+    },
+    "MaxAccumulationSeconds": 28800,
+    "MinClaimSeconds": 10,
+    "FirstClaimMode": "EmptyOnFirstClaim"
+  }
+}

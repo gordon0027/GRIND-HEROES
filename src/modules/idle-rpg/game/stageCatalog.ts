@@ -18,8 +18,10 @@ const legacyLengths = [5000, 5500, 6000, 6500, 7500];
 const LENGTH_FACTOR = 0.9;
 const ACT_GOLD_START = [100, 420, 900] as const;
 const ACT_GOLD_PER_STAGE = [25, 40, 60] as const;
-const ACT_POWER_START = [80, 340, 740] as const;
-const ACT_POWER_END = [300, 680, 1100] as const;
+// Advisory farming targets calibrated against actual Character curves and six-slot gear.
+// Team composition and level-5/8/10 skills can win below these stat-only scores.
+const ACT_POWER_START = [80, 240, 540] as const;
+const ACT_POWER_END = [135, 520, 740] as const;
 const stageLength = (index: number) => Math.round((legacyLengths[index] ?? 7500 + (index - 4) * 150) * LENGTH_FACTOR / 50) * 50;
 const stageGold = (index: number) => {
   const act = Math.floor(index / STAGES_PER_CHAPTER);
@@ -70,7 +72,7 @@ function regularEnemy(chapter: number, stage: number, wave: number, totalWaves: 
       type: ["Goblin Scout", "Goblin Raider", "Goblin Brute"][variant]!,
       visual: ["goblin1", "goblin2", "goblinboss"][variant]!,
       maxHp: Math.round((14 + variant * 4 + progress * 1.6) * pressure),
-      attack: 1 + Math.floor(progress / 4) + (variant === 2 ? 1 : 0),
+      attack: 1 + Math.floor(progress / 3) + (variant === 2 ? 1 : 0) + (stage >= 7 ? 3 : 0),
       defence: variant === 0 ? 0 : 1,
       attackSpeed: variant === 2 ? 0.60 : 0.72,
       moveSpeed: variant === 2 ? 0.36 : 0.44, attackRange: 0.10 + variant * 0.01,
@@ -86,8 +88,8 @@ function regularEnemy(chapter: number, stage: number, wave: number, totalWaves: 
     maxHp: Math.round(source.maxHp * (chapter === 2 ? 0.63 : 0.60) *
       (1 + progress * 0.075) * pressure),
     attack: Math.max(2, source.attack - 1 + Math.floor(progress / 4)) +
-      (chapter === 3 ? 2 + Math.floor(progress / 3) : 0),
-    attackSpeed: source.attackSpeed * 0.88,
+      (chapter === 3 ? 5 + Math.floor(progress / 3) : 2),
+    attackSpeed: source.attackSpeed * (role === "archer" ? 1.02 : 0.88),
     defence: source.defence + Math.floor(progress / 6),
   };
 }
@@ -120,7 +122,7 @@ export function makeStage(chapter: number, stage: number): StageDefinition {
   const boss: EncounterDefinition = { id: `${id}-boss`, distance: length, enemies: [{ ...source,
     maxHp: Math.round(source.maxHp * (1 + (stage - 1) * (chapter === 1 ? 0.18 : 0.08))),
     attack: source.attack + Math.floor((stage - 1) / 4) +
-      (chapter === 3 ? 2 + Math.floor((stage - 1) / 3) : 0),
+      (chapter === 3 ? 5 + Math.floor((stage - 1) / 3) : chapter === 2 ? 3 : stage >= 7 ? 2 : 0),
     defence: source.defence + Math.floor((stage - 1) / 6),
   }] };
   const guardCount = chapter === 3 && stage >= 6 ? 2 : chapter >= 2 && stage >= 5 ? 1 : 0;
