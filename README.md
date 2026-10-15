@@ -1,14 +1,12 @@
 # GRIND HEROES
 
-![Colosseum 2026](https://img.shields.io/badge/Colosseum-2026-1f2937?style=flat-square) ![Solana](https://img.shields.io/badge/Solana-GH%20token-9945FF?style=flat-square) ![iDos Games](https://img.shields.io/badge/iDos%20Games-integrated-C89552?style=flat-square) ![React](https://img.shields.io/badge/React-19-149ECA?style=flat-square) ![Phaser](https://img.shields.io/badge/Phaser-4-8A5CF6?style=flat-square) ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square)
+![Colosseum 2026](https://img.shields.io/badge/Colosseum-2026-1f2937?style=flat-square) ![Solana](https://img.shields.io/badge/Solana-Mainnet-9945FF?style=flat-square) ![iDos Games](https://img.shields.io/badge/iDos%20Games-integrated-C89552?style=flat-square) ![React](https://img.shields.io/badge/React-19-149ECA?style=flat-square) ![Phaser](https://img.shields.io/badge/Phaser-4-8A5CF6?style=flat-square) ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square)
 
 > **Build your party. Progress while AFK.** An idle RPG with automatic battles, lasting hero progression, valuable loot, and a player-driven game economy.
 
 **[Play the live game](https://98jrcakg.idos.games/)** · [Watch the 2-minute demo](https://youtu.be/kQVqU1hUUec) · [Watch the founder pitch](https://www.loom.com/share/d6565085ef3d405696bf17fff49a7032) · [Colosseum project](https://colosseum.com/arena/projects/grind-heroes) · [Development notes](docs/feature-history/README.md)
 
-![Grind Heroes three-hero combat in Jury Edition DEV preview](assets/readme/jury-combat-three-heroes.jpg)
-
-*Actual capture in local DEV combat preview: three classes, with rewards disabled. Jury Edition is live on PROD as v82 (October 15, 2026). Earlier demo videos predate this release.*
+![Grind Heroes Moonlit Battle Legends artwork and logo](assets/readme/grind-heroes-moonlit-logo.png)
 
 ## Try Grind Heroes in 2 Minutes
 
@@ -26,6 +24,10 @@ are longer-term goals, not two-minute promises. [Honest demo script](docs/JURY_D
 Not everyone has hours to play every day. Grind Heroes lets players check in, collect what their heroes earned while away, make a few meaningful choices, and leave the party fighting. Coming back means stronger heroes, new gear, and another stage to push.
 
 The current web build is playable now. It has **three acts and 30 finite stages**, a party of up to three heroes, melee and ranged combat, bosses, equipment, chests, and an in-game marketplace.
+
+![Grind Heroes three-hero combat in Jury Edition DEV preview](assets/readme/jury-combat-three-heroes.jpg)
+
+*Actual capture in local DEV combat preview: three classes, with rewards disabled. Jury Edition is live on PROD as v82 (October 15, 2026). Earlier demo videos predate this release.*
 
 ## The game loop
 
