@@ -88,4 +88,7 @@ in Inventory and Team. A visible SHOP button with the existing `shop` icon now
 opens the same registered Store screen directly, without leaving combat. The
 Store checkout, offer availability and prices are unchanged. Desktop and 390px
 browser checks confirmed the button, Shop categories and close action; no
-purchase was submitted.
+purchase was submitted. Full build **v83** (`bld4a79d819280646a88e8cca76c9c9b771`)
+replaced v82 on PROD. All 119 hosted resources returned HTTP 200; the live
+root loaded the new JS/CSS and the Shop button opened and closed on PROD.
+The native Shop, GH offers, Title configuration and CloudCode were untouched.

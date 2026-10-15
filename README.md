@@ -27,7 +27,7 @@ The current web build is playable now. It has **three acts and 30 finite stages*
 
 ![Grind Heroes combat and stage map in the live game](assets/readme/combat.png)
 
-*Actual live game capture: an automatic boss fight above the stage map. The hero progression update is live on PROD as v82 (October 15, 2026); earlier demo videos predate it.*
+*Actual live game capture: an automatic boss fight above the stage map. The hero progression update is live on PROD; v83 adds a direct Shop button. Earlier demo videos predate this release.*
 
 ## The game loop
 
@@ -97,7 +97,7 @@ Solana gives GH a wallet-connected token network and an existing community famil
 | **Party** | Knight, Archer, and Mage; up to three active heroes; separate recruitment/slot purchases, Hero Levels, six equipment slots and Team Power. |
 | **Loot** | Stage and boss chests, rarity-based equipment, inventory, and Premium Chests. |
 | **Idle progress** | GOLD accumulated while away, with an eight-hour cap; completed stages remain available for automatic farming. |
-| **Jury Edition branch** | Separate Hero Progression window, Level 5/8/10 skills, calibrated stage pressure and explicit GH payout restrictions; pending authorized release. |
+| **Hero progression update** | Separate Hero Progression window, Level 5/8/10 skills, calibrated stage pressure, direct Shop access and explicit GH payout restrictions. |
 | **Trading** | GEMS-priced equipment listings and purchases through the iDos Marketplace. |
 | **GH utility** | Solana GH deposits through the platform wallet and server-backed Store offers for GEMS and Premium Chests. |
 
@@ -181,7 +181,7 @@ More: [Gameplay](docs/GAMEPLAY.md) · [Progression](docs/PROGRESSION.md) ·
 - [x] Three-hero party, equipment progression, and chest rewards
 - [x] GEMS equipment marketplace and GH Store offers
 - [x] Jury Edition implementation, progression boundaries, balance evidence and transparent Earnings
-- [x] Jury Edition deployed to PROD as v82; hosted assets and live progression verified
+- [x] Hero progression and direct Shop access deployed to PROD as v83; hosted assets and live UI verified
 - [ ] Expand content and keep tuning progression and the economy
 - [ ] Explore broader token rewards and Solana-linked item features
 

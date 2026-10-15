@@ -1,7 +1,8 @@
 # Jury Edition production release — 2026-10-15
 
 The user explicitly authorized PROD deployment after reviewing the prepared branch.
-Build v82 (`bld038f0b8740cb4c379b72311165eb294b`) is Live, replacing v81.
+Build v82 (`bld038f0b8740cb4c379b72311165eb294b`) went Live, replacing v81.
+It was superseded by v83's direct Shop header button; see [Shop](shop.md).
 Source commit: `bf2b94b2393c8e00bd25df44bdac99929c98b524`, branch
 `codex/grind-heroes-update`; the replacement GitHub PR #2 remains open and main was not merged.
 
