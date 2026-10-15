@@ -1,0 +1,512 @@
+[
+  {
+    "file": "after/combat-three-preview-1366.jpg",
+    "width": 1366,
+    "height": 900,
+    "bytes": 157423
+  },
+  {
+    "file": "after/combat-two-owned-heroes-1366.jpg",
+    "width": 1366,
+    "height": 900,
+    "bytes": 151475
+  },
+  {
+    "file": "after/earnings-1366.jpg",
+    "width": 1366,
+    "height": 900,
+    "bytes": 41933
+  },
+  {
+    "file": "after/earnings-1920.jpg",
+    "width": 1920,
+    "height": 1080,
+    "bytes": 50095
+  },
+  {
+    "file": "after/earnings-320.jpg",
+    "width": 320,
+    "height": 740,
+    "bytes": 21672
+  },
+  {
+    "file": "after/earnings-360.jpg",
+    "width": 360,
+    "height": 800,
+    "bytes": 28963
+  },
+  {
+    "file": "after/earnings-390.jpg",
+    "width": 390,
+    "height": 844,
+    "bytes": 28119
+  },
+  {
+    "file": "after/earnings-430.jpg",
+    "width": 430,
+    "height": 932,
+    "bytes": 31238
+  },
+  {
+    "file": "after/earnings-768.jpg",
+    "width": 768,
+    "height": 1024,
+    "bytes": 81349
+  },
+  {
+    "file": "after/earnings-qa-allocation-1366.jpg",
+    "width": 1366,
+    "height": 900,
+    "bytes": 73787
+  },
+  {
+    "file": "after/earnings-qa-allocation-payouts-disabled-390.jpg",
+    "width": 390,
+    "height": 844,
+    "bytes": 50664
+  },
+  {
+    "file": "after/earnings-qa-data-unavailable-390.jpg",
+    "width": 390,
+    "height": 844,
+    "bytes": 31128
+  },
+  {
+    "file": "after/earnings-qa-historical-payment-390.jpg",
+    "width": 390,
+    "height": 844,
+    "bytes": 50160
+  },
+  {
+    "file": "after/earnings-qa-no-participants-390.jpg",
+    "width": 390,
+    "height": 844,
+    "bytes": 49978
+  },
+  {
+    "file": "after/earnings-qa-paused-390.jpg",
+    "width": 390,
+    "height": 844,
+    "bytes": 49564
+  },
+  {
+    "file": "after/earnings-qa-pending-review-390.jpg",
+    "width": 390,
+    "height": 844,
+    "bytes": 49914
+  },
+  {
+    "file": "after/earnings-qa-rate-limited-refresh-390.jpg",
+    "width": 390,
+    "height": 844,
+    "bytes": 50363
+  },
+  {
+    "file": "after/earnings-qa-real-prod-read-390.jpg",
+    "width": 390,
+    "height": 844,
+    "bytes": 50252
+  },
+  {
+    "file": "after/earnings-qa-snapshot-not-ready-390.jpg",
+    "width": 390,
+    "height": 844,
+    "bytes": 47288
+  },
+  {
+    "file": "after/earnings-qa-stale-data-390.jpg",
+    "width": 390,
+    "height": 844,
+    "bytes": 49637
+  },
+  {
+    "file": "after/equip-power-feedback-390.jpg",
+    "width": 390,
+    "height": 844,
+    "bytes": 57765
+  },
+  {
+    "file": "after/fresh-guest-1280.jpg",
+    "width": 1280,
+    "height": 720,
+    "bytes": 131501
+  },
+  {
+    "file": "after/fresh-upgrade-before-390.jpg",
+    "width": 390,
+    "height": 844,
+    "bytes": 48373
+  },
+  {
+    "file": "after/fresh-upgrade-confirmed-390.jpg",
+    "width": 390,
+    "height": 844,
+    "bytes": 45762
+  },
+  {
+    "file": "after/inventory-1366.jpg",
+    "width": 1366,
+    "height": 900,
+    "bytes": 89041
+  },
+  {
+    "file": "after/inventory-1920.jpg",
+    "width": 1920,
+    "height": 1080,
+    "bytes": 99870
+  },
+  {
+    "file": "after/inventory-320.jpg",
+    "width": 320,
+    "height": 740,
+    "bytes": 43195
+  },
+  {
+    "file": "after/inventory-360.jpg",
+    "width": 360,
+    "height": 800,
+    "bytes": 49390
+  },
+  {
+    "file": "after/inventory-390.jpg",
+    "width": 390,
+    "height": 844,
+    "bytes": 53672
+  },
+  {
+    "file": "after/inventory-430.jpg",
+    "width": 430,
+    "height": 932,
+    "bytes": 55156
+  },
+  {
+    "file": "after/inventory-768.jpg",
+    "width": 768,
+    "height": 1024,
+    "bytes": 79974
+  },
+  {
+    "file": "after/inventory-equipped-1366.jpg",
+    "width": 416,
+    "height": 900,
+    "bytes": 33798
+  },
+  {
+    "file": "after/knight-level10-confirmed.jpg",
+    "width": 1366,
+    "height": 900,
+    "bytes": 84703
+  },
+  {
+    "file": "after/knight-level5-confirmed.jpg",
+    "width": 390,
+    "height": 844,
+    "bytes": 52722
+  },
+  {
+    "file": "after/marketplace-1366.jpg",
+    "width": 1366,
+    "height": 900,
+    "bytes": 75586
+  },
+  {
+    "file": "after/marketplace-1920.jpg",
+    "width": 1920,
+    "height": 1080,
+    "bytes": 85121
+  },
+  {
+    "file": "after/marketplace-320.jpg",
+    "width": 320,
+    "height": 740,
+    "bytes": 31306
+  },
+  {
+    "file": "after/marketplace-360.jpg",
+    "width": 360,
+    "height": 800,
+    "bytes": 31897
+  },
+  {
+    "file": "after/marketplace-390.jpg",
+    "width": 390,
+    "height": 844,
+    "bytes": 33788
+  },
+  {
+    "file": "after/marketplace-430.jpg",
+    "width": 430,
+    "height": 932,
+    "bytes": 35487
+  },
+  {
+    "file": "after/marketplace-768.jpg",
+    "width": 768,
+    "height": 1024,
+    "bytes": 62648
+  },
+  {
+    "file": "after/pets-390.jpg",
+    "width": 390,
+    "height": 844,
+    "bytes": 46519
+  },
+  {
+    "file": "after/play-1366.jpg",
+    "width": 1366,
+    "height": 900,
+    "bytes": 153428
+  },
+  {
+    "file": "after/play-1920.jpg",
+    "width": 1920,
+    "height": 1080,
+    "bytes": 208833
+  },
+  {
+    "file": "after/play-320.jpg",
+    "width": 320,
+    "height": 740,
+    "bytes": 52945
+  },
+  {
+    "file": "after/play-360.jpg",
+    "width": 360,
+    "height": 800,
+    "bytes": 56368
+  },
+  {
+    "file": "after/play-390.jpg",
+    "width": 390,
+    "height": 844,
+    "bytes": 62300
+  },
+  {
+    "file": "after/play-430.jpg",
+    "width": 430,
+    "height": 932,
+    "bytes": 67817
+  },
+  {
+    "file": "after/play-768.jpg",
+    "width": 768,
+    "height": 1024,
+    "bytes": 103044
+  },
+  {
+    "file": "after/progression-1366.jpg",
+    "width": 1366,
+    "height": 900,
+    "bytes": 76254
+  },
+  {
+    "file": "after/progression-1920.jpg",
+    "width": 1920,
+    "height": 1080,
+    "bytes": 84185
+  },
+  {
+    "file": "after/progression-320.jpg",
+    "width": 320,
+    "height": 740,
+    "bytes": 38671
+  },
+  {
+    "file": "after/progression-360.jpg",
+    "width": 360,
+    "height": 800,
+    "bytes": 41504
+  },
+  {
+    "file": "after/progression-390.jpg",
+    "width": 390,
+    "height": 844,
+    "bytes": 48805
+  },
+  {
+    "file": "after/progression-430.jpg",
+    "width": 430,
+    "height": 932,
+    "bytes": 50018
+  },
+  {
+    "file": "after/progression-768.jpg",
+    "width": 768,
+    "height": 1024,
+    "bytes": 69510
+  },
+  {
+    "file": "after/progression-confirmed-1366.jpg",
+    "width": 1366,
+    "height": 900,
+    "bytes": 77858
+  },
+  {
+    "file": "after/skills-1366.jpg",
+    "width": 1366,
+    "height": 900,
+    "bytes": 88346
+  },
+  {
+    "file": "after/skills-1920.jpg",
+    "width": 1920,
+    "height": 1080,
+    "bytes": 96626
+  },
+  {
+    "file": "after/skills-320.jpg",
+    "width": 320,
+    "height": 740,
+    "bytes": 38612
+  },
+  {
+    "file": "after/skills-360.jpg",
+    "width": 360,
+    "height": 800,
+    "bytes": 45100
+  },
+  {
+    "file": "after/skills-390.jpg",
+    "width": 390,
+    "height": 844,
+    "bytes": 51223
+  },
+  {
+    "file": "after/skills-430.jpg",
+    "width": 430,
+    "height": 932,
+    "bytes": 61461
+  },
+  {
+    "file": "after/skills-768.jpg",
+    "width": 768,
+    "height": 1024,
+    "bytes": 69801
+  },
+  {
+    "file": "after/stage-map-1366.jpg",
+    "width": 1366,
+    "height": 900,
+    "bytes": 85826
+  },
+  {
+    "file": "after/stage-map-390.jpg",
+    "width": 390,
+    "height": 844,
+    "bytes": 39522
+  },
+  {
+    "file": "after/team-1366.jpg",
+    "width": 1366,
+    "height": 900,
+    "bytes": 90104
+  },
+  {
+    "file": "after/team-1920.jpg",
+    "width": 1920,
+    "height": 1080,
+    "bytes": 102308
+  },
+  {
+    "file": "after/team-320.jpg",
+    "width": 320,
+    "height": 740,
+    "bytes": 42050
+  },
+  {
+    "file": "after/team-360.jpg",
+    "width": 360,
+    "height": 800,
+    "bytes": 45087
+  },
+  {
+    "file": "after/team-390.jpg",
+    "width": 390,
+    "height": 844,
+    "bytes": 51708
+  },
+  {
+    "file": "after/team-430.jpg",
+    "width": 430,
+    "height": 932,
+    "bytes": 49516
+  },
+  {
+    "file": "after/team-768.jpg",
+    "width": 768,
+    "height": 1024,
+    "bytes": 75671
+  },
+  {
+    "file": "before/earnings-1366.jpg",
+    "width": 1366,
+    "height": 900,
+    "bytes": 51011
+  },
+  {
+    "file": "before/earnings-390.jpg",
+    "width": 390,
+    "height": 844,
+    "bytes": 24457
+  },
+  {
+    "file": "before/inventory-1366.jpg",
+    "width": 1366,
+    "height": 900,
+    "bytes": 99118
+  },
+  {
+    "file": "before/inventory-390.jpg",
+    "width": 390,
+    "height": 844,
+    "bytes": 55425
+  },
+  {
+    "file": "before/marketplace-1366.jpg",
+    "width": 1366,
+    "height": 900,
+    "bytes": 72623
+  },
+  {
+    "file": "before/marketplace-390.jpg",
+    "width": 390,
+    "height": 844,
+    "bytes": 30474
+  },
+  {
+    "file": "before/play-1366.jpg",
+    "width": 1366,
+    "height": 900,
+    "bytes": 142809
+  },
+  {
+    "file": "before/play-390.jpg",
+    "width": 390,
+    "height": 844,
+    "bytes": 57775
+  },
+  {
+    "file": "before/team-1366.jpg",
+    "width": 1366,
+    "height": 900,
+    "bytes": 83460
+  },
+  {
+    "file": "before/team-390.jpg",
+    "width": 390,
+    "height": 844,
+    "bytes": 51494
+  },
+  {
+    "file": "public-idos-page.jpg",
+    "width": 1265,
+    "height": 712,
+    "bytes": 100296
+  },
+  {
+    "file": "upgrade-refresh-failure-before-fix.jpg",
+    "width": 390,
+    "height": 844,
+    "bytes": 48270
+  }
+]

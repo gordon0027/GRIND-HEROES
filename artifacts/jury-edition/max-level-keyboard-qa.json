@@ -1,0 +1,11 @@
+{
+  "backward": {
+    "inDialog": true,
+    "role": "tab",
+    "text": "UPGRADES"
+  },
+  "forward": {
+    "inDialog": true,
+    "label": "Close hero progression"
+  }
+}

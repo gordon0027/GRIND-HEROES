@@ -1,0 +1,15 @@
+{
+  "backward": {
+    "inDialog": true,
+    "tag": "BUTTON",
+    "text": "Upgrade to Level 6 2,532"
+  },
+  "forward": {
+    "inDialog": true,
+    "label": "Close hero progression"
+  },
+  "skillsSelected": "true",
+  "restored": {
+    "text": "UPGRADE HEROLevel 8 · Passive skillLv 5 ›"
+  }
+}
