@@ -3,7 +3,7 @@
 The user explicitly authorized PROD deployment after reviewing the prepared branch.
 Build v82 (`bld038f0b8740cb4c379b72311165eb294b`) is Live, replacing v81.
 Source commit: `bf2b94b2393c8e00bd25df44bdac99929c98b524`, branch
-`codex/jury-edition`; the GitHub PR remains open and main was not merged.
+`codex/grind-heroes-update`; the replacement GitHub PR #2 remains open and main was not merged.
 
 The build uses `VITE_IDOS_ENV=prod` and a relative Vite base. All original artwork
 is included in the self-contained 119-file archive; no older build asset paths

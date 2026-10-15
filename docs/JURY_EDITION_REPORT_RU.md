@@ -4,11 +4,11 @@
 
 ## Результат и границы выпуска
 
-Реализована Jury Edition в ветке `codex/jury-edition`. После отдельного разрешения
+Реализована Jury Edition в ветке `codex/grind-heroes-update`. После отдельного разрешения
 пользователя опубликована на PROD как **v82** (`bld038f0b8740cb4c379b72311165eb294b`);
 Title-конфигурация, экономика, GH-формулы, token supply, staking, контракты и
 исторические payout-locks не изменялись. Выплаты GH и финансовые пробы не запускались.
-Резервная ветка: `codex/backup-pre-jury-edition-20261015`, исходный commit `64569ed`.
+Локальная резервная ветка: `codex/backup-pre-grind-heroes-update-20261015`, исходный commit `64569ed`.
 
 ## Интерфейс
 
