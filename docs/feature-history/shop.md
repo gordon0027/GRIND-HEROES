@@ -79,3 +79,13 @@ The player requested to remove Free Gems and the starter Iron Sword from SUPPLIE
 The iDos Currency section has `CryptoCurrencies.Main.ValueInUSD = 0`, which is a configured value, not a live market quote. No matching SDK/MCP live GH/USD price service was available. The Shop therefore requests DexScreener's public Solana token-pairs endpoint for the verified GH mint `2gzmu2aJtyw35ph7wQhQKTKe9G6rwD91HyjjsEcJidos`, validates that GH is the base token and the USD price is finite and positive, and prefers the pair with the most reported USD liquidity. The direct embedded request is allowed through PROD `Blockchain.IframeConnectHosts = ["api.dexscreener.com"]`; the rest of Blockchain configuration is unchanged. GEMS and PREMIUM CHESTS show **1,000 GH ≈ USD** and approximate USD equivalents for resolved iDos Store prices, refreshed every two minutes. A missing/failed quote hides those equivalents; it never falls back to the user's illustrative figure. The actual checkout remains in GH at the server-resolved Store price; market USD is display-only and can vary.
 
 The full client bundle, including all 107 PNGs, was published directly to PROD as **v42** (`blde473fcce4c954e1783ea17f7903042d2`). A live page check confirmed the GH/USD quote and card equivalents in GEMS and PREMIUM CHESTS, and only the two Gold cards in SUPPLIES. No purchase was made during verification.
+
+## Direct game-header Shop button (2026-10-15)
+
+The in-game header's hamburger menu was removed at the player's request. Its
+Hero Upgrades and Quests entries no longer appear there; Hero Progression stays
+in Inventory and Team. A visible SHOP button with the existing `shop` icon now
+opens the same registered Store screen directly, without leaving combat. The
+Store checkout, offer availability and prices are unchanged. Desktop and 390px
+browser checks confirmed the button, Shop categories and close action; no
+purchase was submitted.
