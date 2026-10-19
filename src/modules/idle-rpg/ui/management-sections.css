@@ -122,7 +122,7 @@
  .gh-party-slot small{font-size:9px}.gh-party-slot strong{font-size:11px}.gh-party-slot__lock{width:32px;height:41px}.gh-hero-icon--small{width:49px;height:54px}.gh-party-slot .gh-gold-price{font-size:9px}.gh-party-slot .gh-gold-price img{width:14px;height:14px}
  .gh-formation__roster{grid-template-columns:repeat(2,minmax(0,1fr))}.gh-roster-card{min-height:65px}.gh-roster-card strong{font-size:11px}
 }
-/* Jury Edition: equipment first, compact progression, readable touch targets. */
+/* October 2026 release: equipment first, compact progression, readable touch targets. */
 .gh-management{background:radial-gradient(ellipse at 25% 0,#35291e,#1e1915 75%)}
 .gh-management__header{padding:5px 0 14px}.gh-management__inventory-layout{gap:24px;padding-top:18px}
 .gh-inventory .gh-section-title{align-items:center}.gh-inventory .gh-section-title span{margin-left:auto;white-space:nowrap}.gh-inventory .gh-fantasy-button{min-height:44px;font-size:12px}

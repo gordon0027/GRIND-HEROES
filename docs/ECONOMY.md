@@ -15,10 +15,11 @@ CloudCode validates stage eligibility, run identity, server duration, participat
 and duplicate completion before awarding resources. The server does not replay
 the entire combat simulation. Equipment is not represented as Solana NFTs.
 
-Jury Edition does not change currency prices, resource amounts, chest pools,
-tokenomics, supply, staking, contracts or live Title configuration. GH Store
-payments are separate from reward accounting and are not tested with real GH in
-this release. The base wallet continues to handle supported deposits/withdrawals.
+The October 2026 client releases did not change currency prices, resource
+amounts, chest pools, tokenomics, supply, staking or contracts. GH Store
+payments are separate from reward accounting. The configured iDos platform
+wallet supports GH deposits and withdrawals; actual availability depends on
+the player's platform account and transaction flow.
 
 ## Ordinary progression
 
@@ -54,8 +55,9 @@ It explicitly says "Live pool balance unavailable". Missing values stay unknown;
 invalid responses produce an error and retain any previous data as stale. A
 calculated allocation is never replaced by a misleading claimable zero.
 
-PROD overview was read on 2026-10-15 without calling any grant or claim handler.
-The current DEV revision does not allow that overview handler, so DEV Earnings
-correctly shows data unavailable. Details and captured aggregates are in
-[Earnings history](feature-history/jury-earnings.md). No new backend publication
-or production deployment was performed.
+PROD overview was read on 2026-10-15 without calling any grant or claim
+handler. This is a dated snapshot, not a current budget or transfer record.
+The DEV revision checked then did not allow that overview handler, so DEV
+Earnings showed data unavailable. As checked on 2026-10-19, PROD serves
+client v83 and CloudCode revision 14; its claim gate remains closed.
+[Earnings verification](feature-history/earnings-verification.md).

@@ -1,5 +1,10 @@
 # Secure Team Power and custom Top 100
 
+**Current status checked 2026-10-19:** PROD serves client v83 and CloudCode
+revision 14. Team Power and the protected Top 100 remain active, while new GH
+reward claims are disabled. The PROD GH Solana binding now reports six
+decimals; older configuration readings below are dated historical evidence.
+
 Grind Heroes displays `combatPower` from `game/equipment.ts`, which now calls the
 single `ghCombatPower` implementation in `game/powerFormula.js`. The CloudCode
 publisher prepends that exact function source. iDos `Character.Power` is a

@@ -1,7 +1,7 @@
-# Jury Edition combat balance (2026-10-15)
+# October 2026 release combat balance (2026-10-15)
 
 Balance uses read-only DEV Character curves and all 50 actual item definitions in
-`tests/fixtures/jury-dev-public.json`. Eight profiles run through every stage at
+`tests/fixtures/dev-progression-public.json`. Eight profiles run through every stage at
 25/50/100 ms simulation cadences (720 runs). The engine has no RNG: the reported
 victory rates describe cadence robustness, not estimated random win probability.
 Profiles explicitly separate GOLD-paid Hero Level from item eligibility via Stage
@@ -18,7 +18,7 @@ loses 1-10; C (L5/Common) clears it, but loses 2-1. D (two L3/Common) loses 2-5;
 E (three L3/Common) loses 2-9. F (three L8/Rare) clears the campaign but can lose
 its frontline on 3-10; adding the existing Donkey avoids that death. G (L10/Epic)
 farms all 30 stages without deaths. Exact metrics, same-stat skill/gear comparisons
-and before/after tables are in `artifacts/jury-edition/balance-*.json`.
+and before/after tables are in `artifacts/release-evidence/balance-*.json`.
 
 The first level costs the 500 starter GOLD. Total L1→5 is 4,063 GOLD. Farming 1-3
 with L3/Common produces about 153 GOLD/minute: ~23.3 more active minutes after

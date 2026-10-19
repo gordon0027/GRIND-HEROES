@@ -3,7 +3,7 @@
   "offlineTests": "passed",
   "suites": [
     "test",
-    "test:jury",
+    "test:release",
     "test:hero-progression",
     "test:stage",
     "test:world",

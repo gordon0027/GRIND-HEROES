@@ -1,4 +1,4 @@
-# Jury Edition GH Earnings (2026-10-15)
+# October 2026 release GH Earnings (2026-10-15)
 
 Earnings is a read-only presentation of `getPowerRewardOverview`. The player UI
 contains no claim handler or one-GH probe call. The Claim action is permanently
@@ -24,7 +24,7 @@ scrolls.
 2026-10-15 read-back: isolated DEV overview transport succeeded but its handler
 returned an application error. PROD getPowerRewardOverview succeeded: budget
 36,164 GH, daily budget 3,616 GH, 73 participants, window 2. The isolated read-only
-account had no allocation or confirmed receipts. Records in artifacts/jury-edition
+account had no allocation or confirmed receipts. Records in artifacts/release-evidence
 contain only overview aggregates and the account's zero amounts, no identity or
 authentication data. The overview performs its existing daily accounting catch-up;
 no grant handler or financial probe was invoked.

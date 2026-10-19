@@ -8,7 +8,7 @@
 | Stage Mastery | Server-awarded battle XP | Equipment rarity eligibility | 30 |
 
 Character.Level is retained in the native iDos character record. No player
-levels, XP, equipment or party ownership were reset for Jury Edition. Legacy
+levels, XP, equipment or party ownership were reset for October 2026 release. Legacy
 stat enhancements remain a separate native system and are included in effective
 stats when owned; they are not required by the main balance scenarios.
 
@@ -36,7 +36,7 @@ Milestones share progressionSkills.ts. Both actual combat casts and Phaser
 cooldown bars require Level 5. Locked skill cards never claim to be ready.
 
 **Compatibility:** V1 had signature skills at Level 1 and passives at Level 5.
-Jury Edition retains levels but moves signatures to 5 and passives to 8. Existing
+October 2026 release retains levels but moves signatures to 5 and passives to 8. Existing
 Level 5–7 heroes retain their signature; their former passive becomes available
 again at Level 8. This is a gameplay transition, not a data migration.
 
@@ -63,8 +63,8 @@ other spending or chest luck. Level 5 is not promised in the two-minute demo.
 ## Balance evidence
 
 Eight real-config profiles, all 30 stages and three deterministic tick cadences
-produce 720 runs. See [balance history](feature-history/jury-balance.md) and
-[full metrics](../artifacts/jury-edition/balance-after.json). No RNG is involved;
+produce 720 runs. See [balance history](feature-history/balance-verification.md) and
+[full metrics](../artifacts/release-evidence/balance-after.json). No RNG is involved;
 victory rates measure agreement across cadences, not random win probability.
 
 At 50 ms, the L5/Common Knight clears 1-10 in 102.5 seconds. With identical stats

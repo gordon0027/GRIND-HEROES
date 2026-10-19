@@ -1,7 +1,7 @@
-# Jury demo: Try Grind Heroes in 2 Minutes
+# Try Grind Heroes in 2 Minutes
 
-Jury Edition is prepared in this branch. The public live game remains the existing
-release until an authorized deployment; its UI and skill milestones may differ.
+The current live build is v83. Guest play shows the core loop; hero recruitment,
+later skill milestones and a full party take longer than this walkthrough.
 
 | Time | Action | What to explain |
 | --- | --- | --- |
@@ -22,7 +22,7 @@ Level 5 needs 4,063 GOLD from Level 1 (~23 additional active farming minutes in
 the measured scenario after starter GOLD). Recruiting a full party takes longer.
 Do not promise these milestones in two minutes. The existing [technical demo](https://youtu.be/kQVqU1hUUec)
 and [founder pitch](https://www.loom.com/share/d6565085ef3d405696bf17fff49a7032)
-provide context; they were recorded before Jury Edition.
+provide context; they were recorded before the current v83 build.
 
 Use local DEV combat QA for class/milestone demonstrations when necessary. Such
 previews are labelled, award no resources and never alter ownership or production
@@ -34,4 +34,4 @@ A fresh DEV browser guest cleared 1-1, earned a chest and boots, equipped gear,
 upgraded through the native server and encountered a genuine early defeat/rollback.
 An isolated SDK run verified exact level costs, ownership rejection, concurrent
 absolute targets, insufficient funds, the cap, replay, reload and server Power.
-See the [Russian release report](JURY_EDITION_REPORT_RU.md) for evidence and limits.
+See the [release verification](RELEASE_VERIFICATION.md) for evidence and limits.

@@ -1,10 +1,10 @@
-# Jury Edition production release — 2026-10-15
+# October 2026 production release — 2026-10-15
 
 The user explicitly authorized PROD deployment after reviewing the prepared branch.
 Build v82 (`bld038f0b8740cb4c379b72311165eb294b`) went Live, replacing v81.
 It was superseded by v83's direct Shop header button; see [Shop](shop.md).
 Source commit: `bf2b94b2393c8e00bd25df44bdac99929c98b524`, branch
-`codex/grind-heroes-update`; the replacement GitHub PR #2 remains open and main was not merged.
+`codex/grind-heroes-update`; at the time, main had not yet been synchronized.
 
 The build uses `VITE_IDOS_ENV=prod` and a relative Vite base. All original artwork
 is included in the self-contained 119-file archive; no older build asset paths
@@ -21,7 +21,7 @@ hero upgrades, GH claims/transfers or payout probes were submitted.
 No CloudCode, Title configuration, progression data, financial gates or contracts
 were saved by this release. Deploying the frontend does not enable GH payouts.
 
-Evidence: [release record](../../artifacts/jury-edition/prod-release.json),
-[CDN audit](../../artifacts/jury-edition/prod-cdn-audit.json),
-[live dialog](../../artifacts/jury-edition/prod/live-progression.png),
-[iframe login](../../artifacts/jury-edition/prod/idos-iframe-login.png).
+Evidence: [release record](../../artifacts/release-evidence/prod-release.json),
+[CDN audit](../../artifacts/release-evidence/prod-cdn-audit.json),
+[live dialog](../../artifacts/release-evidence/prod/live-progression.png),
+[iframe login](../../artifacts/release-evidence/prod/idos-iframe-login.png).

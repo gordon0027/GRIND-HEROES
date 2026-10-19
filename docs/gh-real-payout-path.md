@@ -3,14 +3,20 @@
 Title `98JRCAKG`. This is a read-only feasibility record and deployment design,
 not an authorization to change funding, publish code, or transfer tokens.
 
-## Current invariant
+**Status checked 2026-10-19:** PROD serves client v83 and CloudCode revision
+14. The GH Solana binding and display precision both report **6 decimals**,
+matching the mint precision described below. New leaderboard reward claims
+remain disabled. Older version and precision observations in this document
+describe the 2026-10-09 investigation, not the current configuration.
+
+## Status at the 2026-10-09 investigation
 
 The protected Team Power Top 100, 10% daily remaining-budget rule, three UTC
 windows, and seven historical `inFlight` claims (1,229 GH) remain in place.
 PROD CloudCode revision 13 blocks new `claimPowerRewards` reservations. Its
 single 1 GH `CryptoCurrency Main` probe returned `Success:false` with
 `Server-issued grants of crypto 'Main' are disabled for this title.` The probe
-is permanently locked; never reuse it. Live client remains v60; v61 is staged.
+is permanently locked; never reuse it. The live client was v60; v61 was staged.
 
 ## Native iDos candidates
 
@@ -73,8 +79,8 @@ crypto quest claim can debit the player reward pool.
 
 Before this pilot, obtain an authoritative reading of **unallocated**
 player-pool backing, confirm that native Quest `Main` rewards use it for
-this Title, and resolve the binding's `Decimals:0` versus mint's 6 on-chain
-decimals with iDos. Preserve the seven Power reservations and use a new
+this Title, and verify the binding's precision against the mint with iDos.
+Preserve the seven Power reservations observed then and use a new
 quest/probe key. Immediately before the single claim read both `Main` and
 `Main_IOU`; after the claim, allow balance propagation and inspect native
 transaction/pool debit evidence. Success means `Main +1`, `Main_IOU +0`,
@@ -108,13 +114,12 @@ The read-only `node scripts/check-gh-solana-mint.mjs` preflight repeats both
 finalized RPC checks; `tests/ghSolanaMint.mjs` covers correct and mismatched
 decimals/program owners.
 
-Important discrepancy: `Currency.CryptoCurrencies.Main.Networks[solana].Decimals`
-currently says **0**, while the finalized mint says **6**. `DisplayDecimals:0`
-is only UI rounding; the network binding's `Decimals` is documented as
-on-chain precision. Resolve this discrepancy with iDos before any external
-transfer or any assumption about deposit/withdrawal conversion. The external
-signer must read and verify the mint's 6 decimals directly from chain and use
-`TransferChecked` with integer base units.
+At the time of this investigation,
+`Currency.CryptoCurrencies.Main.Networks[solana].Decimals` reported **0**
+while the finalized mint reported **6**. The PROD configuration checked on
+2026-10-19 reports **6** for both the network binding and display precision.
+Any external signer must still read and verify the mint's decimals directly
+from chain and use `TransferChecked` with integer base units.
 
 An external treasury payout is **real GH in the player's Solana wallet**. It
 does not increase `InventoryV2.CryptoCurrencies.Main` in iDos. Depositing
@@ -209,8 +214,8 @@ its own authentication design. The browser must not call the payout backend.
   `Server-issued grants of crypto 'Main' are disabled for this title.` for a
   1 GH CloudCode grant while `AllowedGrantTypes` included CryptoCurrency?
   Would a native `ServerApi` Quest reward be allowed on this Title?
-- Why does the Title's Solana `Main` binding say `Decimals:0` while the mint's
-  finalized account and `getTokenSupply` report 6?
+- Confirm that iDos applies the now-matching six-decimal `Main` binding
+  consistently to deposits, withdrawals and any proposed reward route.
 - Can iDos expose the execution/transaction records for the seven historical
   claim IDs so each can be reconciled without a repeat payout?
 

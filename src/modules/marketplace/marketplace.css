@@ -75,7 +75,7 @@
   .gh-market__sell-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
 }
 @media(max-width:560px){.gh-market__navigation{flex-wrap:wrap;align-items:start}.gh-market__navigation>.gh-market__button{margin-left:auto}.gh-market__tabs{flex-basis:100%;order:1}.gh-market__tabs button,.gh-market__button{font-size:11px;min-height:34px;padding:1px 6px;border-width:7px;border-image-width:7px}.gh-market__heading p{font-size:11px}}
-/* Jury Edition: readable loading, consistent fantasy surfaces and reachable mobile tabs. */
+/* October 2026 release: readable loading, consistent fantasy surfaces and reachable mobile tabs. */
 .gh-more-panel--marketplace{background:radial-gradient(ellipse at 25% 0,#35291e,#1e1915 75%)}
 .gh-market__loading{display:flex;align-items:center;justify-content:center;gap:12px;min-height:100px;padding:20px;border:1px solid #685036;background:#251c15;color:#d8c09b;font:13px/1.5 system-ui,sans-serif}
 .gh-market__tabs button,.gh-market__button,.gh-market__options button,.gh-market__filter-toggle,.gh-market__chip{min-height:44px}

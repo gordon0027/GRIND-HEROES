@@ -3,7 +3,7 @@ import {useState} from "react";
 import {createRoot} from "react-dom/client";
 import {EarningsView} from "../src/base/lobby/EarningsView";
 import {parseEarnings} from "../src/base/lobby/earningsModel";
-import real from "../artifacts/jury-edition/earnings-prod-read.json";
+import real from "../artifacts/release-evidence/earnings-prod-read.json";
 import "../src/base/lobby/grind-frame.css";
 import "../src/base/lobby/earnings.css";
 const allocation={...real.overview,status:"available",rank:3,power:584,dailyShareUnits:"440",currentWindowUnits:"147"};

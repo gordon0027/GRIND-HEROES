@@ -8,7 +8,7 @@ import { stageHeroStats, combatPower, gearBonuses, ZERO_BONUSES, GEAR_SLOTS, RAR
 import { STAGE_CATALOG } from "../src/modules/idle-rpg/game/stageCatalog.ts";
 import { StageRun } from "../src/modules/idle-rpg/game/stageRun.ts";
 
-export const fixture = JSON.parse(readFileSync(new URL("./fixtures/jury-dev-public.json", import.meta.url), "utf8"));
+export const fixture = JSON.parse(readFileSync(new URL("./fixtures/dev-progression-public.json", import.meta.url), "utf8"));
 const ids = ["Knight", "Archer", "Mage"];
 export function realParty(level, tier, count = 1, pet = {attack:0,maxHp:0}, enhancements = 0) {
   return ids.slice(0, count).map(id => {
@@ -82,7 +82,7 @@ export function sweepReal(stages = STAGE_CATALOG) {
       rareTeamWithDonkey:simulateReal(stage,realParty(8,"Rare",3,{attack:0,maxHp:20}))
     })),rows};
 }
-if(process.argv[1]?.endsWith("juryBalance.mjs")) {
+if(process.argv[1]?.endsWith("progressionBalance.mjs")) {
   const report=sweepReal();
   if(process.argv.includes("--report")) writeFileSync(process.argv[process.argv.indexOf("--report")+1],JSON.stringify(report,null,2)+"\n");
   for(const profile of Object.keys(profiles)) {
@@ -99,6 +99,6 @@ if(process.argv[1]?.endsWith("juryBalance.mjs")) {
     assert.equal(get("G","3-10").victoryRate,1,"developed party can finish campaign");
     const noGear=simulateReal(STAGE_CATALOG[5],realParty(5,null));
     assert.ok(get("C","1-6").victoryRate>Number(noGear.result==="clear") || get("C","1-6").seconds<noGear.seconds,"equipment matters");
-    console.log("Jury progression scenarios passed");
+    console.log("Release progression scenarios passed");
   }
 }

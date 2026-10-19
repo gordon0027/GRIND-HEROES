@@ -56,7 +56,7 @@ Read-before-write configuration backups and browser evidence are under
 artifacts/hero-progression. The Russian release report records deployed build
 identity and remaining verification limits.
 
-## Jury Edition progression (2026-10-15)
+## October 2026 release progression (2026-10-15)
 
 Inventory and Team now open one reusable native Hero Progression dialog. Inventory
 keeps equipment and the bag visible before Premium Chests; a compact upgrade

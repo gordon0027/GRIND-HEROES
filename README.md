@@ -1,154 +1,130 @@
 # GRIND HEROES
 
-![Colosseum 2026](https://img.shields.io/badge/Colosseum-2026-1f2937?style=flat-square) ![Solana](https://img.shields.io/badge/Solana-Mainnet-9945FF?style=flat-square) ![iDos Games](https://img.shields.io/badge/iDos%20Games-integrated-C89552?style=flat-square) ![React](https://img.shields.io/badge/React-19-149ECA?style=flat-square) ![Phaser](https://img.shields.io/badge/Phaser-4-8A5CF6?style=flat-square) ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square)
+![Grind Heroes moonlit fantasy artwork and logo](assets/readme/grind-heroes-moonlit-logo.png)
 
-> **Build your party. Progress while AFK.** An idle RPG with automatic battles, lasting hero progression, valuable loot, and a player-driven game economy.
+![Colosseum 2026](https://img.shields.io/badge/Colosseum-2026-1f2937?style=flat-square) ![Solana](https://img.shields.io/badge/Solana-GH%20token-9945FF?style=flat-square) ![iDos Games](https://img.shields.io/badge/iDos%20Games-integrated-C89552?style=flat-square) ![Phaser](https://img.shields.io/badge/Phaser-4-8A5CF6?style=flat-square) ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square)
 
-**[Play the live game](https://98jrcakg.idos.games/)** · [Watch the 2-minute demo](https://youtu.be/kQVqU1hUUec) · [Watch the founder pitch](https://www.loom.com/share/d6565085ef3d405696bf17fff49a7032) · [Colosseum project](https://colosseum.com/arena/projects/grind-heroes) · [Development notes](docs/feature-history/README.md)
+**Build a party. Let it fight. Come back stronger.** Grind Heroes is a playable idle fantasy RPG built with Phaser, React, TypeScript and iDos Games. Automatic combat, three hero classes, equipment, pets and a player marketplace feed a 30-stage campaign. Team Power adds a server-calculated Top 100; GH connects the game economy to Solana through the iDos platform wallet.
 
-![Grind Heroes Moonlit Battle Legends artwork and logo](assets/readme/grind-heroes-moonlit-logo.png)
+**[Play the live game](https://98jrcakg.idos.games/)** · [Two-minute walkthrough](docs/QUICK_START.md) · [Watch the demo](https://youtu.be/kQVqU1hUUec) · [Colosseum project](https://colosseum.com/arena/projects/grind-heroes)
 
-## Try Grind Heroes in 2 Minutes
+![Automatic combat and stage map](assets/readme/combat.png)
 
-1. Open the [game](https://98jrcakg.idos.games/) and choose **Play as guest**.
-2. Watch automatic combat and the first boss; a fresh tested 1-1 run takes about 68 seconds.
-3. Open the earned chest, visit **Inventory** and **Equip Best**. The first clear also gives Traveler Boots.
-4. Open **Upgrade Hero** from Inventory or Team. Compare stats and discover the Level 5 / 8 / 10 skill goals.
-5. Explore the Stage Map, Team, Pets, Marketplace and Rankings. GH Earnings explains calculated allocations and unavailable payouts.
+*Gameplay capture from the live game. The current published build is v83; the demo video was recorded earlier.*
 
-The starter 500 GOLD covers the first level upgrade. Level 5 and a full party
-are longer-term goals, not two-minute promises. [Honest demo script](docs/JURY_DEMO.md).
+## What is Grind Heroes?
 
-## Built for short sessions and long progression
-
-Not everyone has hours to play every day. Grind Heroes lets players check in, collect what their heroes earned while away, make a few meaningful choices, and leave the party fighting. Coming back means stronger heroes, new gear, and another stage to push.
-
-The current web build is playable now. It has **three acts and 30 finite stages**, a party of up to three heroes, melee and ranged combat, bosses, equipment, chests, and an in-game marketplace.
-
-![Grind Heroes combat and stage map in the live game](assets/readme/combat.png)
-
-*Actual live game capture: an automatic boss fight above the stage map. The hero progression update is live on PROD; v83 adds a direct Shop button. Earlier demo videos predate this release.*
-
-## The game loop
+Choose a stage, watch your party battle automatically, collect rewards, improve your heroes and push farther. The campaign spans **three acts and 30 finite stages** with melee and ranged enemies, bosses, farming and auto advance. A guest account can start playing without a wallet.
 
 ```text
-Build a party → Fight automatically → Earn GOLD and chests
-       ↑                                   ↓
-Push harder stages ← Upgrade and equip ← Open loot
-                             ↕
-                     Keep or trade gear
+Fight → Earn GOLD, XP and chests → Improve heroes and gear
+  ↑                                          ↓
+Farm cleared stages ← Build Team Power ← Push harder stages
 ```
 
-Knight, Archer, and Mage have different combat roles. Players recruit heroes, unlock party slots, level up and equip them, then choose a stage to progress through or farm. Stage and boss chests add gear across five rarity tiers. An AFK return grants accumulated GOLD, capped at eight hours.
+## Core Gameplay
 
-| Equip the party | Browse player listings |
+| System | What players do |
 | --- | --- |
-| ![Jury Edition equipment-first Inventory](assets/readme/jury-inventory.jpg) | ![Jury Edition GEMS equipment Marketplace in DEV](assets/readme/jury-marketplace.jpg) |
+| Automatic battles | Select a stage and let up to three heroes fight. Skills trigger automatically after they unlock. |
+| Campaign | Clear 30 stages across Meadow Road, Orange Bastion and Undead Crypt, including a boss chest on every fifth stage. |
+| Farming | Repeat cleared stages, or enable auto advance to try the next stage. Defeat returns the party to cleared-stage farming. |
+| Idle return | Collect server-backed GOLD accrued while away, capped at eight hours. |
+| Preparation | Compare Team Power with stage recommendations, then adjust heroes, equipment and a pet. The recommendation is guidance, not a gate. |
 
-## Heroes, skills and progression
+| Three-hero combat | Stage preparation |
+| --- | --- |
+| ![Knight, Archer and Mage in combat](assets/readme/combat-three-heroes.jpg) | ![Stage map and recommended power](assets/readme/stage-map.jpg) |
 
-| Hero | Combat role | Level 5 signature | Level 8 passive |
+*Additional captures show the current interface in the DEV title. The three-hero
+combat image is a non-reward preview, not an earned guest party.*
+
+## Heroes & Team Building
+
+The **Knight** protects the front line, the **Archer** attacks from range, and the **Mage** brings area damage. Heroes are recruited and party slots are unlocked separately; owned heroes can then fill up to three active slots. GOLD buys native Hero Levels, while battle XP advances a separate Stage Mastery track that unlocks equipment rarities.
+
+| Hero | Level 5 signature | Level 8 passive | Level 10 |
 | --- | --- | --- | --- |
-| Knight | Frontline melee | Crushing Blow | Guardian's Resolve |
-| Archer | Ranged damage | Rapid Fire | Piercing Precision |
-| Mage | Ranged area damage | Meteor | Scorching Impact |
+| Knight | Crushing Blow | Guardian's Resolve | Signature mastery |
+| Archer | Rapid Fire | Piercing Precision | Signature mastery |
+| Mage | Meteor | Scorching Impact | Signature mastery |
 
-At **Hero Level 10**, each signature gains mastery. All abilities activate
-automatically after unlocking; Levels 1–4 use normal attacks. Hero Level costs
-GOLD and is stored in the native iDos character record. **Stage Mastery** uses
-battle XP to unlock equipment rarities. Neither track resets existing progress.
+The Inventory and Team screens open a dedicated Hero Progression window with upgrade costs, stat changes and skill milestones. [Progression details](docs/PROGRESSION.md).
 
-Inventory answers “What should I equip?”, Team answers “Who fights?”, and the
-separate Hero Progression window answers “How do I grow stronger?”. It previews
-costs and stat gains, explains locked skills, and confirms upgrades with the
-server. Play and Stage Map compare Team Power with stage recommendations.
-
-| Hero Progression on desktop | Skills on mobile |
+| Equipment-first Inventory | Hero Progression |
 | --- | --- |
-| ![Hero Progression desktop](assets/readme/jury-progression.jpg) | ![Automatic skills and unlock levels on mobile](assets/readme/jury-skills-mobile.jpg) |
+| ![Hero equipment and inventory](assets/readme/equipment-inventory.jpg) | ![Hero progression window](assets/readme/hero-progression.jpg) |
 
-*Local DEV captures of the actual UI. See [progression and compatibility notes](docs/PROGRESSION.md).*
+## Equipment & Loot
 
-## A player-driven economy
+Equip six slots per hero: **Helmet, Armor, Gloves, Boots, Weapon and Offhand**. Loot has five rarity tiers: Common, Uncommon, Rare, Epic and Legendary. Stage Mastery unlocks those tiers at levels 1, 5, 10, 15 and 20. Item stats affect combat and Team Power; class restrictions and slot rules apply. Inventory comparisons and **Equip Best** help players choose upgrades.
 
-Loot creates a choice: **equip an item for the next fight, keep it for another hero, or list eligible equipment for another player.** The live iDos Marketplace supports player listings and purchases of equipment priced in **GEMS**. Sale proceeds can go back into the game economy, including gear from other players.
+## Pets & Companions
 
-The **GH token lives on Solana**. Players can deposit GH through the iDos Games platform wallet into their game balance and spend that balance in the in-game Store on GEMS or Premium Chests. A Premium Chest opens into a server-rolled equipment item. Durable character/item state and GEMS marketplace settlement are handled by iDos game services; combat simulation runs in the client with CloudCode stage/reward validation; this build does not present equipment as on-chain NFTs or price marketplace listings in GH.
+One owned pet can support the active party. Players can select a pet in Team; the choice takes effect on the next run, so an active fight is not rewritten. The shop offers pets through the currencies configured for each offer. [Gameplay details](docs/GAMEPLAY.md).
 
-### GH reward accounting is transparent
+## Leaderboards & Competition
 
-GH Earnings separates the **remaining accounting budget**, daily calculated
-share, current reward window, pending review and confirmed lifetime receipts.
-The accounting budget is not a live shared-pool balance. **GH payouts are
-currently unavailable**: Claim is disabled, no financial probe is exposed, and
-this branch does not change reward formulas, tokenomics or payout gates.
-The DEV overview handler is currently unavailable; the UI reports that honestly.
-[Economy and data-source details](docs/ECONOMY.md).
+The **Power leaderboard** in Team displays a global ranking of up to **100 players**. The server calculates each player's Team Power as the sum of the active, owned heroes' combat power. It reads character progression, the protected formation, equipped Grind gear and the selected pet from game state. The client sends **no Power value, hero stats or gear bonuses** for ranking.
 
-### Why Solana?
+CloudCode recalculates Power after relevant party and equipment changes and when a player opens the board. It stores the bounded Top 100 projection and returns public names, avatars, ranks and scores. A player outside the Top 100 still sees their own Power. External changes can leave a score stale until that player returns or opens the board; the ranking is not a continuous live feed. [Implementation and limits](docs/feature-history/team-power.md).
 
-Solana gives GH a wallet-connected token network and an existing community familiar with digital assets. Its fast, low-cost transfers suit an economy players can enter and leave through deposits and withdrawals. The battle loop stays responsive because moment-to-moment gameplay runs through the game client and iDos services.
+Team Power also supplies the protected daily snapshot used by **GH reward accounting** below. A higher score increases the calculated share; it does not currently grant claimable GH.
 
-## What is playable
+## Rewards & Progression
 
-| Area | Current build |
+| Source | Current reward |
 | --- | --- |
-| **Combat** | Automatic melee and ranged fights, stage selection, bosses, and 30 stages across three acts. |
-| **Party** | Knight, Archer, and Mage; up to three active heroes; separate recruitment/slot purchases, Hero Levels, six equipment slots and Team Power. |
-| **Loot** | Stage and boss chests, rarity-based equipment, inventory, and Premium Chests. |
-| **Idle progress** | GOLD accumulated while away, with an eight-hour cap; completed stages remain available for automatic farming. |
-| **Hero progression update** | Separate Hero Progression window, Level 5/8/10 skills, calibrated stage pressure, direct Shop access and explicit GH payout restrictions. |
-| **Trading** | GEMS-priced equipment listings and purchases through the iDos Marketplace. |
-| **GH utility** | Solana GH deposits through the platform wallet and server-backed Store offers for GEMS and Premium Chests. |
+| Validated stage clear | GOLD, battle XP for eligible participating heroes, and **one guaranteed Stage Chest**. |
+| Every fifth stage | An additional guaranteed Boss Chest after the validated clear. |
+| First clear of stage 1-1 | Traveler Boots in addition to normal rewards. |
+| Stage and Boss Chests | Server-rolled equipment when opened; rarity and item eligibility follow the configured loot pools. |
+| AFK return | GOLD accrued through the iDos idle reward configuration, up to eight hours. |
+| Premium Chest | A GH Store purchase provides a chest that opens into server-rolled equipment. |
 
-## How it is built
+Stage and Boss Chests are **guaranteed on an accepted clear**, not random drops. The equipment inside is rolled when the chest is opened. GOLD and gear improve the party; XP and Hero Levels open further progression; farming supports the next stage push. CloudCode checks the active run, stage eligibility, server elapsed time, participation and duplicate completion before granting stage rewards. The Phaser client runs the battle simulation; the server does not replay every hit. [Gameplay](docs/GAMEPLAY.md) · [Economy](docs/ECONOMY.md).
 
-| Layer | Technology |
+## GH Earnings
+
+The Earnings screen shows **reward calculations**, not a withdrawable balance. Its daily plan uses up to **10% of a manually tracked, unspent GH accounting budget** for eligible players in the protected Top 100 snapshot. That daily amount is allocated in proportion to Team Power and divided into three eight-hour UTC windows. The screen distinguishes the calculated daily share, current window allocation, amounts pending review, and lifetime receipts recorded as confirmed in the game ledger. This accounting budget is **not** a live reading of a platform token pool.
+
+**GH claiming and new reward payouts are currently unavailable.** The Claim control is disabled and the PROD CloudCode claim gate remains closed. Earlier unresolved reservations are not presented as payments. A calculated share is neither a confirmed transfer nor GH available to withdraw. GH spent in the Store is a separate, active use of an existing in-game balance. [Accounting and payout status](docs/ECONOMY.md).
+
+![GH Earnings interface with allocation and payout status](artifacts/release-evidence/after/earnings-390.jpg)
+
+*Interface capture; the figures shown are a captured state, not a current balance or payout promise.*
+
+## Solana & GH Token Integration
+
+**GH is a Solana token** configured as the game's `Main` crypto currency in iDos Games. The PROD title has GH deposits and withdrawals enabled through the **iDos platform wallet**. A supported deposit credits the player's internal in-game GH balance; supported withdrawals are platform wallet actions. Wallet access and transaction availability depend on the player's platform account and the iDos flow.
+
+The game reads that internal balance for Store purchases of GEMS packs and Premium Chests. The **GEMS equipment Marketplace** uses iDos listing, escrow and settlement services. Its listings are not NFTs or on-chain GH trades. This Web2 game does not expose Phantom sign-in or a direct wallet connection inside the game. The Top 100 and GH Earnings infrastructure calculate possible allocations, while actual leaderboard reward claims remain disabled. [Technical payout investigation](docs/gh-real-payout-path.md).
+
+## Marketplace & Shop
+
+Players can browse, list and buy eligible equipment in the iDos Marketplace for **GEMS**. The Shop contains configured GOLD supplies, pets, GH-priced GEMS packs and GH-priced Premium Chests. The GH offers consume the **internal game balance** through iDos services; no marketplace item is represented as a Solana NFT.
+
+| GEMS equipment Marketplace | Shop in the live v83 build |
 | --- | --- |
-| Game simulation and rendering | Phaser 4 |
-| Interface | React 19, TypeScript 5 |
-| Build and local development | Vite 8 |
-| Accounts, game state, and services | iDos Games SDK and host modules |
-| Token network | Solana, through the GH token and iDos platform wallet |
-| Verification | TypeScript typecheck and Node-based gameplay and economy tests |
+| ![Equipment listings in the Marketplace](assets/readme/equipment-marketplace.jpg) | ![Shop opened from the game header](artifacts/shop-header-v83/live-shop-open.png) |
 
-```mermaid
-flowchart TD
-    Player[Player / browser] --> Game[React UI + Phaser combat]
-    Game --> SDK[iDos Games SDK]
-    SDK --> State[Characters, inventory, stages, loot]
-    SDK --> Market[GEMS equipment marketplace]
-    SDK --> Store[GH Store]
-    Player --> Wallet[iDos platform wallet]
-    Wallet <--> Solana[Solana GH token]
-    Wallet -->|GH deposits / withdrawals| SDK
-```
+*Marketplace capture from DEV; Shop capture from the live v83 build.*
 
-### iDos Games integration
+## Technology & Architecture
 
-The host provides sign-in and the game session. iDos-backed characters, inventory, formation, lootboxes, Store, Marketplace, and server-side stage validation keep durable progress outside the Phaser scene. The platform wallet handles GH deposits and withdrawals; the game reads the resulting in-game GH balance for Store purchases. This lets a solo developer spend more time on combat, progression, content, and balancing.
+| Layer | Responsibility |
+| --- | --- |
+| Phaser 4 + TypeScript | Automatic combat, stage presentation and client-side battle simulation. |
+| React 19 + Vite 8 | Game interface, account flow and production web build. |
+| iDos Games SDK | Accounts, native characters, inventory, lootboxes, Store, Marketplace and wallet integration. |
+| CloudCode | Stage/run checks and reward grants, protected Team Power calculation, Top 100 projection and GH accounting. |
+| Solana | GH token network; iDos handles the supported wallet deposit and withdrawal flow. |
 
-This repository contains the **current React/Phaser hackathon client and its tests**. Title configuration and managed backend services live on iDos Games, so they are not represented as local JSON or smart contracts here. See [IDOS.md](IDOS.md) for the project map and [feature history](docs/feature-history/README.md) for implementation decisions.
+The repository contains the client, tests and CloudCode source used to prepare published handlers. Live Title configuration and managed player data reside in iDos Games rather than local JSON files. [Project structure](IDOS.md) · [Feature history](docs/feature-history/README.md).
 
-## Campaign, pets and preparation
+## Getting Started
 
-Three acts move from early goblin encounters to ranged pressure, armoured
-frontlines and guarded bosses. Loot spans five rarities, with eligibility from
-Stage Mastery. One owned pet supports the next run. Underprepared parties lose;
-gear, levels, skill unlocks and party composition create measurable improvements.
-
-![Jury Edition Stage Map and preparation advice](assets/readme/jury-stage-map.jpg)
-
-Balance verification covers **8 real-config profiles × 30 stages × 3 deterministic
-cadences = 720 simulations**. A bare starter clears the first four stages and
-then loses; a Level-5/Common Knight can clear the first act, and a developed
-Level-10/Epic trio can farm the campaign. [Metrics and methodology](docs/feature-history/jury-balance.md).
-
-## Play or run locally
-
-**For judges:** open the [live game](https://98jrcakg.idos.games/). Choose a sign-in method when prompted; **Play as Guest** is the quickest way to try the core game. For GH already deposited through an iDos Games account, sign in with that same account.
-
-**For developers:** use a supported Node.js release and npm. The repository has a canonical Title ID in `src/idos.title.ts`; `.env.local` selects the DEV environment for a local run.
+Use a current supported Node.js release and npm. The repository's canonical Title ID is in `src/idos.title.ts`; local runs use the DEV Title. No credentials belong in this repository.
 
 ```bash
 git clone https://github.com/gordon0027/GRIND-HEROES.git
@@ -159,38 +135,15 @@ npm run dev
 ```
 
 ```bash
+npm test
 npm run typecheck
 npm run build
-npm test
 ```
 
-Local development connects to the iDos DEV Title and its backend configuration. No credentials are needed in the repository.
+The offline test suite covers combat, progression, stage rewards, inventory, Marketplace settlement, Team Power and GH accounting. Browser and live-service checks require a suitable iDos account and DEV or PROD access; the offline suite does not execute token transfers.
 
-`npm test` includes skill boundaries, atomic upgrade recovery, gear and party
-rules, stage rollback, marketplace purchase settlement, GH accounting and payout
-guards. The real DEV SDK tests are opt-in and use isolated guests; they are not
-part of the offline suite. Browser evidence covers 320, 360, 390, 430, 768, 1366
-and 1920 px. [QA report and limitations](docs/JURY_EDITION_REPORT_RU.md).
+## Links & Hackathon Information
 
-More: [Gameplay](docs/GAMEPLAY.md) · [Progression](docs/PROGRESSION.md) ·
-[Economy](docs/ECONOMY.md) · [Judge demo](docs/JURY_DEMO.md).
+**[Play Grind Heroes](https://98jrcakg.idos.games/)** · [Game page](https://idosgames.com/app/98JRCAKG/) · [Colosseum project](https://colosseum.com/arena/projects/grind-heroes) · [Two-minute demo](https://youtu.be/kQVqU1hUUec) · [Founder pitch](https://www.loom.com/share/d6565085ef3d405696bf17fff49a7032)
 
-## Status and next steps
-
-- [x] Three-act campaign, automatic combat, bosses, and AFK GOLD
-- [x] Three-hero party, equipment progression, and chest rewards
-- [x] GEMS equipment marketplace and GH Store offers
-- [x] Jury Edition implementation, progression boundaries, balance evidence and transparent Earnings
-- [x] Hero progression and direct Shop access deployed to PROD as v83; hosted assets and live UI verified
-- [ ] Expand content and keep tuning progression and the economy
-- [ ] Explore broader token rewards and Solana-linked item features
-
-## Colosseum 2026
-
-GRIND HEROES was built by a solo founder for [Colosseum's Crypto World's Fair](https://colosseum.com/arena/projects/grind-heroes), with iDos Games integration.
-
-| Founder | Role | Contact |
-| --- | --- | --- |
-| Adam Tukeyev | Solo Founder & Game Developer | [Telegram](https://t.me/abidelaw) · [X](https://x.com/adam2key) · [GitHub](https://github.com/gordon0027) |
-
-**[Live game](https://98jrcakg.idos.games/)** · [Technical demo](https://youtu.be/kQVqU1hUUec) · [Founder pitch](https://www.loom.com/share/d6565085ef3d405696bf17fff49a7032) · [Project page](https://colosseum.com/arena/projects/grind-heroes)
+Built by **Adam Tukeyev**, solo founder and game developer, for Colosseum's Crypto World's Fair. [Telegram](https://t.me/abidelaw) · [X](https://x.com/adam2key) · [GitHub](https://github.com/gordon0027).

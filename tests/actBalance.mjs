@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { STAGE_CATALOG } from "../src/modules/idle-rpg/game/stageCatalog.ts";
-import { realParty, simulateReal } from "./juryBalance.mjs";
+import { realParty, simulateReal } from "./progressionBalance.mjs";
 // Campaign regression uses real Character definitions, separate Hero Level and gear mastery.
 for (const stage of STAGE_CATALOG) {
   const party = stage.chapter===1 ? stage.stage===1 ? realParty(1,null) : stage.stage<=4 ? realParty(3,"Common") : realParty(5,"Common",2)
