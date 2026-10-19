@@ -53,7 +53,7 @@ The Inventory and Team screens open a dedicated Hero Progression window with upg
 
 | Equipment-first Inventory | Hero Progression |
 | --- | --- |
-| ![Hero equipment and inventory](assets/readme/equipment-inventory.jpg) | ![Hero progression window](assets/readme/hero-progression.jpg) |
+| ![Hero equipment and inventory on mobile](assets/readme/equipment-inventory-mobile.png) | ![Hero progression window on mobile](assets/readme/hero-progression-mobile.png) |
 
 ## Equipment & Loot
 
