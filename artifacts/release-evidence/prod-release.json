@@ -1,4 +1,5 @@
 {
+  "publicCopyNote": "The display label was normalized for repository presentation; build identifiers and verification results are unchanged.",
   "releasedAt": "2026-10-15T14:15:53.747Z",
   "sourceCommit": "bf2b94b2393c8e00bd25df44bdac99929c98b524",
   "branch": "codex/grind-heroes-update",

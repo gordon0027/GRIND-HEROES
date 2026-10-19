@@ -15,6 +15,10 @@ reward formulas and payout locks were not changed. v83 added direct Shop access
 in the game header. [Production release history](feature-history/production-release.md)
 and [Shop history](feature-history/shop.md) record those deployments.
 
+For neutral repository presentation, the public copy of the v82 release record
+uses a normalized display label and path. Build identifiers, metrics and
+verification outcomes are unchanged.
+
 The Inventory shows six equipment slots, comparison and Equip Best. Inventory
 and Team open the same Hero Progression dialog. Play and Stage Map show Team
 Power against recommended Power; that recommendation is advice, not an
