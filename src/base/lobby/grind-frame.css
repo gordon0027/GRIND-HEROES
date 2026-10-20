@@ -103,9 +103,10 @@
   color: #f5dfaa !important;
 }
 @media(max-width:500px) {
-  .grind-frame-header { min-height: 44px; padding: 4px 7px; }
+  .grind-header-phantom span:first-child { display: none; }
+  .grind-frame-header { min-height: 44px; padding: 4px 7px; flex-wrap: wrap; gap: 4px; }
   .grind-frame-header__balances { gap: 4px; }
-  .grind-frame-header__actions { gap: 4px; }
+  .grind-frame-header__actions { gap: 4px; margin-left: auto; }
   .grind-header-shop { min-height: 32px; padding: 2px 5px; font-size: 9px; }
   .grind-header-shop svg { width: 18px; height: 18px; }
   .grind-frame-header__balance { font-size: 11px; padding-right: 5px; }

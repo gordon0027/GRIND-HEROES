@@ -143,6 +143,10 @@ export function makeFrameHeader(options: GameFrameOptions): ComponentType {
       return <div className="grind-frame-header">
         <GrindFrameBalances />
         <div className="grind-frame-header__actions">
+          <button type="button" className="grind-header-shop grind-header-phantom" aria-label="Open Phantom wallet"
+            onClick={() => window.dispatchEvent(new Event("grind:open-wallet"))}>
+            <span aria-hidden="true">◈</span><span>WALLET</span>
+          </button>
           <GrindHeaderShop features={options.features} />
           <Account features={options.features} />
         </div>

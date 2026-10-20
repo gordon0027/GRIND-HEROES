@@ -1,4 +1,4 @@
-import { useRef, useState, useSyncExternalStore, type ComponentType, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, type ComponentType, type CSSProperties, type ReactNode } from "react";
 import type { FeatureRegistry } from "@idosgames/module-sdk";
 import { Button, Popup, ResourceList, v } from "@idosgames/react/ui";
 import type { IdleSession } from "../game/session";
@@ -24,6 +24,12 @@ export function makeGamePanel(session: IdleSession, features: FeatureRegistry): 
     useSyncExternalStore(session.subscribe, session.getVersion);
     const [section, setSection] = useState<GameSection>("play");
     const [mapOpen, setMapOpen] = useState(false);
+    const [walletRequest, setWalletRequest] = useState(0);
+    useEffect(() => {
+      const open = () => { setSection("team"); setMapOpen(false); setWalletRequest(n => n + 1); };
+      window.addEventListener("grind:open-wallet", open);
+      return () => window.removeEventListener("grind:open-wallet", open);
+    }, []);
     const [collectedAway, setCollectedAway] = useState<{ currencyID: string; amount: number } | null>(null);
     const market = features.get("marketplace");
     const MarketplaceScreen = market?.available ? market.Screen : null;
@@ -63,7 +69,7 @@ export function makeGamePanel(session: IdleSession, features: FeatureRegistry): 
       </div> : <div className="gh-game-section">
         <div className="gh-game-section__inner">
           {section === "inventory" ? <InventorySection session={session} onPlay={() => setSection("play")} /> : null}
-          {section === "team" ? <TeamSection session={session} /> : null}
+          {section === "team" ? <TeamSection session={session} walletRequest={walletRequest} /> : null}
           {section === "marketplace" ? <section className="gh-more-panel gh-more-panel--marketplace"
             style={{ borderImageSource: `url("${heroUi.panel}")` }}>
             {MarketplaceScreen ? <MarketplaceScreen close={() => setSection("play")} />
@@ -110,6 +116,7 @@ export function makeGamePanel(session: IdleSession, features: FeatureRegistry): 
       {session.lastLevelNotice ? <div className="gh-level-up-notice" role="status">{session.lastLevelNotice}</div> : null}
       <GameFooter section={section} onPick={(next) => {
         if (next === section) return;
+        setWalletRequest(0);
         setMapOpen(false);
         setSection(next);
         if (next === "rankings") void session.loadTeamLeaderboard();

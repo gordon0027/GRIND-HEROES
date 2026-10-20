@@ -1,5 +1,13 @@
 # Pet System V1–V2
 
+2026-10-20: Watchdog is now an ordinary one-time purchase for 1 in-game GH in
+PROD, through the native Store slot `shop/pets/slot_pet_gh_v1`. Its existing
+`pet_gh_v1` Item, stats and server ownership rules are used. The owner cancelled
+token holder access. The separate Phantom panel only connects/disconnects and
+shows an address; no signatures, balance checks or purchase permissions.
+See [wallet integration notes](holder-watchdog-feasibility.md) for verification
+and the preceding platform limitations.
+
 Presentation follow-up: [Combat Polish V1](combat-polish-v1.md) updates scales,
 per-frame feet anchors, follow spacing and shared shadows. Ownership, selection
 and passive bonuses are unchanged.

@@ -359,10 +359,11 @@ export function InventorySection({ session, onPlay }: { session: IdleSession; on
   </SectionFrame>;
 }
 
-export function TeamSection({ session }: { session: IdleSession }): ReactNode {
+export function TeamSection({ session, walletRequest = 0 }: { session: IdleSession; walletRequest?: number }): ReactNode {
   const [heroID, setHeroID] = useState(session.selectedID ?? "Knight");
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [tab, setTab] = useState<"heroes" | "pets">("heroes");
+  useEffect(() => { if (walletRequest) setTab("pets"); }, [walletRequest]);
   return <SectionFrame title="TEAM" kicker="GRIND HEROES / FORMATION" className="gh-management--team">
     <div className="gh-team-tabs" role="tablist" aria-label="Team management">
       <button type="button" role="tab" aria-selected={tab === "heroes"} onClick={() => setTab("heroes")}>HEROES</button>

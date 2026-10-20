@@ -4,6 +4,7 @@ import type { PetDefinition } from "../game/pets";
 import { PET_VISUALS } from "../phaser/petVisuals";
 import { heroUi } from "./heroAssets";
 import "./pets.css";
+import { PhantomPanel } from "./PhantomPanel";
 
 const currencyIcons: Record<string, string> = {
   GOLD: heroUi.gold,
@@ -38,6 +39,7 @@ function PetCard({ session, pet }: { session: IdleSession; pet: PetDefinition })
         {pet.bonus.maxHp > 0 ? `+${pet.bonus.maxHp} HP` : null} · all active heroes</p>
       <div className="gh-pet-card__price"><img src={currencyIcons[pet.currencyID]} alt="" />
         <strong>{pet.price.toLocaleString("en-US")} {pet.currencyID === "Main" ? "GH" : pet.currencyID}</strong></div>
+      {pet.currencyID === "Main" ? <p>Uses your in-game GH balance</p> : null}
     </div>
     <div className="gh-pet-card__action">
       {active ? <>
@@ -55,6 +57,7 @@ export function PetsSection({ session }: { session: IdleSession }): ReactNode {
   return <section className="gh-pets" style={{ borderImageSource: `url("${heroUi.panel}")` }}>
     <header><span>GRIND HEROES / COMPANIONS</span><h2>PETS</h2>
       <p>One pet helps your whole active team. Your chosen pet appears immediately; bonuses change next run.</p></header>
+    <PhantomPanel />
     {session.petError ? <p className="gh-pets__error" role="alert">{session.petError}
       <button type="button" onClick={() => void session.loadPets()}>Retry</button></p> : null}
     {!session.petState ? <p role="status">Loading pets…</p> : <div className="gh-pets__grid">

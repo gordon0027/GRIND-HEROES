@@ -1,6 +1,43 @@
 # GH holder Watchdog: feasibility check (2026-10-20)
 
-Status: stopped at the requested feasibility gate. No wallet or holder UI, entitlement,
+## Current decision (2026-10-20)
+
+The owner cancelled holder access and requested an ordinary GH pet purchase plus
+a simple Phantom connection without balance checks or signatures. Watchdog now
+uses the existing `pet_gh_v1` catalog entry, portrait, animation and server-owned
+selection. PROD has its nontradable stackable Item and a fixed `shop/pets/slot_pet_gh_v1`
+offer: consume exactly 1 in-game `CryptoCurrency:Main`, grant exactly one Item,
+`TotalCap:1`. Existing Donkey/Pug offers and all other store entries were preserved.
+This does not spend from the connected Phantom wallet.
+
+The new header WALLET entry opens TEAM/PETS. `PhantomPanel` only calls provider
+connect/disconnect, displays the address and handles account switches, rejection,
+trusted reconnect and cleanup. It neither signs nor reads holdings nor replaces
+the authenticated iDos player. A missing iframe provider shows an explicit link
+to open the standalone game using the player's usual account. No native wallet
+package is imported: its lazy Solana entry also bundled incompatible EVM deps.
+
+All gameplay tests, typecheck and build passed. A fresh zero-GH PROD test guest
+resolved the exact Watchdog offer and slot, received the native insufficient-GH
+rejection and could not equip an unowned Watchdog. No real player's tokens were
+spent. Successful funded purchase and actual Phantom connection remain for the
+owner's browser test: browser automation was disabled in Work, and the owner
+explicitly authorized publication with manual testing.
+
+During the preceding investigation, native DEV signature linking succeeded with
+a generated test Ed25519 key and a replay was rejected. This was not a real Phantom
+signing test. Both DEV and PROD CloudCode HTTP probes were refused with
+`Outbound HTTP from CloudCode is not available on the current plan.` Enabling the
+configuration did not enable the plan feature. All probe handlers were removed;
+PROD revision 18 has the identical source hash as the original revision 15,
+`27dc67e2f3c84ca2a24b46578aae6f25ece02ff84439c1091cb5a24d39fa80d1`,
+with the same 23 handlers and HTTP disabled. DEV revision 37 restores its original
+gameplay source. DEV blockchain settings were restored to their original state.
+PROD blockchain settings, wallet login and Open gameplay were not changed.
+
+## Original feasibility audit (historical)
+
+Status at the initial audit: stopped at the requested feasibility gate. No wallet or holder UI, entitlement,
 pet grant, source change, PROD deployment or GitHub push was made. Tutorial V2 is
 already live as v85, from commit `f946b03`; the attachment's pre-release description
 was stale. Current PROD CloudCode remains revision 15.

@@ -26,6 +26,7 @@ instead.
 - [Grind Heroes Shop](shop.md) — native GH Store purchases for GEMS and Premium Chests, deployed to PROD.
 - [Secure Team Power](team-power.md) — server-derived active party Power and a protected custom Top 100.
 - [Pet System V1–V2](pets.md) — native Store ownership, next-run bonuses and animated battle companions in TEAM.
+- [Phantom connection and Watchdog sale](holder-watchdog-feasibility.md) — optional wallet address connection and a one-time 1 GH native Store purchase.
 - [Game polish V1 release report (RU)](game-polish-v1-report-ru.md) — production build 81, browser verification and known limits.
 - [October 2026 release balance](balance-verification.md) — real DEV stat profiles, 720 deterministic runs, stage preparation and unchanged rewards.
 - [October 2026 release Earnings](earnings-verification.md) — read-only budget, allocation and receipt hierarchy, strict data validation and disabled payouts.
