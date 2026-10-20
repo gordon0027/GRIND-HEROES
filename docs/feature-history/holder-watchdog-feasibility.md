@@ -10,13 +10,18 @@ offer: consume exactly 1 in-game `CryptoCurrency:Main`, grant exactly one Item,
 `TotalCap:1`. Existing Donkey/Pug offers and all other store entries were preserved.
 This does not spend from the connected Phantom wallet.
 
-Release attempt: frontend build `bld71f7ed52bcfc4d58be8bc61ed0374a5b` / v86
+Production release: after the owner freed storage and authorized retry, frontend
+v87 / `bld12b5b6358b904592ab2ac4f7475964c0` became Live on 2026-10-20.
+The live HTML points to this build, and its JavaScript and CSS match the verified
+local bundle byte for byte. The wallet UI and the 1 GH Watchdog sale are now live.
+Actual Phantom connection remains for the owner's manual browser test.
+
+Earlier release attempt: frontend build `bld71f7ed52bcfc4d58be8bc61ed0374a5b` / v86
 failed with `Storage quota exceeded. Free up space or upgrade your plan to upload
 more.` Despite `Published:true` in the response, `Status:Failed`, `list_builds.Live`
-and the real live HTML all confirm that v85 remains live. Only the Item/Store
-configuration is live; the new wallet UI is committed locally and not deployed.
-Code commit: `340dacb` (`docs update`). Free storage before a new upload attempt;
-do not delete historical builds without the owner's authorization.
+and the real live HTML confirmed that v85 remained live at that time. Only the
+Item/Store configuration had been published until the successful v87 retry.
+Code commit: `340dacb` (`docs update`). No historical builds were deleted by the agent.
 
 The new header WALLET entry opens TEAM/PETS. `PhantomPanel` only calls provider
 connect/disconnect, displays the address and handles account switches, rejection,
