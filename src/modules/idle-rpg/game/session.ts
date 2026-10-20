@@ -61,7 +61,7 @@ import { previewParty, type PreviewTier } from "./combatPreview";
 import type { HeroSource } from "./stageRun";
 import { HeroUpgrade } from "./heroUpgrade";
 import { heroLevelEnabled } from "./heroLevel";
-import { ONBOARDING_KEY, onboardingStep, type OnboardingStep } from "./onboarding";
+import { ONBOARDING_KEY, onboardingStep, restoreGuide, type GuideProgress, type OnboardingStep } from "./onboarding";
 
 /** The private custom-data key of the stage progress ("." and "$" are not allowed in keys). */
 export const PROGRESS_KEY = "idle_rpg_progress";
@@ -188,6 +188,7 @@ export class IdleSession {
   notice: (Notice & { at: number }) | null = null;
   loaded = false;
   onboardingActive = false;
+  guideProgress: GuideProgress = restoreGuide(null, false);
   private onboardingWrites: Promise<void> = Promise.resolve();
   private backgroundTimer: ReturnType<typeof setInterval> | null = null;
   private backgroundAt = 0;
@@ -278,11 +279,24 @@ export class IdleSession {
   getVersion = (): number => this.version;
 
   get currentOnboardingStep(): OnboardingStep {
+    if (!this.onboardingActive) return null;
     return onboardingStep({ active: this.onboardingActive,
+      welcomed: this.guideProgress.welcomed, victorySeen: this.guideProgress.victorySeen,
       firstClear: (this.stageProgress.completed[FIRST_STAGE.id] ?? 0) > 0,
-      chestCount: this.chestCount("stage_chest"), capacity: this.capacity,
+      capacity: this.capacity,
       archerOwned: this.ownedHeroIDs().has("Archer"),
-      archerAssigned: this.formation.slots[1] === "Archer" });
+      archerAssigned: this.formation.slots.includes("Knight") && this.formation.slots.includes("Archer") });
+  }
+
+  continueOnboarding(): void {
+    const step = this.currentOnboardingStep;
+    if (step === "welcome") this.guideProgress.welcomed = true;
+    else if (step === "victory") this.guideProgress.victorySeen = true;
+    else if (step === "complete") this.onboardingActive = false;
+    else return;
+    this.persistOnboarding(step === "complete" ? "done" : "active");
+    this.changed();
+    if (this.run.state === "ready" && this.autoFlowEnabled) void this.startRun();
   }
 
   skipOnboarding(): void {
@@ -290,11 +304,14 @@ export class IdleSession {
     this.onboardingActive = false;
     this.persistOnboarding("skipped");
     this.changed();
+    if (this.run.state === "ready" && this.autoFlowEnabled) void this.startRun();
   }
 
   private persistOnboarding(value: "active" | "skipped" | "done"): void {
+    this.guideProgress.status = value;
+    const snapshot = JSON.stringify(this.guideProgress);
     this.onboardingWrites = this.onboardingWrites.then(async () => {
-      const saved = await this.client.userCustomData.setPrivateData(ONBOARDING_KEY, value);
+      const saved = await this.client.userCustomData.setPrivateData(ONBOARDING_KEY, snapshot);
       if (!saved.ok) throw new Error(String(saved.error ?? saved.reason));
     }).catch((error: unknown) => {
       this.stageError = `Guide save: ${String(error)}`;
@@ -757,10 +774,6 @@ export class IdleSession {
     if (result.ok) {
       this.formation = next;
       this.formationStored = true;
-      if (this.onboardingActive && next.slots[1] === "Archer") {
-        this.onboardingActive = false;
-        this.persistOnboarding("done");
-      }
       this.managementRevision++;
       this.stagePartyDirty = true;
       this.syncParty();
@@ -985,6 +998,7 @@ export class IdleSession {
   }
 
   private async beginRun(): Promise<boolean> {
+    if (this.currentOnboardingStep === "welcome") return false;
     if (!this.loaded || !this.equipmentReady || this.runStartBusy || this.lootPending || this.lootBusy ||
       this.failureClose || this.run.state !== "ready" || this.serverRunId ||
       !(this.isDevPreview || stageUnlocked(this.stageProgress, this.run.stage.id))) return false;
@@ -1213,6 +1227,12 @@ export class IdleSession {
           completed.progress, this.autoProgressEnabled);
         this.validatedClearSeconds = completed.serverSeconds;
         this.lootGold = completed.rewards.gold;
+        if (this.onboardingActive && this.run.stage.id === FIRST_STAGE.id &&
+            !((before.completed[FIRST_STAGE.id] ?? 0) > 0)) {
+          this.guideProgress.rewardGold = completed.rewards.gold;
+          this.guideProgress.welcomed = true;
+          this.persistOnboarding("active");
+        }
         this.run.bestClearSeconds = completed.progress.bestSeconds[this.run.stage.id] ?? null;
         this.heroProgressMap = completed.heroProgress;
         this.refreshHero();
@@ -1385,8 +1405,8 @@ export class IdleSession {
       this.stageProgress = parseStageProgress(res.data.ReadOnly?.[STAGE_PROGRESS_KEY]?.Value);
       const onboardingValue = res.data.Private?.[ONBOARDING_KEY]?.Value;
       const hasStageHistory = Object.values(this.stageProgress.completed).some((count) => count > 0);
-      this.onboardingActive = onboardingValue === "active" ||
-        !onboardingValue && !hasStageHistory;
+      this.guideProgress = restoreGuide(onboardingValue, hasStageHistory);
+      this.onboardingActive = this.guideProgress.status === "active";
       if (this.onboardingActive && !onboardingValue) this.persistOnboarding("active");
       this.heroProgressMap = parseHeroProgress(res.data.ReadOnly?.[HERO_XP_KEY]?.Value);
       try {
@@ -1417,10 +1437,6 @@ export class IdleSession {
       const savedFormation = res.data.Private?.[FORMATION_KEY]?.Value;
       const ownedHeroes = this.ownedHeroIDs();
       this.formation = restoreFormation(savedFormation, ownedHeroes, this.capacity);
-      if (this.onboardingActive && this.formation.slots[1] === "Archer") {
-        this.onboardingActive = false;
-        this.persistOnboarding("done");
-      }
       this.formationStored = Number(res.data.Private?.[FORMATION_KEY]?.Version ?? 0) > 0;
       this.syncParty();
       let savedFormationValid = false;

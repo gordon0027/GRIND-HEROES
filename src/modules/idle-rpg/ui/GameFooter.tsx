@@ -15,6 +15,7 @@ const entries: Array<{ id: GameSection; label: string; icon: string; ariaLabel?:
 export function GameFooter({ section, onPick }: { section: GameSection; onPick: (section: GameSection) => void }): ReactNode {
   return <nav className="gh-game-footer" aria-label="Grind Heroes sections">
     {entries.map((entry) => <button key={entry.id} type="button"
+      data-guide-target={`nav-${entry.id}`}
       aria-current={section === entry.id ? "page" : undefined}
       aria-label={entry.ariaLabel}
       className={section === entry.id ? "is-active" : ""}

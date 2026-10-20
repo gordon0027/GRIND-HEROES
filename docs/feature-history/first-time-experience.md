@@ -1,15 +1,17 @@
-# First-time experience V1
+# First-time experience
 
 The introduction uses the existing Stage 1-1 and continuous autobattle. A separate
 stage would require changes to the stage catalog, server run validation, progress
 migration and reward routing. The first fight starts through the normal session
-activation path. Guidance appears inside PLAY and TEAM, leaving the combat area and
-controls usable. Players can visit every section or skip at any point.
+activation path after the welcome dialogue, or immediately after Skip. A dedicated
+adventure guide now replaces the original inline hints (see V2 below).
 
 The client stores `grind_onboarding_v1` in private user custom data. A player with
 existing stage clears sees no introduction. A new player resumes the current step
 after refresh; the step is derived from server-backed stage progress, chest inventory,
 party capacity, Archer ownership and formation. `skipped` and `done` remain saved.
+V2 accepts these original string saves and stores a JSON snapshot under the same
+key, including welcome/victory acknowledgements and the actual GOLD receipt.
 
 The first server-validated Stage 1-1 clear grants its usual 100 GOLD, Stage Chest,
 first-clear boots and XP, plus 11,000 GOLD for the existing 3,000 GOLD second slot
@@ -39,3 +41,37 @@ Typecheck, tests and the PROD build passed. The staged client loaded an existing
 player without onboarding; after release, the live root served v84 assets and
 the public PLAY NOW button opened the game. The release did not create or reset
 player progress.
+
+## Adventure guide V2 (local / DEV, 2026-10-20)
+
+Removed the old inline guide, its outline classes and the separate PLAY `NEXT STEP`
+card. Replaced them with an RPG dialogue using existing hero art, short messages,
+eight progress marks and a dedicated Skip action. The welcome waits for LET'S GO;
+the battle message is nonblocking and leaves the battlefield undimmed. Victory
+shows the GOLD returned by `completeStageRun`, with no new reward call.
+
+The remaining flow spotlights the actual TEAM navigation button, Slot 2, its
+purchase confirmation, Recruit Hero, Archer and its purchase confirmation, then
+Slot 2 and the owned Archer formation control. Slot capacity, ownership and the
+saved Knight/Archer formation drive the transitions. START ADVENTURE saves `done`;
+Skip saves `skipped`, removes the overlay and returns to PLAY immediately. Combat
+and automatic stage progression continue during all post-welcome steps.
+
+The portal is attached to this game's document body. An SVG mask dims the viewport
+by 72% around measured target bounds; the gold ring and mask ignore pointer events.
+Capture listeners allow the real target and guide controls, block unrelated
+activation, and retain scrolling. Keyboard focus cycles through the real target
+and guide buttons; Escape skips. ResizeObserver, DOM changes, captured nested scroll
+events and viewport resize refresh the bounds. Missing targets release interaction.
+The guide scrolls the target into view and places the dialogue above, below or to
+the side, with a compact layout for short iframes.
+
+Verified with real DEV guest accounts in the browser: desktop and 390px iframe
+journeys from welcome through saved two-hero formation; refresh recovery before
+slot purchase and before formation; completion and Skip remain hidden after
+refresh. Also visually checked 320px welcome/slot/purchase screens and a
+1000x430 cross-origin iframe, including nested scrolling to Archer. The public
+iDos page was not updated for this version. Screenshots are local QA artifacts.
+The normal first-stage duration remains about 68 seconds; an isolated shorter
+encounter would need a separate server-validated run/reward contract and is
+outside this presentation change. No Title configuration or CloudCode changed.
