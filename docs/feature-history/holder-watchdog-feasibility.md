@@ -10,6 +10,14 @@ offer: consume exactly 1 in-game `CryptoCurrency:Main`, grant exactly one Item,
 `TotalCap:1`. Existing Donkey/Pug offers and all other store entries were preserved.
 This does not spend from the connected Phantom wallet.
 
+Release attempt: frontend build `bld71f7ed52bcfc4d58be8bc61ed0374a5b` / v86
+failed with `Storage quota exceeded. Free up space or upgrade your plan to upload
+more.` Despite `Published:true` in the response, `Status:Failed`, `list_builds.Live`
+and the real live HTML all confirm that v85 remains live. Only the Item/Store
+configuration is live; the new wallet UI is committed locally and not deployed.
+Code commit: `340dacb` (`docs update`). Free storage before a new upload attempt;
+do not delete historical builds without the owner's authorization.
+
 The new header WALLET entry opens TEAM/PETS. `PhantomPanel` only calls provider
 connect/disconnect, displays the address and handles account switches, rejection,
 trusted reconnect and cleanup. It neither signs nor reads holdings nor replaces
