@@ -335,7 +335,7 @@ export class StageRun {
   tick(dt: number): RunEvent[] {
     const events: RunEvent[] = [];
     if (!Number.isFinite(dt) || dt <= 0) return events;
-    let left = Math.min(dt, 0.25); // hidden tabs do not simulate missed minutes
+    let left = Math.min(dt, 0.25); // Keep each simulation call bounded; the session replays wall time in slices.
     while (left > 0 && (this.state === "running" || this.state === "encounter" || this.state === "boss")) {
       const step = Math.min(left, 1 / 60);
       this.step(step, events);

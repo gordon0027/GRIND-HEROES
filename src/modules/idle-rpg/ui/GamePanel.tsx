@@ -42,6 +42,29 @@ export function makeGamePanel(session: IdleSession, features: FeatureRegistry): 
     const upgradeCost = growingHero ? heroLevelCost(growingHero.def, growingHero.rank) : null;
     const location = run.stage.name.split(" · ")[1] ?? run.stage.name;
     const percent = Math.min(100, run.distance / run.stage.length * 100);
+    const guideStep = session.currentOnboardingStep;
+    const guide = guideStep ? <div className="gh-onboarding" role="status">
+      <div className="gh-onboarding__copy">
+        <small>YOUR FIRST PARTY</small>
+        <strong>{({ battle: "Your Knight is already fighting", chest: "Your first reward is ready",
+          slot: "Make room for a second hero", recruit: "Recruit your Archer",
+          assign: "Put Archer in Slot 2" })[guideStep]}</strong>
+        <p>{({ battle: "Watch the battle. Your hero attacks automatically, and the first clear earns GOLD and a chest.",
+          chest: "Open the Stage Chest to reveal your first equipment.",
+          slot: "Open TEAM and unlock Slot 2 with the GOLD from your first clear.",
+          recruit: "In TEAM, choose Recruit Hero and select Archer.",
+          assign: "In TEAM, select the empty Slot 2, then choose Archer from your roster." })[guideStep]}</p>
+      </div>
+      <div className="gh-onboarding__actions">
+        {guideStep === "chest" && section === "play" ? <button type="button"
+          onClick={() => void session.openChest("stage_chest")}>OPEN CHEST</button> : null}
+        {["slot", "recruit", "assign"].includes(guideStep) && section !== "team" ?
+          <button type="button" onClick={() => setSection("team")}>OPEN TEAM</button> : null}
+        {guideStep === "chest" && section !== "play" ? <button type="button"
+          onClick={() => setSection("play")}>OPEN PLAY</button> : null}
+        <button type="button" className="gh-onboarding__skip" onClick={() => session.skipOnboarding()}>SKIP TUTORIAL</button>
+      </div>
+    </div> : null;
     return <div style={{ position: "absolute", inset: 0, pointerEvents: "none", fontFamily: v.font, color: v.text }}>
       {import.meta.env.DEV && session.devPreviewAvailable ? <DevCombatPanel session={session} /> : null}
       {section === "play" ? <div className="gh-stage-hud" style={{ top: 8 }}>
@@ -68,6 +91,7 @@ export function makeGamePanel(session: IdleSession, features: FeatureRegistry): 
           {session.lootError || session.stageError ? <div className="gh-stage-hud__error" role="alert">{session.lootError ?? session.stageError}</div> : null}
       </div> : <div className="gh-game-section">
         <div className="gh-game-section__inner">
+          {guide}
           {section === "inventory" ? <InventorySection session={session} onPlay={() => setSection("play")} /> : null}
           {section === "team" ? <TeamSection session={session} /> : null}
           {section === "marketplace" ? <section className="gh-more-panel gh-more-panel--marketplace"
@@ -81,6 +105,7 @@ export function makeGamePanel(session: IdleSession, features: FeatureRegistry): 
         </div>
       </div>}
       {section === "play" ? <div className="gh-play-lower">
+        {guide}
         <section className="gh-stage-navigator" aria-label="Stage navigator">
           <div className="gh-stage-navigator__top">
             <span>ACT {run.stage.chapter} · {location}</span>

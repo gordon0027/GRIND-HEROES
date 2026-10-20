@@ -79,8 +79,9 @@ assert.equal(grants.length, 1);
 assert.equal(win.xpAwards.length, 1);
 assert.equal(win.xpAwards[0].heroID, "Knight");
 assert.equal(win.heroProgress.Knight.xp, 35);
-assert.deepEqual(Array.from(grants[0].Operation.Grant.Standard.Entries, (entry) => entry.Amount), [100, 1, 1],
+assert.deepEqual(Array.from(grants[0].Operation.Grant.Standard.Entries, (entry) => entry.Amount), [11100, 1, 1],
   "client payload cannot select reward amounts or items");
+assert.equal(win.rewards.gold, 11100, "first clear funds the existing slot and Archer prices");
 assert.equal(complete("grind-stage-1-1", first.runId, 42).reason, "run_not_active");
 assert.equal(grants.length, 1, "one run grants only once");
 assert.equal(JSON.parse(records.ReadOnly.grind_hero_xp_v1.Value).Knight.xp, 35,
@@ -96,6 +97,8 @@ const replay = start("grind-stage-1-1", 70);
 assert.equal(complete("grind-stage-1-1", replay.runId, 120).accepted, true);
 assert.equal(progress().bestSeconds["grind-stage-1-1"], 40, "slower clear keeps best");
 assert.equal(grants[1].Operation.Grant.Standard.Entries.length, 2, "first bonus is not farmable");
+assert.equal(grants[1].Operation.Grant.Standard.Entries[0].Amount, 100,
+  "a repeated clear keeps the normal Stage 1-1 reward");
 const faster = start("grind-stage-1-1", 130);
 assert.equal(complete("grind-stage-1-1", faster.runId, 165).accepted, true);
 assert.equal(progress().bestSeconds["grind-stage-1-1"], 35, "faster clear replaces best");
@@ -139,6 +142,7 @@ assert.deepEqual(Array.from(grants.at(-1).Operation.Grant.Standard.Entries, (ent
 const prices = sandbox.handlers.getPartySlotPrices();
 assert.equal(prices.slot2, 3000);
 assert.equal(prices.slot3, 12000);
+inventory.InventoryV2.VirtualCurrencies.GOLD.Amount = 0;
 assert.equal(sandbox.handlers.unlockPartySlot({ slot: 3 }).reason, "previous_slot_locked");
 assert.equal(sandbox.handlers.unlockPartySlot({ slot: 2 }).reason, "not_enough_gold");
 inventory.InventoryV2.VirtualCurrencies.GOLD.Amount = 2999;

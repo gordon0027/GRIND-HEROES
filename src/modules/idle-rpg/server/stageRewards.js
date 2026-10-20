@@ -24,6 +24,9 @@ var GH_MIN_HERO_XP_PARTICIPATION_RATIO = 0.25;
 // Tunable DEV-only party prices. The client reads these through getPartySlotPrices.
 var GH_PARTY_SLOT_COSTS = { 2: 3000, 3: 12000 };
 var GH_PARTY_CAPACITY_KEY = "grind_party_capacity_v2";
+// The first validated clear funds the existing second slot and Archer prices.
+// The completed counter is server-owned, so retries and farming cannot repeat it.
+var GH_FIRST_CLEAR_GOLD = 11000;
 
 function ghStage(stageId) {
   for (var i = 0; i < GH_STAGES.length; i++)
@@ -333,6 +336,7 @@ handlers.completeStageRun = function (args, context) {
   var xpAwards = ghAwardXP(heroProgress, qualified, stage.config.heroXP);
 
   var firstClear = !Number(progress.completed[stage.config.id]);
+  var welcomeGold = stage.index === 0 && firstClear ? GH_FIRST_CLEAR_GOLD : 0;
   var best = Number(progress.bestSeconds[stage.config.id]);
   progress.bestSeconds[stage.config.id] = !isFinite(best) || best <= 0
     ? seconds : Math.min(best, seconds);
@@ -349,7 +353,7 @@ handlers.completeStageRun = function (args, context) {
   if (!saved.Success) throw new Error("stage_state_write_failed: " + saved.Error);
 
   var entries = [
-    { Type: "VirtualCurrency", CurrencyID: "GOLD", Amount: stage.config.gold },
+    { Type: "VirtualCurrency", CurrencyID: "GOLD", Amount: stage.config.gold + welcomeGold },
     { Type: "Item", CatalogID: "Item", ItemID: ghChestItemID("stage_chest", stage.index), Amount: 1 },
   ];
   if (stage.config.bossChest)
@@ -367,7 +371,7 @@ handlers.completeStageRun = function (args, context) {
     accepted: true, stageId: stage.config.id, runId: active.id,
     serverSeconds: seconds, firstClear: firstClear, progress: progress,
     xpAwards: xpAwards, xpEligibility: xpEligibility, heroProgress: heroProgress,
-    rewards: { gold: stage.config.gold, chestItemID: ghChestItemID("stage_chest", stage.index),
+    rewards: { gold: stage.config.gold + welcomeGold, chestItemID: ghChestItemID("stage_chest", stage.index),
       bossChestItemID: stage.config.bossChest ? ghChestItemID("boss_chest", stage.index) : null,
       firstItemID: firstClear ? stage.config.firstItem || null : null },
   };

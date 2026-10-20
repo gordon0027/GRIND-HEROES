@@ -128,7 +128,15 @@ try {
   assert.equal(restored.counters.starts, 1, "restored ready stage starts without START");
   restored.session.suspend();
 
-  console.log("IdleSession automatic battle, fallback, reload and single-start guards passed");
+  const hidden = makeSession(0, "running", parseStageProgress(null));
+  let hiddenSteps = 0;
+  hidden.session.run.tick = () => { hiddenSteps++; return []; };
+  hidden.session.backgroundAt = Date.now() - 1000;
+  hidden.session.advanceHiddenRun();
+  assert.ok(hiddenSteps >= 3 && hiddenSteps <= 5,
+    "a hidden run advances elapsed wall time in bounded combat steps");
+
+  console.log("IdleSession automatic battle, background clock, fallback, reload and single-start guards passed");
 } finally {
   await server.close();
 }

@@ -139,6 +139,7 @@ export class GrindScene extends Phaser.Scene {
   }
 
   override update(_time: number, deltaMs: number): void {
+    if (document.hidden || typeof document.hasFocus === "function" && !document.hasFocus()) return;
     const run = this.session.run;
     this.battleAssets.ensure(run.stage.chapter);
     if (run !== this.lastRun || run.elapsedSeconds < this.lastElapsed - 0.1) {

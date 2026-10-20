@@ -210,7 +210,7 @@ function FormationPanel({ session, heroID, selectHero }: {
     <div className="gh-section-title"><strong>Active party</strong><span>{session.activeCapacity} / 3 slots</span></div>
     <div className="gh-formation__slots">{slots.map((slot) => {
       const selected = target === slot.index;
-      return <button key={slot.index} type="button" className={`gh-party-slot${selected ? " gh-party-slot--selected" : ""}`}
+      return <button key={slot.index} type="button" className={`gh-party-slot${selected ? " gh-party-slot--selected" : ""}${slot.index === 2 && ["slot", "assign"].includes(session.currentOnboardingStep ?? "") ? " gh-onboarding-target" : ""}`}
         onClick={() => slot.unlocked ? setTarget(slot.index) : setPurchaseSlot(slot.index as 2 | 3)} aria-pressed={selected}
         style={{ borderImageSource: `url("${heroUi.panel}")` }}>
         <small>Slot {slot.index}</small>
@@ -223,14 +223,14 @@ function FormationPanel({ session, heroID, selectHero }: {
     <div className="gh-section-title"><strong>Heroes</strong><span>Choose a hero for Slot {target}</span></div>
     <div className="gh-formation__roster">{session.roster.filter((hero) => hero.rank > 0).map((hero) => {
       const position = assigned(hero.id);
-      return <button type="button" key={hero.id} className={`gh-roster-card${heroID === hero.id ? " gh-roster-card--selected" : ""}`}
+      return <button type="button" key={hero.id} className={`gh-roster-card${heroID === hero.id ? " gh-roster-card--selected" : ""}${hero.id === "Archer" && session.currentOnboardingStep === "assign" ? " gh-onboarding-target" : ""}`}
         onClick={() => assign(hero)} aria-label={`${hero.name}${position ? `, party slot ${position}` : ""}`}>
         <HeroIcon id={hero.id} small />
         <span><strong>{hero.name}</strong><small>Lv {hero.rank}</small></span>
         {position ? <b className="gh-roster-card__position">{position}</b> : null}
       </button>;
     })}{RECRUITABLE_HERO_IDS.some((id) => !session.ownedHeroIDs().has(id)) ?
-      <button type="button" className="gh-roster-card gh-roster-card--recruit" onClick={() => setRecruitOpen(true)}>+ Recruit Hero</button> : null}</div>
+      <button type="button" className={`gh-roster-card gh-roster-card--recruit${session.currentOnboardingStep === "recruit" ? " gh-onboarding-target" : ""}`} onClick={() => setRecruitOpen(true)}>+ Recruit Hero</button> : null}</div>
     {slots.find((slot) => slot.index === target)?.heroID && slots.filter((slot) => slot.heroID).length > 1 ?
       <FantasyButton className="gh-formation__remove" disabled={session.formationBusy}
         onClick={() => void session.assignHero(target, null)}>Remove from Slot {target}</FantasyButton> : null}
@@ -303,7 +303,7 @@ function RecruitHeroDialog({ session, close }: { session: IdleSession; close: ()
     style={{ borderImageSource: `url("${heroUi.panel}")` }}>
     <button className="gh-purchase-dialog__close" type="button" onClick={close} aria-label="Close recruitment">×</button>
     <h3>Recruit Hero</h3><div className="gh-recruit-options">{available.map((entry) => <button type="button" key={entry.id}
-      onClick={() => setChosen(entry.id)} className="gh-recruit-option">
+      onClick={() => setChosen(entry.id)} className={`gh-recruit-option${entry.id === "Archer" && session.currentOnboardingStep === "recruit" ? " gh-onboarding-target" : ""}`}>
       <HeroIcon id={entry.id} small /><strong>{entry.name}</strong><GoldPrice amount={session.recruitCost(entry.id) ?? 0} />
     </button>)}</div>
   </section></div>;

@@ -61,6 +61,7 @@ import { previewParty, type PreviewTier } from "./combatPreview";
 import type { HeroSource } from "./stageRun";
 import { HeroUpgrade } from "./heroUpgrade";
 import { heroLevelEnabled } from "./heroLevel";
+import { ONBOARDING_KEY, onboardingStep, type OnboardingStep } from "./onboarding";
 
 /** The private custom-data key of the stage progress ("." and "$" are not allowed in keys). */
 export const PROGRESS_KEY = "idle_rpg_progress";
@@ -186,6 +187,34 @@ export class IdleSession {
   lastCollect: { amount: number; at: number } | null = null;
   notice: (Notice & { at: number }) | null = null;
   loaded = false;
+  onboardingActive = false;
+  private onboardingWrites: Promise<void> = Promise.resolve();
+  private backgroundTimer: ReturnType<typeof setInterval> | null = null;
+  private backgroundAt = 0;
+  private readonly visibilityChanged = (): void => {
+    if (typeof document === "undefined") return;
+    if (document.hidden || typeof document.hasFocus === "function" && !document.hasFocus()) {
+      this.backgroundAt = Date.now();
+      this.backgroundTimer ??= setInterval(() => this.advanceHiddenRun(), 250);
+    } else {
+      this.advanceHiddenRun();
+      if (this.backgroundTimer) clearInterval(this.backgroundTimer);
+      this.backgroundTimer = null;
+    }
+  };
+
+  private advanceHiddenRun(): void {
+    const now = Date.now();
+    // A fully suspended browser cannot execute code until it wakes. Catch up one
+    // active run in bounded, deterministic combat steps when timers resume.
+    let remaining = Math.min(180, Math.max(0, (now - this.backgroundAt) / 1000));
+    this.backgroundAt = now;
+    while (remaining > 0 && ["running", "encounter", "boss"].includes(this.run.state)) {
+      const step = Math.min(0.25, remaining);
+      this.tickRun(step);
+      remaining -= step;
+    }
+  }
   teamPower: number | null = null;
   teamPowerError: string | null = null;
   teamLeaderboard: TeamPowerLeaderboard | null = null;
@@ -247,6 +276,31 @@ export class IdleSession {
   };
 
   getVersion = (): number => this.version;
+
+  get currentOnboardingStep(): OnboardingStep {
+    return onboardingStep({ active: this.onboardingActive,
+      firstClear: (this.stageProgress.completed[FIRST_STAGE.id] ?? 0) > 0,
+      chestCount: this.chestCount("stage_chest"), capacity: this.capacity,
+      archerOwned: this.ownedHeroIDs().has("Archer"),
+      archerAssigned: this.formation.slots[1] === "Archer" });
+  }
+
+  skipOnboarding(): void {
+    if (!this.onboardingActive) return;
+    this.onboardingActive = false;
+    this.persistOnboarding("skipped");
+    this.changed();
+  }
+
+  private persistOnboarding(value: "active" | "skipped" | "done"): void {
+    this.onboardingWrites = this.onboardingWrites.then(async () => {
+      const saved = await this.client.userCustomData.setPrivateData(ONBOARDING_KEY, value);
+      if (!saved.ok) throw new Error(String(saved.error ?? saved.reason));
+    }).catch((error: unknown) => {
+      this.stageError = `Guide save: ${String(error)}`;
+      this.changed();
+    });
+  }
 
   private changed(): void {
     this.version++;
@@ -703,6 +757,10 @@ export class IdleSession {
     if (result.ok) {
       this.formation = next;
       this.formationStored = true;
+      if (this.onboardingActive && next.slots[1] === "Archer") {
+        this.onboardingActive = false;
+        this.persistOnboarding("done");
+      }
       this.managementRevision++;
       this.stagePartyDirty = true;
       this.syncParty();
@@ -1188,6 +1246,12 @@ export class IdleSession {
   /** The mode is on screen: collect what the hero earned meanwhile, then keep collecting. */
   activate(): void {
     this.autoFlowEnabled = true;
+    if (typeof document !== "undefined") {
+      document.addEventListener("visibilitychange", this.visibilityChanged);
+      window.addEventListener("blur", this.visibilityChanged);
+      window.addEventListener("focus", this.visibilityChanged);
+      this.visibilityChanged();
+    }
     if (this.loaded && this.run.state === "ready") void this.startRun();
     if (["clear", "failed"].includes(this.run.state)) this.scheduleAutoAdvance();
     void this.collect();
@@ -1199,6 +1263,13 @@ export class IdleSession {
 
   suspend(): void {
     this.autoFlowEnabled = false;
+    if (typeof document !== "undefined") {
+      document.removeEventListener("visibilitychange", this.visibilityChanged);
+      window.removeEventListener("blur", this.visibilityChanged);
+      window.removeEventListener("focus", this.visibilityChanged);
+    }
+    if (this.backgroundTimer) clearInterval(this.backgroundTimer);
+    this.backgroundTimer = null;
     this.cancelAutoAdvance();
     if (this.collectTimer) clearInterval(this.collectTimer);
     this.collectTimer = null;
@@ -1312,6 +1383,11 @@ export class IdleSession {
     if (saved) this.battle.setStage(saved.stage, saved.best);
     if (res.ok) {
       this.stageProgress = parseStageProgress(res.data.ReadOnly?.[STAGE_PROGRESS_KEY]?.Value);
+      const onboardingValue = res.data.Private?.[ONBOARDING_KEY]?.Value;
+      const hasStageHistory = Object.values(this.stageProgress.completed).some((count) => count > 0);
+      this.onboardingActive = onboardingValue === "active" ||
+        !onboardingValue && !hasStageHistory;
+      if (this.onboardingActive && !onboardingValue) this.persistOnboarding("active");
       this.heroProgressMap = parseHeroProgress(res.data.ReadOnly?.[HERO_XP_KEY]?.Value);
       try {
         this.grindEquipment = await this.equipmentService.load();
@@ -1341,6 +1417,10 @@ export class IdleSession {
       const savedFormation = res.data.Private?.[FORMATION_KEY]?.Value;
       const ownedHeroes = this.ownedHeroIDs();
       this.formation = restoreFormation(savedFormation, ownedHeroes, this.capacity);
+      if (this.onboardingActive && this.formation.slots[1] === "Archer") {
+        this.onboardingActive = false;
+        this.persistOnboarding("done");
+      }
       this.formationStored = Number(res.data.Private?.[FORMATION_KEY]?.Version ?? 0) > 0;
       this.syncParty();
       let savedFormationValid = false;
