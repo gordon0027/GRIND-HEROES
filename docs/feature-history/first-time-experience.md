@@ -42,7 +42,7 @@ player without onboarding; after release, the live root served v84 assets and
 the public PLAY NOW button opened the game. The release did not create or reset
 player progress.
 
-## Adventure guide V2 (local / DEV, 2026-10-20)
+## Adventure guide V2 (2026-10-20)
 
 Removed the old inline guide, its outline classes and the separate PLAY `NEXT STEP`
 card. Replaced them with an RPG dialogue using existing hero art, short messages,
@@ -70,8 +70,19 @@ Verified with real DEV guest accounts in the browser: desktop and 390px iframe
 journeys from welcome through saved two-hero formation; refresh recovery before
 slot purchase and before formation; completion and Skip remain hidden after
 refresh. Also visually checked 320px welcome/slot/purchase screens and a
-1000x430 cross-origin iframe, including nested scrolling to Archer. The public
-iDos page was not updated for this version. Screenshots are local QA artifacts.
+1000x430 cross-origin iframe, including nested scrolling to Archer. These initial
+checks used local clients against DEV. Screenshots are local QA artifacts.
 The normal first-stage duration remains about 68 seconds; an isolated shorter
 encounter would need a separate server-validated run/reward contract and is
 outside this presentation change. No Title configuration or CloudCode changed.
+
+### Production release
+
+After explicit release approval, commit `f946b03` was packaged with PROD settings
+and published as v85 (`blded814bb7cdee49c79d8f7cb3bb2e9bd1`, label `Game update`).
+The archive includes all 119 files and has no dependency on another build's art.
+CloudCode remains at revision 15. Typecheck, guide tests and the release build
+passed; the full automated suite and new-player browser journeys had passed
+before release. A staged PROD check loaded an existing account and its saved
+TEAM without onboarding. The live root then served the v85 JavaScript, with zero
+obsolete hint elements, and the public PLAY NOW button opened the updated game.
